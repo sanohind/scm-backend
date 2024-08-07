@@ -42,6 +42,7 @@ return [
             'synchronous' => null,
         ],
 
+        // mysql config
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
@@ -97,6 +98,7 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        // sql srv config
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),

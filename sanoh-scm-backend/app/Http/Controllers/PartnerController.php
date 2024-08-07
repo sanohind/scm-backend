@@ -14,9 +14,12 @@ class PartnerController extends Controller
         return view('index', compact('users'));
     }
 
+    // function for copy the data from sql server to mysql
     public function copy(){
+        // get all data from sql server
         $sqlsrvData = Partner::all();
 
+        // copy all data from sql server
         foreach ($sqlsrvData as $data) {
             PartnerLocal::create([
                 'bp_code' => $data->bp_code,
