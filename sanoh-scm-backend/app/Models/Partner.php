@@ -13,3 +13,4 @@ class Partner extends Model
 
     protected $table = "business_partner";
 }
+
