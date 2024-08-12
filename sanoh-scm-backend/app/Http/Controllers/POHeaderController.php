@@ -18,7 +18,7 @@ class POHeaderController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List User',
+            'message' => 'Berhasil Menampilkan List PO Header',
             'data' => POHeaderResource::collection($data_po)
         ]);
     }

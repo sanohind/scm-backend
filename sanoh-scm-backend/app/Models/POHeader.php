@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\PartnerLocal;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class POHeader extends Model
 {
@@ -18,8 +21,8 @@ class POHeader extends Model
     ];
 
     // Relationship
-   public function poheader(): BelongsTo
-   {
-       return $this->belongsTo(PartnerLocal::class, 'bp_code', 'bp_code');
-   }
+    public function poheader(): BelongsTo
+    {
+        return $this->belongsTo(PartnerLocal::class, 'bp_code', 'bp_code');
+    }
 }
