@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\POHeaderController;
 
 // Route for super admin
 // Route for show list of user
@@ -14,3 +15,4 @@ Route::put('update/{user}',[UserController::class, "update"]);
 Route::post('/create',[UserController::class, "store"]);
 
 // Route::apiResource('/user',[UserController::class]);
+Route::get('/indexpo',[POHeaderController::class, "index"]);
