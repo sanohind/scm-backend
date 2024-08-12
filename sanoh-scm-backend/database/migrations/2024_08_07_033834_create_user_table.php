@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('status',25)->nullable();
             $table->string('username',25)->nullable();
             $table->string('password',25)->nullable();
+
+            // tambahan email
+            $table->string('email',255)->nullable();
             $table->timestamps();
         });
     }
