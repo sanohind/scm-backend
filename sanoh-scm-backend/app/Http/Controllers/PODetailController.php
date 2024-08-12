@@ -8,7 +8,7 @@ use App\Http\Resources\PODetailResource;
 
 class PODetailController extends Controller
 {
-    /// View list data PODetail
+    // View list data PODetail
     public function index()
     {
         //get data api to view
