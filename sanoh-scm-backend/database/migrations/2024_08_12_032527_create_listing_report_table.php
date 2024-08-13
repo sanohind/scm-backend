@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('listing_report', function (Blueprint $table) {
-            $table->integer('user_id')->primary();
+            $table->string('po_listing_no', 25)->primary();
             $table->string('bp_code', 25);
             $table->foreign('bp_code')->references('bp_code')->on('business_partner')->onDelete('cascade');
             $table->datetime('date');
