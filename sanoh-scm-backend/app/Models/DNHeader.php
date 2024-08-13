@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DNHeader extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $table = "dn_header";
 

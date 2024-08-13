@@ -14,6 +14,11 @@ class ListingReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'po_listing_no' => $this->po_listing_no,
+            'bp_code' => $this->bp_code,
+            'date' => $this->date,
+            'file' => $this->file,
+        ];
     }
 }

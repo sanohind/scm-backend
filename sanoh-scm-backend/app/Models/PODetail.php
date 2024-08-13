@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PODetail extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $table = "po_detail";
 

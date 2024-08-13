@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DNDetail extends Model
 {
+    use HasFactory, Notifiable;
+
     protected $table = "dn_detail";
 
     protected $fillable = [
