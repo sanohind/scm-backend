@@ -25,7 +25,7 @@ Route::get('/indexpoheader',[POHeaderController::class, "index"]);
 // Route for edit list PO Header
 Route::get('edit/{po_no}',[POHeaderController::class, "edit"]);
 // Route for update list PO Header
-Route::put('update/{po_no}',[POHeaderController::class, "update"]);
+Route::put('/updatepoheader/{po_no}',[POHeaderController::class, "update"]);
 
 // Route for show list PO Detail
 Route::get('/indexpodetail',[PODetailController::class, "index"]);

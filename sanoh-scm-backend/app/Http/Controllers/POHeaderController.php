@@ -11,9 +11,7 @@ class POHeaderController extends Controller
     // View list data POHeader
     public function index()
     {
-        //get data api to view
-        // Using eager loading request data to database for efficiency data
-        //in case calling data relation
+        // Ensure the relationship is correct or remove if not used
         $data_po = POHeader::with('poheader')->get();
 
         return response()->json([
@@ -23,36 +21,32 @@ class POHeaderController extends Controller
         ]);
     }
 
-    //Show edit form POHeader
-    public function edit($po_header)
+    // Show edit form POHeader
+    public function edit($po_no)
     {
-        //variable $user to store the id of data
-        $data_edit = POHeader::findOrFail($po_header);
+        // Ensure the ID exists in the database
+        $data_edit = POHeader::findOrFail($po_no);
         return new POHeaderResource($data_edit);
     }
 
     // Update data to database
-    public function update(Request $request, POHeader $po_header)
+    public function update(Request $request, $po_no)
     {
-        //
-        $data_edit = POHeader::findOrFail($po_header);
-
+        $po_header = POHeader::findOrFail($po_no);
         // Validate the request data
-        $data = $request->validate ([
-            'po_no' => 'required|string|max:25'.$po_header,
+        $data = $request->validate([
             'response' => 'required|string|max:25',
             // Add other fields as necessary
         ]);
 
-        // Update the user with the validated data
-        $data_update = POHeader::update([$data]);
+        // Update the model with the validated data
+        $po_header->update($data);
 
-        // Return value
+        // Return updated model data
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Merubah Status \"'.$data_update->response."\"",
-            'data' => new POHeaderResource($data_update)
+            'message' => 'Berhasil Merubah Status ' . $po_header->response,
+            'data' => new POHeaderResource($po_header)
         ]);
-
     }
 }

@@ -34,7 +34,7 @@ class UserController extends Controller
             'status' => 'required|string|max:25',
             'username' => 'required|string|max:25',
             'password' => 'required|string|max:25',
-            'email' => 'required|string|email|max:255|unique:users,email'
+            'email' => 'required|string|email|max:255|unique:user,email'
         ]);
 
         $data['password'] = bcrypt($data['password']); // Encrypt password

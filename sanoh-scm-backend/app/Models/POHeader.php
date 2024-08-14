@@ -12,6 +12,10 @@ class POHeader extends Model
 {
     use HasFactory, Notifiable;
 
+    protected $primaryKey = "po_no";
+
+    public $timestamps = false;
+
     protected $table = "po_header";
 
     protected $fillable = [
@@ -20,7 +24,7 @@ class POHeader extends Model
         'response',
     ];
 
-    // Relationship
+    // Ensure this relationship is defined correctly
     public function poheader(): BelongsTo
     {
         return $this->belongsTo(PartnerLocal::class, 'bp_code', 'bp_code');
