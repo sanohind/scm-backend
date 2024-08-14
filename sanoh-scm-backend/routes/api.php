@@ -38,7 +38,7 @@ Route::get('/indexdndetail',[DNDetailController::class, "index"]);
 // Route for edit list DN Detail
 Route::get('edit/{dn_detail_no}',[DNDetailController::class, "edit"]);
 // Route for update list DN Detail
-Route::put('update/{dn_detail_no}',[DNDetailController::class, "update"]);
+Route::put('/updatedndetail/{dn_detail_no}',[DNDetailController::class, "update"]);
 
 // Route for show list of Listing Report
 Route::get('/indexlistingreport',[ListingReportController::class, "index"])->name('index');

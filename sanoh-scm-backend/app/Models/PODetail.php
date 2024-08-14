@@ -12,6 +12,10 @@ class PODetail extends Model
 {
     use HasFactory, Notifiable;
 
+    protected $primaryKey = "po_detail_no";
+
+    public $timestamps = false;
+
     protected $table = "po_detail";
 
     // Relationship

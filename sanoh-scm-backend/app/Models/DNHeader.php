@@ -12,6 +12,10 @@ class DNHeader extends Model
 {
     use HasFactory, Notifiable;
 
+    protected $primaryKey = "no_dn";
+
+    public $timestamps = false;
+
     protected $table = "dn_header";
 
     // Relationship

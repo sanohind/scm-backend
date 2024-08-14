@@ -12,6 +12,10 @@ class DNDetail extends Model
 {
     use HasFactory, Notifiable;
 
+    protected $primaryKey = "dn_detail_no";
+
+    public $timestamps = false;
+
     protected $table = "dn_detail";
 
     protected $fillable = [
