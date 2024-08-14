@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\Api\PartnerController;
 
 Route::get('/', [PartnerController::class,'index']);
 Route::get('/copy', [PartnerController::class,'copy']);

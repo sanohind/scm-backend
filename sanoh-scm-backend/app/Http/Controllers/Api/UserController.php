@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserDetailResource;
 
-class UserController extends Controller
+class UserController
 {
     // View list data user
     public function index()
@@ -15,7 +15,7 @@ class UserController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_user = User::with('partner')->get();
+        $data_user = User::orderby('user_id','asc')->with('partner')->get();
 
         return response()->json([
             'success' => true,
@@ -34,7 +34,7 @@ class UserController extends Controller
             'role' => 'required|string|max:25',
             'status' => 'required|string|max:25',
             'username' => 'required|string|max:25',
-            'password' => 'required|string|max:25',
+            'password' => 'required|string|max:255',
             'email' => 'required|unique|string|max:255'
         ]);
 

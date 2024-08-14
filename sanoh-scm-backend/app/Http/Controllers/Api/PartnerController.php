@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Partner;
 use App\Models\PartnerLocal;
 use Illuminate\Http\Request;
 
-class PartnerController extends Controller
+class PartnerController
 {
     public function index(){
         $users = PartnerLocal::all();

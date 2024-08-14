@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
                 'role' => 'supplier',
                 'status' => 'active',
                 'username' => Str::random(10),
-                'password' => Str::random(10),
+                'password' => Hash::make('aqil'),
                 'email' => Str::random(10).'@example.com',
             ]);
         }

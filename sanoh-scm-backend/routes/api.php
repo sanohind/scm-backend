@@ -2,15 +2,18 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
 
-// Route for super admin
-// Route for show list of user
-Route::get('/index',[UserController::class, "index"])->name('index');
-// Route for edit user form
-Route::get('edit/{user}',[UserController::class, "edit"]);
-// Route for edit user data
-Route::put('update/{user}',[UserController::class, "update"]);
-Route::post('/create',[UserController::class, "store"]);
+// Route Login
+Route::post('/login', [AuthController::class, 'login']);
 
-// Route::apiResource('/user',[UserController::class]);
+//Route Supplier
+Route::middleware(['auth:sanctum','userRole:supplier'])->group(function () {
+
+    Route::get('/index', [UserController::class, 'index']);
+
+    //Logout route
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('role',25)->nullable();
             $table->string('status',25)->nullable();
             $table->string('username',25)->nullable();
-            $table->string('password',25)->nullable();
+            $table->string('password',255)->nullable();
 
             // tambahan email
             $table->string('email',255)->nullable();
