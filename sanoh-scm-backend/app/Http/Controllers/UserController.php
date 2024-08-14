@@ -27,7 +27,6 @@ class UserController extends Controller
     // Store data user to database
     public function store(Request $request)
     {
-        // Data input validation
         $data = $request->validate([
             'bp_code' => 'required|string|max:25',
             'name' => 'required|string|max:25',
@@ -35,17 +34,17 @@ class UserController extends Controller
             'status' => 'required|string|max:25',
             'username' => 'required|string|max:25',
             'password' => 'required|string|max:25',
-            'email' => 'required|unique|string|max:255'
+            'email' => 'required|string|email|max:255|unique:users,email'
         ]);
 
-        // Create data
-        $data_create = User::create([$data]);
+        $data['password'] = bcrypt($data['password']); // Encrypt password
 
-        // Return value
+        $data_create = User::create($data);
+
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menambahkan User \"'.$data_create->username."\"",
-            'data' => UserResource::collection($data_create)
+            'message' => 'Berhasil Menambahkan User "' . $data_create->username . '"',
+            'data' => new UserResource($data_create)
         ]);
     }
 
@@ -58,12 +57,10 @@ class UserController extends Controller
     }
 
     // Update data to database
-    public function update(Request $request, User $user)
+    public function update(Request $request, $user)
     {
-        //
         $data_edit = User::findOrFail($user);
-
-        // Validate the request data
+        //dd($data_edit);
         $data = $request->validate([
             'bp_code' => 'required|string|max:25',
             'name' => 'required|string|max:25',
@@ -71,19 +68,18 @@ class UserController extends Controller
             'status' => 'required|string|max:25',
             'username' => 'required|string|max:25',
             'password' => 'required|string|max:25',
-            'email' => 'required|unique:email|string|max:255'
-            // Add other fields as necessary
+            'email' => 'required|string|email|max:255|unique:user,email,' . $data_edit->user_id . ',user_id',
         ]);
 
-        // Update the user with the validated data
-        $data_update = User::update([$data]);
+        $data['password'] = bcrypt($data['password']); // Encrypt password
 
-        // Return value
+        $data_edit->update($data);
+
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menambahkan User \"'.$data_create->username."\"",
-            'data' => new UserResource($data_update)
+            'message' => 'Berhasil Mengupdate User "' . $data_edit->username . '"',
+            'data' => new UserResource($data_edit)
         ]);
-
     }
+
 }

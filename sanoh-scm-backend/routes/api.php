@@ -13,9 +13,9 @@ use App\Http\Controllers\ListingReportController;
 // Route for show list of user
 Route::get('/index',[UserController::class, "index"])->name('index');
 // Route for edit user form
-Route::get('edit/{user}',[UserController::class, "edit"]);
+Route::post('edit/{user}',[UserController::class, "edit"]);
 // Route for edit user data
-Route::put('update/{user}',[UserController::class, "update"]);
+Route::put('/update/{user}',[UserController::class, "update"]);
 Route::post('/create',[UserController::class, "store"]);
 
 // Route::apiResource('/user',[UserController::class]);

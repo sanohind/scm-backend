@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         for ($i=0; $i <= 10; $i++) {
             # code...
             User::create([
-                'bp_code' => '1',
+                'bp_code' => 'APFEY',
                 'name' => Str::random(10),
                 'role' => 'supplier',
                 'status' => 'active',
