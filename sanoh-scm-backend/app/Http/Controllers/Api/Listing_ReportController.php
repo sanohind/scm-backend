@@ -28,12 +28,13 @@ class Listing_ReportController extends Controller
     // Store data user to database
     public function store(Request $request)
     {
-        // Data input validation
-        $validator = Validator::make($request->all(),[
+        $rules =[
             'bp_code' => 'required|string|max:25',
             'date' => 'required|date',
             'file' => 'required|string|max:255',
-        ]);
+        ];
+        // Data input validation
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([
