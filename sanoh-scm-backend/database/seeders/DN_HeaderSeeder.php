@@ -20,7 +20,7 @@ class DN_HeaderSeeder extends Seeder
             # code...
             DN_Header::create([
                 'no_dn' => Str::random(10),
-                'po_no' => '0VVOPkvq27',
+                'po_no' => '07TgGeZhCN',
                 'dn_created_date' => Carbon::now(),
                 'dn_year' => rand(2000, 2024),
                 'dn_period' => rand(1, 4),

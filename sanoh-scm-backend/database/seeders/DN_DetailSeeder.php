@@ -20,7 +20,7 @@ class DN_DetailSeeder extends Seeder
             # code...
             DN_Detail::create([
                 'dn_detail_no' => Str::random(10),
-                'no_dn' => '9LO3KrsqEo',
+                'no_dn' => 'E8f8qjvZN6',
                 'dn_line' => rand(1, 3),
                 'order_origin' => rand(60, 80),
                 'plan_delivery_date' => Carbon::now(),
