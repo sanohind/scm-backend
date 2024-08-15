@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DNDetail;
+use App\Models\DN_Detail;
 use Illuminate\Http\Request;
-use App\Http\Resources\DNDetailResource;
+use App\Http\Resources\DN_DetailResource;
 
-class DNDetailController extends Controller
+class DN_DetailController extends Controller
 {
     // View list data DNDetail
     public function index()
     {
         // Get data with eager loading of any relationships
-        $data_dndetail = DNDetail::all(); // Adjust if you have relationships to load
+        $data_dndetail = DN_Detail::all(); // Adjust if you have relationships to load
 
         return response()->json([
             'success' => true,
             'message' => 'Berhasil Menampilkan List DN Detail',
-            'data' => DNDetailResource::collection($data_dndetail)
+            'data' => DN_DetailResource::collection($data_dndetail)
         ]);
     }
 
@@ -25,15 +25,15 @@ class DNDetailController extends Controller
     public function edit($dn_detail_no)
     {
         // Find the record by id
-        $data_edit = DNDetail::findOrFail($dn_detail_no);
-        return new DNDetailResource($data_edit);
+        $data_edit = DN_Detail::findOrFail($dn_detail_no);
+        return new DN_DetailResource($data_edit);
     }
 
     // Update data to database
     public function update(Request $request, $dn_detail_no)
     {
         // Find the record by id
-        $dn_detail = DNDetail::findOrFail($dn_detail_no);
+        $dn_detail = DN_Detail::findOrFail($dn_detail_no);
 
         // Validate the request data
         $data = $request->validate([
@@ -49,7 +49,7 @@ class DNDetailController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Berhasil Merubah Status ' . $dn_detail->qty_confirm . '',
-            'data' => new DNDetailResource($dn_detail)
+            'data' => new DN_DetailResource($dn_detail)
         ]);
     }
 }

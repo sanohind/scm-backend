@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\DNDetail;
+use App\Models\DN_Detail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class DNDetailSeeder extends Seeder
+class DN_DetailSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,7 +18,7 @@ class DNDetailSeeder extends Seeder
         // create dummy data
         for ($i=0; $i <= 10; $i++) {
             # code...
-            DNDetail::create([
+            DN_Detail::create([
                 'dn_detail_no' => Str::random(10),
                 'no_dn' => '9LO3KrsqEo',
                 'dn_line' => rand(1, 3),

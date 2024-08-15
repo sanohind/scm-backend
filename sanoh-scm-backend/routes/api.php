@@ -21,26 +21,26 @@ Route::post('/create',[UserController::class, "store"]);
 // Route::apiResource('/user',[UserController::class]);
 
 // Route for show list PO Header
-Route::get('/indexpoheader',[POHeaderController::class, "index"]);
+Route::get('/indexpoheader',[PO_HeaderController::class, "index"]);
 // Route for edit list PO Header
-Route::get('edit/{po_no}',[POHeaderController::class, "edit"]);
+Route::get('edit/{po_no}',[PO_HeaderController::class, "edit"]);
 // Route for update list PO Header
-Route::put('/updatepoheader/{po_no}',[POHeaderController::class, "update"]);
+Route::put('/updatepoheader/{po_no}',[PO_HeaderController::class, "update"]);
 
 // Route for show list PO Detail
-Route::get('/indexpodetail',[PODetailController::class, "index"]);
+Route::get('/indexpodetail',[PO_DetailController::class, "index"]);
 
 // Route for show list DN Header
-Route::get('/indexdnheader',[DNHeaderController::class, "index"]);
+Route::get('/indexdnheader',[DN_HeaderController::class, "index"]);
 
 // Route for show list DN Detail
-Route::get('/indexdndetail',[DNDetailController::class, "index"]);
+Route::get('/indexdndetail',[DN_DetailController::class, "index"]);
 // Route for edit list DN Detail
-Route::get('edit/{dn_detail_no}',[DNDetailController::class, "edit"]);
+Route::get('edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
 // Route for update list DN Detail
-Route::put('/updatedndetail/{dn_detail_no}',[DNDetailController::class, "update"]);
+Route::put('/updatedndetail/{dn_detail_no}',[DN_DetailController::class, "update"]);
 
 // Route for show list of Listing Report
-Route::get('/indexlistingreport',[ListingReportController::class, "index"])->name('index');
+Route::get('/indexlistingreport',[Listing_ReportController::class, "index"])->name('index');
 // Route for store Listing Report
-Route::post('/createlistingreport',[ListingReportController::class, "store"]);
+Route::post('/createlistingreport',[Listing_ReportController::class, "store"]);

@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PODetail;
+use App\Models\DN_Header;
 use Illuminate\Http\Request;
-use App\Http\Resources\PODetailResource;
+use App\Http\Resources\DN_HeaderResource;
 
-class PODetailController extends Controller
+class DN_HeaderController extends Controller
 {
-    // View list data PODetail
+    // View list data DNHeader
     public function index()
     {
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_podetail = PODetail::with('podetail')->get();
+        $data_dnheader = DN_Header::with('dnheader')->get();
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List PO Detail',
-            'data' => PODetailResource::collection($data_podetail)
+            'message' => 'Berhasil Menampilkan List DN Header',
+            'data' => DN_HeaderResource::collection($data_dnheader)
         ]);
     }
 }

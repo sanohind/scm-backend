@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DNDetailResource extends JsonResource
+class DN_DetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

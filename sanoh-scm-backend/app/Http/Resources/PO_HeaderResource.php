@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class POHeaderResource extends JsonResource
+class PO_HeaderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

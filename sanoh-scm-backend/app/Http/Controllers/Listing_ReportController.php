@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ListingReport;
-use App\Http\Resources\ListingReportResource;
+use App\Models\Listing_Report;
+use App\Http\Resources\Listing_ReportResource;
 
-class ListingReportController extends Controller
+class Listing_ReportController extends Controller
 {
     // View list data Listing Report
     public function index()
@@ -14,12 +14,12 @@ class ListingReportController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_listingreport = ListingReport::with('listingreport')->get();
+        $data_listingreport = Listing_Report::with('listingreport')->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Berhasil Menampilkan Listing Report',
-            'data' => ListingReportResource::collection($data_listingreport)
+            'data' => Listing_ReportResource::collection($data_listingreport)
         ]);
     }
 
@@ -34,13 +34,13 @@ class ListingReportController extends Controller
         ]);
 
         // Create data
-        $data_create = ListingReport::create([$data]);
+        $data_create = Listing_Report::create([$data]);
 
         // Return value
         return response()->json([
             'success' => true,
             'message' => 'Berhasil Menambahkan Report \"'.$data_create->file."\"",
-            'data' => ListingReportResource::collection($data_create)
+            'data' => Listing_ReportResource::collection($data_create)
         ]);
     }
 }

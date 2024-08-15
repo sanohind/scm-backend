@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DNHeaderResource extends JsonResource
+class PO_DetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,10 +15,10 @@ class DNHeaderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'no_dn' => $this->no_dn,
-            'po_no' => $this->po_no,
-            'plan_delivery_date' => $this->plan_delivery_date,
-            'status_desc' => $this->status_desc,
+            'bp_part_no' => $this->bp_part_no,
+            'item_desc_a' => $this->item_desc_a,
+            'purchase_unit' => $this->purchase_unit,
+            'po_qty' => $this->po_qty,
         ];
     }
 }

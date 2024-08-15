@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\POHeader;
+use App\Models\PO_Header;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Type\Integer;
 use Illuminate\Database\Seeder;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Carbon;
 
-class POHeaderSeeder extends Seeder
+class PO_HeaderSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -20,7 +20,7 @@ class POHeaderSeeder extends Seeder
         //create dummy data
         for ($i=0; $i <= 10; $i++) {
             # code...
-            POHeader::create([
+            PO_Header::create([
                 'po_no' => Str::random(10),
                 'bp_code' => 'APFEY',
                 'po_type_desc' => Str::random(10),

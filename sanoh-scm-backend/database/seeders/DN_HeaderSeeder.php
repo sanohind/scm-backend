@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\DNHeader;
+use App\Models\DN_Header;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class DNHeaderSeeder extends Seeder
+class DN_HeaderSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,7 +18,7 @@ class DNHeaderSeeder extends Seeder
         //create dummy data
         for ($i=0; $i <= 10; $i++) {
             # code...
-            DNHeader::create([
+            DN_Header::create([
                 'no_dn' => Str::random(10),
                 'po_no' => '0VVOPkvq27',
                 'dn_created_date' => Carbon::now(),
