@@ -44,12 +44,13 @@ class DN_DetailController extends Controller
             ], 404);
         }
 
-        // Validate the request data
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'dn_detail_no' => 'required|string|max:25',
             'qty_confirm' => 'required|integer',
-            // Add other fields as necessary
-        ]);
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([

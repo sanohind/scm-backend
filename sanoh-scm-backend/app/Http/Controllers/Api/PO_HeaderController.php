@@ -56,9 +56,11 @@ class PO_HeaderController extends Controller
             ], 404);
         }
 
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'response' => 'required|string|max:25',
-        ]);
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([
