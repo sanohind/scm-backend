@@ -19,7 +19,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List User',
+            'message' => 'Success Display List User',
             'data' => UserResource::collection($data_user)
         ]);
     }
@@ -43,7 +43,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menambahkan User "' . $data_create->username . '"',
+            'message' => 'Success Add User "' . $data_create->username . '"',
             'data' => new UserResource($data_create)
         ]);
     }
@@ -77,7 +77,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Mengupdate User "' . $data_edit->username . '"',
+            'message' => 'Success Update User "' . $data_edit->username . '"',
             'data' => new UserResource($data_edit)
         ]);
     }
