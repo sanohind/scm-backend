@@ -32,8 +32,8 @@ return new class extends Migration
             $table->integer('lot_number');
             $table->integer('dn_qty');
             $table->integer('receipt_qty');
-            $table->integer('dn_unit');
-            $table->integer('dn_snp');
+            $table->string('dn_unit');
+            $table->string('dn_snp');
             $table->string('reference',255);
             $table->integer('status_desc');
             $table->integer('qty_confirm');
