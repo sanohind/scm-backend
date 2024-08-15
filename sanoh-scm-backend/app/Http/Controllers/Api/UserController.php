@@ -15,11 +15,11 @@ class UserController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_user = User::with('partner')->get();
+        $data_user = User::orderby('user_id','asc')->with('partner')->get();
 
         return response()->json([
             'success' => true,
-            'message' => 'Success Display List User',
+            'message' => 'Berhasil Menampilkan List User',
             'data' => UserResource::collection($data_user)
         ]);
     }
@@ -27,23 +27,49 @@ class UserController extends Controller
     // Store data user to database
     public function store(Request $request)
     {
-        $data = $request->validate([
+        // Data input rules
+        $rules = [
             'bp_code' => 'required|string|max:25',
             'name' => 'required|string|max:25',
             'role' => 'required|string|max:25',
             'status' => 'required|string|max:25',
-            'username' => 'required|string|max:25',
-            'password' => 'required|string|max:25',
-            'email' => 'required|string|email|max:255|unique:user,email'
-        ]);
+            'username' => 'required|string|unique:user,username|max:25', // username must unique
+            'password' => 'required|string|min:8|max:25',//min and max leght 8/25
+            'email' => 'required|email|unique:user,email|max:255' // email must unique
+        ];
 
-        $data['password'] = bcrypt($data['password']); // Encrypt password
+        // Validator instance
+        $validator = Validator::make($request->all(), $rules);
 
-        $data_create = User::create($data);
+        // Check validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Register validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
+        // Checking input if username have duplicate in database
+        // *note for checking username
+        // $usernameExist = User::where('username', $request->username)->first();
+        // if ($usernameExist) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Username has already been used',
+        //     ], 422);
+        // }
+
+        // Create data
+        $data_create = User::create(array_merge(
+            $validator->validated(),
+            ['password' => Hash::make($request->password)]
+            ));
+
+        // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Success Add User "' . $data_create->username . '"',
+            'message' => 'Data user "'.$data_create->username.'" successfuly created',
             'data' => new UserResource($data_create)
         ]);
     }
@@ -51,7 +77,7 @@ class UserController extends Controller
     //Show edit form user
     public function edit($user)
     {
-        //variable $user to store the id of data
+        // Find user
         $data_edit = User::findOrFail($user);
         return new UserDetailResource($data_edit);
     }
@@ -59,27 +85,59 @@ class UserController extends Controller
     // Update data to database
     public function update(Request $request, $user)
     {
+        // Find user
         $data_edit = User::findOrFail($user);
-        //dd($data_edit);
-        $data = $request->validate([
+
+        // Fail find user
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'errors' => 'User not found'
+            ], 404);
+        }
+
+        // Data input rules
+        $rules = [
             'bp_code' => 'required|string|max:25',
             'name' => 'required|string|max:25',
             'role' => 'required|string|max:25',
             'status' => 'required|string|max:25',
-            'username' => 'required|string|max:25',
-            'password' => 'required|string|max:25',
-            'email' => 'required|string|email|max:255|unique:user,email,' . $data_edit->user_id . ',user_id',
-        ]);
+            'username' => 'required|string|unique:user,username|max:25', // username must unique
+            'password' => 'required|string|min:8|max:25',//min and max leght 8/25
+            'email' => 'required|email|max:255|unique:user,email,'.$data_edit->user_id.',user_id' // email must unique
+        ];
 
-        $data['password'] = bcrypt($data['password']); // Encrypt password
+        // Validator instance
+        $validator = Validator::make($request->all(), $rules);
 
-        $data_edit->update($data);
+        // Check validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Update validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
+        // Update the user with validated data
+        $validatedData = $validator->validated();
+
+        // Hash the password if it was provided
+        if (!empty($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } else {
+            unset($validatedData['password']); // Remove password if not provided
+        }
+
+        // Update the user instance
+        $data_edit->update($validatedData);
+
+        // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Success Update User "' . $data_edit->username . '"',
+            'message' => 'Data user "'.$data_edit->username.'" successfuly updated',
             'data' => new UserResource($data_edit)
         ]);
-    }
 
+    }
 }
