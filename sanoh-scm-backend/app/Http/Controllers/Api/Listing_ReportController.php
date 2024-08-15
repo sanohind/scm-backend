@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Models\Listing_Report;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Listing_ReportResource;
 
 class Listing_ReportController extends Controller
@@ -20,27 +22,35 @@ class Listing_ReportController extends Controller
             'success' => true,
             'message' => 'Berhasil Menampilkan Listing Report',
             'data' => Listing_ReportResource::collection($data_listingreport)
-        ]);
+        ], 200);
     }
 
     // Store data user to database
     public function store(Request $request)
     {
         // Data input validation
-        $data = $request->validate([
+        $validator = Validator::make($request->all(),[
             'bp_code' => 'required|string|max:25',
             'date' => 'required|date',
             'file' => 'required|string|max:255',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         // Create data
-        $data_create = Listing_Report::create([$data]);
+        $data_create = Listing_Report::create($validator->validated());
 
         // Return value
         return response()->json([
-            'success' => true,
-            'message' => 'Berhasil Menambahkan Report \"'.$data_create->file."\"",
+            'status' => success,
+            'message' => 'Berhasil Menambahkan Report '.$data_create->file."",
             'data' => Listing_ReportResource::collection($data_create)
-        ]);
+        ], 201);
     }
 }

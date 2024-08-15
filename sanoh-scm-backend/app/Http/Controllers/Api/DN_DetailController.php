@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\DN_Detail;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\DN_DetailResource;
 
 class DN_DetailController extends Controller
@@ -18,7 +20,7 @@ class DN_DetailController extends Controller
             'success' => true,
             'message' => 'Berhasil Menampilkan List DN Detail',
             'data' => DN_DetailResource::collection($data_dndetail)
-        ]);
+        ], 200);
     }
 
     // Show edit form DNDetail
@@ -35,21 +37,36 @@ class DN_DetailController extends Controller
         // Find the record by id
         $dn_detail = DN_Detail::findOrFail($dn_detail_no);
 
+        if (!$dn_detail) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'DN Detail tidak ditemukan'
+            ], 404);
+        }
+
         // Validate the request data
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'dn_detail_no' => 'required|string|max:25',
             'qty_confirm' => 'required|integer',
             // Add other fields as necessary
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         // Update the record with the validated data
-        $dn_detail->update($data);
+        $dn_detail->update($validator->validated());
 
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Merubah Status ' . $dn_detail->qty_confirm . '',
+            'message' => 'Berhasil Merubah Quantity ' . $dn_detail->qty_confirm . '',
             'data' => new DN_DetailResource($dn_detail)
-        ]);
+        ], 200);
     }
 }

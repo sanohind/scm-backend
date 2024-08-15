@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\PO_Detail;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\PO_DetailResource;
 
 class PO_DetailController extends Controller
@@ -20,6 +22,6 @@ class PO_DetailController extends Controller
             'success' => true,
             'message' => 'Berhasil Menampilkan List PO Detail',
             'data' => PO_DetailResource::collection($data_podetail)
-        ]);
+        ], 200);
     }
 }

@@ -2,12 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\DNDetailController;
-use App\Http\Controllers\DNHeaderController;
-use App\Http\Controllers\PODetailController;
-use App\Http\Controllers\POHeaderController;
-use App\Http\Controllers\ListingReportController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\DN_DetailController;
+use App\Http\Controllers\Api\DN_HeaderController;
+use App\Http\Controllers\Api\PO_DetailController;
+use App\Http\Controllers\Api\PO_HeaderController;
+use App\Http\Controllers\Api\Listing_ReportController;
 
 // Route for super admin
 // Route for show list of user
@@ -22,8 +22,6 @@ Route::post('/create',[UserController::class, "store"]);
 
 // Route for show list PO Header
 Route::get('/indexpoheader',[PO_HeaderController::class, "index"]);
-// Route for edit list PO Header
-Route::get('edit/{po_no}',[PO_HeaderController::class, "edit"]);
 // Route for update list PO Header
 Route::put('/updatepoheader/{po_no}',[PO_HeaderController::class, "update"]);
 
@@ -44,3 +42,11 @@ Route::put('/updatedndetail/{dn_detail_no}',[DN_DetailController::class, "update
 Route::get('/indexlistingreport',[Listing_ReportController::class, "index"])->name('index');
 // Route for store Listing Report
 Route::post('/createlistingreport',[Listing_ReportController::class, "store"]);
+
+/* Route::middleware('api')->group(function () {
+    Route::get('/poheader', [PO_HeaderController::class, 'index']);
+    Route::post('/poheader', [PO_HeaderController::class, 'store']);
+    Route::get('/poheader/{po_no}', [PO_HeaderController::class, 'show']);
+    Route::put('/poheader/{po_no}', [PO_HeaderController::class, 'update']);
+    Route::patch('/poheader/edit/{po_no}', [PO_HeaderController::class, 'edit'])->name('po_header.edit');
+}); */

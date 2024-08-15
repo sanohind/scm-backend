@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\DN_Header;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\DN_HeaderResource;
 
 class DN_HeaderController extends Controller
@@ -20,6 +22,6 @@ class DN_HeaderController extends Controller
             'success' => true,
             'message' => 'Berhasil Menampilkan List DN Header',
             'data' => DN_HeaderResource::collection($data_dnheader)
-        ]);
+        ], 200);
     }
 }
