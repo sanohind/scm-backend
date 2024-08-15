@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\Listing_ReportController;
 // Route for show list of user
 Route::get('/index',[UserController::class, "index"])->name('index');
 // Route for edit user form
-Route::post('edit/{user}',[UserController::class, "edit"]);
+Route::post('/edit/{user}',[UserController::class, "edit"]);
 // Route for edit user data
 Route::put('/update/{user}',[UserController::class, "update"]);
 Route::post('/create',[UserController::class, "store"]);
@@ -34,7 +34,7 @@ Route::get('/indexdnheader',[DN_HeaderController::class, "index"]);
 // Route for show list DN Detail
 Route::get('/indexdndetail',[DN_DetailController::class, "index"]);
 // Route for edit list DN Detail
-Route::get('edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
+Route::get('/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
 // Route for update list DN Detail
 Route::put('/updatedndetail/{dn_detail_no}',[DN_DetailController::class, "update"]);
 

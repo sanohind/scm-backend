@@ -15,7 +15,7 @@ class PO_HeaderController extends Controller
         $data_po = PO_Header::all();
         return response()->json([
             'status' => 'success',
-            'message' => 'PO berhasil diambil',
+            'message' => 'Success Display List PO Header',
             'data' => PO_HeaderResource::collection($data_po)
         ], 200);
     }
@@ -52,7 +52,7 @@ class PO_HeaderController extends Controller
         if (!$po_header) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'PO tidak ditemukan'
+                'message' => 'PO Not Found'
             ], 404);
         }
 
@@ -63,7 +63,7 @@ class PO_HeaderController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Validasi gagal',
+                'message' => 'Validate Fail',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -72,7 +72,7 @@ class PO_HeaderController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'PO berhasil diperbarui',
+            'message' => 'PO Edited Success',
             'data' => new PO_HeaderResource($po_header)
         ], 200);
     }

@@ -20,7 +20,7 @@ class PO_DetailController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List PO Detail',
+            'message' => 'Success Display List PO Detail',
             'data' => PO_DetailResource::collection($data_podetail)
         ], 200);
     }

@@ -20,7 +20,7 @@ class Listing_ReportController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan Listing Report',
+            'message' => 'Success Display Listing Report',
             'data' => Listing_ReportResource::collection($data_listingreport)
         ], 200);
     }
@@ -49,7 +49,7 @@ class Listing_ReportController extends Controller
         // Return value
         return response()->json([
             'status' => success,
-            'message' => 'Berhasil Menambahkan Report '.$data_create->file."",
+            'message' => 'Success Add Report '.$data_create->file."",
             'data' => Listing_ReportResource::collection($data_create)
         ], 201);
     }

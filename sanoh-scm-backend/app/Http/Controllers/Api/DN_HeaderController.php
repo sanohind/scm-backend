@@ -20,7 +20,7 @@ class DN_HeaderController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List DN Header',
+            'message' => 'Success Display List DN Header',
             'data' => DN_HeaderResource::collection($data_dnheader)
         ], 200);
     }

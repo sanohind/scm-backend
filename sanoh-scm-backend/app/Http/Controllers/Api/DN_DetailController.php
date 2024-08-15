@@ -18,7 +18,7 @@ class DN_DetailController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List DN Detail',
+            'message' => 'Success Display List DN Detail',
             'data' => DN_DetailResource::collection($data_dndetail)
         ], 200);
     }
@@ -40,7 +40,7 @@ class DN_DetailController extends Controller
         if (!$dn_detail) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'DN Detail tidak ditemukan'
+                'message' => 'DN Detail Not Found'
             ], 404);
         }
 
@@ -54,7 +54,7 @@ class DN_DetailController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Validasi gagal',
+                'message' => 'Validate Fail',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -65,7 +65,7 @@ class DN_DetailController extends Controller
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Merubah Quantity ' . $dn_detail->qty_confirm . '',
+            'message' => 'Success Edit Quantity ' . $dn_detail->qty_confirm . '',
             'data' => new DN_DetailResource($dn_detail)
         ], 200);
     }
