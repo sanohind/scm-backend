@@ -17,3 +17,12 @@ Route::middleware(['auth:sanctum','userRole:supplier'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+
+// route testing
+// Route for show list of user
+// Route::get('/index',[UserController::class, "index"])->name('index');
+// Route for edit user form
+Route::get('edit/{user}',[UserController::class, "edit"]);
+// Route for edit user data
+Route::put('update/{user}',[UserController::class, "update"]);
+Route::post('/create',[UserController::class, "store"]);
