@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             // tes waktu
             'created_at' => Carbon::Parse($this->created_at)->format('Y-m-d H:i'),
+            'created_ata' => Carbon::Parse($this->created_at)->format('F'),
             // tes convert timezone
             'tes_timezone' => Carbon::now()->setTimezone('America/Chicago')->format('Y-m-d H:i')
         ];

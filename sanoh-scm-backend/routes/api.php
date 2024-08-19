@@ -14,9 +14,9 @@ use App\Http\Controllers\Api\Listing_ReportController;
 Route::post('/login', [AuthController::class, 'login']);
 
 //Route Supplier
+Route::get('/index', [UserController::class, 'index']);
 Route::middleware(['auth:sanctum','userRole:supplier'])->group(function () {
 
-    Route::get('/index', [UserController::class, 'index']);
 
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
