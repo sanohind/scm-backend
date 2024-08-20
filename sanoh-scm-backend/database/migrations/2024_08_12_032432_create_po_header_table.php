@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -30,6 +30,9 @@ return new class extends Migration
             $table->integer('po_revision_no');
             $table->date('po_revision_date');
             $table->string('response', 25);
+            $table->dateTime('accept_at');
+            $table->dateTime('decline_at');
+            $table->dateTime('po_printed_at');
         });
     }
 

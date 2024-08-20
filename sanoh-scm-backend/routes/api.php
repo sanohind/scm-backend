@@ -14,7 +14,7 @@ use App\Http\Controllers\Api\Listing_ReportController;
 Route::post('/login', [AuthController::class, 'login']);
 
 //Route Supplier
-Route::middleware(['auth:sanctum','userRole:supplier'])->group(function () {
+Route::middleware(['auth:sanctum','userRole:supplier']) ->group(function () {
 
     Route::get('/index', [UserController::class, 'index']);
 

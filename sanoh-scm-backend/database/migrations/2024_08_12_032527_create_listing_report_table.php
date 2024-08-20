@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreign('bp_code')->references('bp_code')->on('business_partner')->onDelete('cascade');
             $table->datetime('date');
             $table->string('file', 255);
+            $table->datetime('upload_at');
+
         });
     }
 
