@@ -16,7 +16,7 @@ class PO_DetailController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_podetail = PO_Detail::with('podetail')->get();
+        $data_podetail = PO_Detail::with('poHeader')->get();
 
         return response()->json([
             'success' => true,

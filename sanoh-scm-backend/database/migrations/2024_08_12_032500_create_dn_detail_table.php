@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('dn_detail', function (Blueprint $table) {
             $table->string('dn_detail_no', 25)->primary();
-            $table->string('no_dn', 25);
-            $table->foreign('no_dn')->references('no_dn')->on('dn_header')->onDelete('cascade');
+            $table->string('dn_no', 25); //fixed no_dn
+            $table->foreign('dn_no')->references('dn_no')->on('dn_header')->onDelete('cascade');
             $table->integer('dn_line');
             $table->integer('order_origin');
             $table->date('plan_delivery_date');

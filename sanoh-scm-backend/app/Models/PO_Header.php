@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\PartnerLocal;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -13,6 +14,8 @@ class PO_Header extends Model
     use HasFactory, Notifiable;
 
     protected $primaryKey = "po_no";
+
+    protected $keyType = 'string';
 
     public $timestamps = false;
 
@@ -24,9 +27,15 @@ class PO_Header extends Model
         'response',
     ];
 
-    // Ensure this relationship is defined correctly
-    public function poheader(): BelongsTo
+    // bussines_partner relationship
+    public function partner(): BelongsTo
     {
         return $this->belongsTo(PartnerLocal::class, 'bp_code', 'bp_code');
+    }
+
+    // po_detail relationship
+    public function poDetail(): HasMany
+    {
+        return $this->hasMany(PO_Detail::class, 'po_no', 'po_no');
     }
 }

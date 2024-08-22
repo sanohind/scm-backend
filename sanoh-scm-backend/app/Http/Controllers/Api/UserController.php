@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserDetailResource;
 
-class UserController extends Controller
+class UserController
 {
     // View list data user
     public function index()

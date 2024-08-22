@@ -14,13 +14,21 @@ class DN_Header extends Model
 
     protected $primaryKey = "no_dn";
 
+    protected $keyType = 'string';
+
     public $timestamps = false;
 
     protected $table = "dn_header";
 
-    // Relationship
-    public function dnheader(): BelongsTo
+    // Relationship poheader
+    public function poHeader(): BelongsTo
     {
         return $this->belongsTo(PO_Header::class, 'po_no', 'po_no');
+    }
+
+    // Relationship dndetail
+    public function dnDetail(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
     }
 }

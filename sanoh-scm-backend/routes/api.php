@@ -8,15 +8,15 @@ use App\Http\Controllers\Api\DN_DetailController;
 use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\PO_DetailController;
 use App\Http\Controllers\Api\PO_HeaderController;
-use App\Http\Controllers\Api\Listing_ReportController;
+use App\Http\Controllers\Api\ListingReportController;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
 //Route Supplier
+Route::get('/index', [UserController::class, 'index']);
 Route::middleware(['auth:sanctum','userRole:supplier']) ->group(function () {
 
-    Route::get('/index', [UserController::class, 'index']);
 
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -51,9 +51,9 @@ Route::get('/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
 Route::put('/updatedndetail/{dn_detail_no}',[DN_DetailController::class, "update"]);
 
 // Route for show list of Listing Report
-Route::get('/indexlistingreport',[Listing_ReportController::class, "index"])->name('index');
+Route::get('/indexlistingreport',[ListingReportController::class, "index"])->name('index');
 // Route for store Listing Report
-Route::post('/createlistingreport',[Listing_ReportController::class, "store"]);
+Route::post('/createlistingreport',[ListingReportController::class, "store"]);
 
 /* Route::middleware('api')->group(function () {
     Route::get('/poheader', [PO_HeaderController::class, 'index']);

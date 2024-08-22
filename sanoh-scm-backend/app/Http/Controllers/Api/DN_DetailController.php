@@ -13,8 +13,7 @@ class DN_DetailController extends Controller
     // View list data DNDetail
     public function index()
     {
-        // Get data with eager loading of any relationships
-        $data_dndetail = DN_Detail::all(); // Adjust if you have relationships to load
+        $data_dndetail = DN_Detail::with('dnHeader')->get();
 
         return response()->json([
             'success' => true,

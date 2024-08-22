@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dn_header', function (Blueprint $table) {
-            $table->string('no_dn', 25)->primary();
+            $table->string('dn_no', 25)->primary(); // fixed no_dn
             $table->string('po_no', 25);
             $table->foreign('po_no')->references('po_no')->on('po_header')->onDelete('cascade');
             $table->date('dn_created_date');

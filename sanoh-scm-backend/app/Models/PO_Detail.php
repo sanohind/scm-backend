@@ -18,9 +18,10 @@ class PO_Detail extends Model
 
     protected $table = "po_detail";
 
-    // Relationship
-    public function podetail(): BelongsTo
+    // Relationship belongs to po header
+    public function poHeader(): BelongsTo
     {
         return $this->belongsTo(PO_Header::class, 'po_no', 'po_no');
     }
+
 }

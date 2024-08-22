@@ -24,8 +24,8 @@ class DN_Detail extends Model
         'qty_confirm',
     ];
 
-    // Relationship
-    public function dndetail(): BelongsTo
+    // Relationship to dnheader
+    public function dnHeader(): BelongsTo
     {
         return $this->belongsTo(DN_Header::class, 'no_dn', 'no_dn');
     }
