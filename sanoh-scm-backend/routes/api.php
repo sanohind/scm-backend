@@ -38,13 +38,13 @@ Route::get('/indexpoheader',[PO_HeaderController::class, "index"]);
 Route::put('/updatepoheader/{po_no}',[PO_HeaderController::class, "update"]);
 
 // Route for show list PO Detail
-Route::get('/indexpodetail',[PO_DetailController::class, "index"]);
+Route::get('/indexpodetail/{po_no}',[PO_DetailController::class, "index"]);
 
 // Route for show list DN Header
 Route::get('/indexdnheader',[DN_HeaderController::class, "index"]);
 
 // Route for show list DN Detail
-Route::get('/indexdndetail',[DN_DetailController::class, "index"]);
+Route::get('/indexdndetail/{no_dn}',[DN_DetailController::class, "index"]);
 // Route for edit list DN Detail
 Route::get('/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
 // Route for update list DN Detail

@@ -11,12 +11,18 @@ use App\Http\Resources\PO_DetailResource;
 class PO_DetailController extends Controller
 {
     // View list data PODetail
-    public function index()
+    public function index($po_no)
     {
-        //get data api to view
-        // Using eager loading request data to database for efficiency data
-        //in case calling data relation
-        $data_podetail = PO_Detail::with('poHeader')->get();
+        // Fetch PO details based on the provided po_no
+        $data_podetail = PO_Detail::where('po_no', $po_no)->get();
+
+        if ($data_podetail->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'PO details not found',
+                'data' => []
+            ], 404);
+        }
 
         return response()->json([
             'success' => true,
