@@ -26,7 +26,7 @@ Route::middleware(['auth:sanctum','userRole:supplier']) ->group(function () {
 // route view
 Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
 Route::get('/dnhview/{dn_no}', [PrintController::class, 'dnHeaderView']);
-Route::get('/lbview', [UserController::class, 'index']);
+Route::get('/lbview/{dn_no}', [PrintController::class, 'labelView']);
 
 // route testing
 // Route for show list of user
