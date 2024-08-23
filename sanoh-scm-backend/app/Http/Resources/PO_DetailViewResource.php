@@ -21,7 +21,7 @@ class PO_DetailViewResource extends JsonResource
             'seq_no' => $this->po_sequence,
             'part_number' => $this->bp_part_no,
             'part_name' => $this->bp_part_name,
-            'delivery_date' => $this->planned_receipt_date,             // still dont know the value from
+            'delivery_date' => $this->planned_receipt_date,
             'quantity' => $this->po_qty,
             'unit' => $this->purchase_unit,
             'unit_price' => $this->price,

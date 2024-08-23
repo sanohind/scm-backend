@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\DN_Detail;
 use App\Models\PO_Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,7 +14,7 @@ class DN_Header extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $primaryKey = "no_dn";
+    protected $primaryKey = "dn_no";
 
     protected $keyType = 'string';
 
@@ -29,6 +31,6 @@ class DN_Header extends Model
     // Relationship dndetail
     public function dnDetail(): HasMany
     {
-        return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
+        return $this->hasMany(DN_Detail::class, 'dn_no', 'dn_no');
     }
 }

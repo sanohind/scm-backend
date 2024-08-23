@@ -2,8 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PrintController;
+use App\Http\Controllers\Api\Api\AuthController;
 use App\Http\Controllers\Api\DN_DetailController;
 use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\PO_DetailController;
@@ -22,6 +23,10 @@ Route::middleware(['auth:sanctum','userRole:supplier']) ->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+// route view
+Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
+Route::get('/dnhview/{dn_no}', [PrintController::class, 'dnHeaderView']);
+Route::get('/lbview', [UserController::class, 'index']);
 
 // route testing
 // Route for show list of user

@@ -20,26 +20,27 @@ class PO_HeaderViewResource extends JsonResource
             'po_date'  => $this->po_date,
             'po_type'  => $this->po_type_desc,
             'pr_no'  => $this->pr_no,
-            'delivery_term'  => $this->delivery_term_calculate(),
+            'delivery_term'  => $this->deliveryTermCalculate(),
             'currency'  => $this->po_currency,
-            'note'  => $this->note_concat(),
+            'note'  => $this->noteConcat(),
             'supplier_nama'  => $this->partner->bp_name,
-            'supplier_code'  => $this->partner_bp_code,
+            'supplier_code'  => $this->partner->bp_code,
             'planned_receipt_date' => $this->planned_receipt_date,
-            'total_amount' => $this->amount->sum('amount'),
-            'supplier_address' => $this->addr_concat(),
+            'total_amount' => $this->poDetail->sum('amount'),
+            'supplier_address' => $this->addrConcat(),
             'phone_number' => $this->partner->bp_phone,
             'fax_number' => $this->partner->bp_fax,
-            'delivery_date' => $this->planned_receipt_date,             // still dont know the value from = done
+            'delivery_date' => $this->planned_receipt_date,
             'accepted_confirmed_by' => $this->partner->bp_name,
-            'terms' => $this->delivery_term_calculate,                  // ambigu
+            'terms' => $this->payment_term,
             'attn' => $this->attn_name,
             'printed_date' => $this->po_printed_at,
+            'detail' => PO_DetailViewResource::collection($this->whenLoaded('poDetail'))
         ];
     }
 
     // calculate the diffrence date for delivery term
-    private function delivery_term_calculate(){
+    private function deliveryTermCalculate(){
         // value
         $formatted_planned_receipt_date = Carbon::Parse($this->planned_receipt_date);
         $formatted_purchase_order_date = Carbon::Parse($this->po_date);
@@ -51,7 +52,7 @@ class PO_HeaderViewResource extends JsonResource
     }
 
     // concat ref 1 and ref 2
-    private function note_concat(){
+    private function noteConcat(){
         //value
         $ref1 = $this->references_1;
         $ref2 = $this->references_2;
@@ -62,7 +63,7 @@ class PO_HeaderViewResource extends JsonResource
     }
 
     // concat address
-    private function addr_concat(){
+    private function addrConcat(){
         //value
         $addr1 = $this->partner->adr_line_1;
         $addr2 = $this->partner->adr_line_2;

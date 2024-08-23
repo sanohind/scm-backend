@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('supplier_item_no', 25);
             $table->string('item_desc_a', 255);
             $table->string('item_desc_b', 255);
-            $table->integer('lot_number');
+            $table->string('lot_number', 255);
             $table->integer('dn_qty');
             $table->integer('receipt_qty');
             $table->string('dn_unit');
