@@ -14,6 +14,37 @@ class DN_DetailViewResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'delivery_note_detail_id' => $this->dn_detail_no,
+            'dn_number' => $this->dn_no,
+            'line_no' => $this->dn_line,
+            'supplier_part_number' => $this->supplier_item_no,
+            'internal_part_number' => $this->part_no,
+            'part_name' => $this->partConcat(),
+            'pcs_per_kamban' => $this->dn_snp,
+            'no_of_kamban' => $this->noOfKanban(),
+            'total_quantity' => $this->dn_qty,
+            'box_quantity' => $this->noOfKanban()
+        ];
+    }
+
+    private function partConcat(){
+        //value
+        $descA = $this->item_desc_a;
+        $descB = $this->item_desc_b;
+
+        $concat = $descA.' '.$descB;
+
+        return $concat;
+    }
+
+    private function noOfKanban(){
+       //value
+       $snp = $this->dn_snp;
+       $qty = $this->dn_qty;
+
+       $total = $qty / $snp;
+
+       return $concat;
     }
 }

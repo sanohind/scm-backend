@@ -7,13 +7,33 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DN_LabelResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'dn_label_no' => $this->dn_label_no,
+            'lot_number' => $this->dnDetail->lot_number,
+            'qr_number' => $this->dnDetail->qrNumber(),
+            'po_number' => $this->dnDetail->po_no,
+            'dn_number' => $this->dnDetail->dn_no,
+            'dn_number' => $this->dnDetail->dn_no,
+            'model' => $this->dnDetail->dn_no,
+            'customer_name' => 'PT. Sanoh Indonesia',
+            'supplier_name' => $this->dnDetail->dnHeader->supplier_name,
+            'part_number' => $this->dnDetail->part_no,
+            'part_name' => $this->dnDetail->partConcat(),
+            'quantity' => $this->dnDetail->dn_snp,
+            'delivery_date' => $this->dnDetail->dn_no,
+            'printed_date' => $this->dnDetail->plan_delivery_date,
+        ];
+    }
+
+    private function qrNumber(){
+        $part_number = $this->dnDetail->part_no;
+        $qty = $this->dnDetail->dn_qty;
+        $lot = $this->dnDetail->lot_number;
+        $line = $this->dnDetail->order_line;
+        $seq = $this->dnDetail->order_seq;
+
+        $concat = $part_number.''.$qty.''.$lot.''.$line.''.$seq;
     }
 }

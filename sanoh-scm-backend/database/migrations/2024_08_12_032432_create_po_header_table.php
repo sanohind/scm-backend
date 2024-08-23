@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('po_currency', 25);
             $table->integer('pr_no');
             $table->date('planned_receipt_date');
+            $table->string('payment_term', 25);
             $table->string('po_origin', 25);
             $table->integer('po_revision_no');
             $table->date('po_revision_date');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -13,23 +14,34 @@ class DN_HeaderViewResource extends JsonResource
         return [
             'dn_number' => $this->dn_no,
             'po_number' => $this->po_no,
-            'supplier_name' => $this->po_header->partner->bp_name,
-            'supplier_code' => $this->po_header->partner->bp_code,
-            'planned_receipt_date' => $this->plan_concat(),
-            // 'actual_received_date' => $this->plan_concat(), kosongkan karna ditulis tangan
-            'total_box' => $this->plan_concat(),
+            'supplier_name' => $this->supplier_name,
+            'supplier_code' => $this->supplier_code,
+            'planned_receipt_date' => $this->planConcat(),
+            // 'actual_received_date' => $this->planConcat(), kosongkan karna ditulis tangan
+            'total_box' => $this->planConcat(),
             'printed_date' => $this->dn_printed_at,
+            'detail' => DN_DetailViewResource::collection($this->whenLoaded('dnDetail'))
         ];
     }
 
     // concat plan date and plan time
-    private function plan_concat(){
+    private function planConcat(){
         //value
-        $pd = $this->plan_delivery_date;
-        $pt = $this->plan_delivery_time;
+        // $pd = Carbon::parse($this->plan_delivery_date);
+        // $pt = Carbon::parse($this->plan_delivery_time);
 
-        $concat = $pd.' '.$pt;
+        // $concat = $pd.' '.$pt;
 
-        return $concat;
+        // return $concat;
+
+        // Convert date and time to strings
+    $dateString = date('Y-m-d', strtotime($this->plan_delivery_date)); // Format the date as 'Y-m-d'
+    $timeString = date('H:i:s', strtotime($this->plan_delivery_time)); // Format the time as 'H:i:s'
+
+    // Concatenate the date and time strings
+    $concat = $dateString . ' ' . $timeString;
+
+    // Return the concatenated string
+    return dd($concat);
     }
 }
