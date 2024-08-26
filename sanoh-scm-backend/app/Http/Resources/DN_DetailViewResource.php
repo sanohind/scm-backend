@@ -28,6 +28,7 @@ class DN_DetailViewResource extends JsonResource
         ];
     }
 
+    // concat description A and description B
     private function partConcat(){
         //value
         $descA = $this->item_desc_a;
@@ -38,6 +39,7 @@ class DN_DetailViewResource extends JsonResource
         return $concat;
     }
 
+    // calculate no_of_kanban qty/snp
     private function noOfKanban(){
        //value
        $snp = $this->dn_snp;
@@ -45,6 +47,12 @@ class DN_DetailViewResource extends JsonResource
 
        $total = $qty / $snp;
 
-       return $concat;
+       return $total;
+    }
+
+    // for pass data to DN_HeaderViewResource total box
+    public function valueForTotalBox()
+    {
+        return $this->noOfKanban();
     }
 }

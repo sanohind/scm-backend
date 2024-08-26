@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dn_header', function (Blueprint $table) {
+        Schema::connection('mysql')->create('dn_header', function (Blueprint $table) {
             $table->string('dn_no', 25)->primary(); // fixed no_dn
             $table->string('po_no', 25);
             $table->foreign('po_no')->references('po_no')->on('po_header')->onDelete('cascade');

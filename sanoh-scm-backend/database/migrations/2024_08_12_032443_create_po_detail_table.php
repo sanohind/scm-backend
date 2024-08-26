@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('po_detail', function (Blueprint $table) {
+        Schema::connection('mysql')->create('po_detail', function (Blueprint $table) {
             $table->integer('po_detail_no', 25)->primary();
             $table->string('po_no', 25);
             $table->foreign('po_no')->references('po_no')->on('po_header')->onDelete('cascade');

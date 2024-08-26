@@ -12,21 +12,21 @@ class DN_LabelResource extends JsonResource
         return [
             'dn_label_no' => $this->dn_label_no,
             'lot_number' => $this->dnDetail->lot_number,
-            'qr_number' => $this->dnDetail->qrNumber(),
+            'qr_number' => $this->qrNumber(),
             'po_number' => $this->dnDetail->po_no,
-            'dn_number' => $this->dnDetail->dn_no,
             'dn_number' => $this->dnDetail->dn_no,
             'model' => $this->dnDetail->dn_no,
             'customer_name' => 'PT. Sanoh Indonesia',
-            'supplier_name' => $this->dnDetail->dnHeader->supplier_name,
+            'supplier_name' => $this->null,//supplier_name,
             'part_number' => $this->dnDetail->part_no,
-            'part_name' => $this->dnDetail->partConcat(),
+            'part_name' => $this->dnDetail->item_desc_a,
             'quantity' => $this->dnDetail->dn_snp,
             'delivery_date' => $this->dnDetail->dn_no,
             'printed_date' => $this->dnDetail->plan_delivery_date,
         ];
     }
 
+    // concat qrNumber
     private function qrNumber(){
         $part_number = $this->dnDetail->part_no;
         $qty = $this->dnDetail->dn_qty;
@@ -34,6 +34,8 @@ class DN_LabelResource extends JsonResource
         $line = $this->dnDetail->order_line;
         $seq = $this->dnDetail->order_seq;
 
-        $concat = $part_number.''.$qty.''.$lot.''.$line.''.$seq;
+        $concat = $part_number.';'.$qty.';'.$lot.';'.$line.';'.$seq;
+
+        return $concat;
     }
 }

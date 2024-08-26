@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dn_detail', function (Blueprint $table) {
+        Schema::connection('mysql')->create('dn_detail', function (Blueprint $table) {
             $table->string('dn_detail_no', 25)->primary();
             $table->string('dn_no', 25); //fixed no_dn
             $table->foreign('dn_no')->references('dn_no')->on('dn_header')->onDelete('cascade');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->integer('dn_qty');
             $table->integer('receipt_qty');
             $table->string('dn_unit');
-            $table->string('dn_snp');
+            $table->integer('dn_snp');
             $table->string('reference',255);
             $table->integer('status_desc');
             $table->integer('qty_confirm');

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\PO_Header;
-use App\Http\Resources\PO_HeaderViewResource;
+use App\Models\DN_Label;
 use App\Models\DN_Header;
-use App\Http\Resources\DN_HeaderViewResource;
+use App\Models\PO_Header;
 use Illuminate\Http\Request;
-use GuzzleHttp\Psr7\Header;
+use App\Http\Resources\DN_LabelResource;
+use App\Http\Resources\DN_HeaderViewResource;
+use App\Http\Resources\PO_HeaderViewResource;
 
 class PrintController
 {
@@ -19,7 +20,7 @@ class PrintController
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List User',
+            'message' => 'Berhasil Menampilkan List PO',
             'data' => PO_HeaderViewResource::collection($data_po)
         ]);
     }
@@ -31,13 +32,20 @@ class PrintController
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List User',
+            'message' => 'Berhasil Menampilkan List DN',
             'data' => DN_HeaderViewResource::collection($data_dn)
         ]);
     }
 
-    public function labelView()
+    public function labelView($dn_no)
     {
+        //get data api to view
+        $data_lb = DN_Label::with('dnDetail')->get();
 
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil Menampilkan Label',
+            'data' => DN_LabelResource::collection($data_lb)
+        ]);
     }
 }
