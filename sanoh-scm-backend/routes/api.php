@@ -49,7 +49,7 @@ Route::get('/indexpodetail/{po_no}',[PO_DetailController::class, "index"]);
 Route::get('/indexdnheader',[DN_HeaderController::class, "index"]);
 
 // Route for show list DN Detail
-Route::get('/indexdndetail/{no_dn}',[DN_DetailController::class, "index"]);
+Route::get('/indexdndetail/{dn_no}',[DN_DetailController::class, "index"]);
 // Route for edit list DN Detail
 Route::get('/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
 // Route for update list DN Detail

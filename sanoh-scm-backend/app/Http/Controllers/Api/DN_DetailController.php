@@ -11,7 +11,7 @@ use App\Http\Resources\DN_DetailResource;
 class DN_DetailController extends Controller
 {
     // View list data DNDetail
-    public function index($no_dn)
+    public function index($dn_no)
     {
         $data_dndetail = DN_Detail::where('no_dn', $no_dn)->get();
 

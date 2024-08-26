@@ -24,7 +24,25 @@ class PO_Header extends Model
     protected $fillable = [
         'po_no',
         'bp_code',
+        'po_type_desc',
+        'po_date',
+        'po_year',
+        'po_period',
+        'po_status',
+        'references_1',
+        'references_2',
+        'attn_name',
+        'po_currency',
+        'pr_no',
+        'planned_receipt_date',
+        'payment_term',
+        'po_origin',
+        'po_revision_no',
+        'po_revision_date',
         'response',
+        'accept_at',
+        'decline_at',
+        'po_printed_at',
     ];
 
     // bussines_partner relationship
