@@ -21,9 +21,11 @@ class ListingReport extends Model
 
     // Column
     protected $fillable = [
+        'po_listing_no',
         'bp_code',
         'date',
         'file',
+        'upload_at',
     ];
 
    // Relationship

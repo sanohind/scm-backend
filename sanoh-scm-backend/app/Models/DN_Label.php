@@ -17,6 +17,11 @@ class DN_Label extends Model
 
     protected $table = "dn_label";
 
+    protected $fillable = [
+        'dn_label_no',
+        'dn_detail_no',
+    ];
+
     // relationship dn_detail
     public function dnDetail(): BelongsTo
     {
