@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dn_detail', function (Blueprint $table) {
-            $table->string('dn_detail_no', 25)->primary();
-            $table->string('no_dn', 25);
-            $table->foreign('no_dn')->references('no_dn')->on('dn_header')->onDelete('cascade');
+        Schema::connection('mysql')->create('dn_detail', function (Blueprint $table) {
+            $table->id('dn_detail_no', 25);
+            $table->string('dn_no', 25); //fixed no_dn
+            $table->foreign('dn_no')->references('dn_no')->on('dn_header')->onDelete('cascade');
             $table->integer('dn_line');
             $table->integer('order_origin');
             $table->date('plan_delivery_date');
@@ -29,11 +29,11 @@ return new class extends Migration
             $table->string('supplier_item_no', 25);
             $table->string('item_desc_a', 255);
             $table->string('item_desc_b', 255);
-            $table->integer('lot_number');
+            $table->string('lot_number', 255);
             $table->integer('dn_qty');
             $table->integer('receipt_qty');
             $table->string('dn_unit');
-            $table->string('dn_snp');
+            $table->integer('dn_snp');
             $table->string('reference',255);
             $table->integer('status_desc');
             $table->integer('qty_confirm');

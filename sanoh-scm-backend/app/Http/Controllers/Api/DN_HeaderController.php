@@ -16,7 +16,7 @@ class DN_HeaderController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_dnheader = DN_Header::with('dnheader')->get();
+        $data_dnheader = DN_Header::with('poHeader')->get();
 
         return response()->json([
             'success' => true,

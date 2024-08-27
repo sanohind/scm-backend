@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Listing_Report extends Model
+class ListingReport extends Model
 {
     use HasFactory, Notifiable;
 
@@ -21,9 +21,11 @@ class Listing_Report extends Model
 
     // Column
     protected $fillable = [
+        'po_listing_no',
         'bp_code',
         'date',
         'file',
+        'upload_at',
     ];
 
    // Relationship

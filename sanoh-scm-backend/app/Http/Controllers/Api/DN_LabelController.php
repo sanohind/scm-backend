@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class DNLabelController extends Controller
+class DN_LabelController extends Controller
 {
-    //
+
 }

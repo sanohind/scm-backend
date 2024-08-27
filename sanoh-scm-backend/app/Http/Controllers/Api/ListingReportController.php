@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Models\Listing_Report;
+use App\Models\ListingReport;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\Listing_ReportResource;
+use App\Http\Resources\ListingReportResource;
 
-class Listing_ReportController extends Controller
+class ListingReportController extends Controller
 {
     // View list data Listing Report
     public function index()
@@ -16,12 +16,12 @@ class Listing_ReportController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_listingreport = Listing_Report::with('listingreport')->get();
+        $data_listingreport = ListingReport::with('listingreport')->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Success Display Listing Report',
-            'data' => Listing_ReportResource::collection($data_listingreport)
+            'data' => ListingReportResource::collection($data_listingreport)
         ], 200);
     }
 
@@ -45,13 +45,13 @@ class Listing_ReportController extends Controller
         }
 
         // Create data
-        $data_create = Listing_Report::create($validator->validated());
+        $data_create = ListingReport::create($validator->validated());
 
         // Return value
         return response()->json([
             'status' => success,
             'message' => 'Success Add Report '.$data_create->file."",
-            'data' => Listing_ReportResource::collection($data_create)
+            'data' => ListingReportResource::collection($data_create)
         ], 201);
     }
 }

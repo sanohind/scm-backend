@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('mysql')->create('user', function (Blueprint $table) {
-            $table->id('user_id');
+            $table->id('user_id',25);
 
             // Foreign key column bp_code from table bussiness_partner
             $table->string('bp_code',25);
@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->string('name',255)->nullable();
             $table->string('role',25)->nullable();
-            $table->string('status',25)->nullable();
+            $table->integer('status',25)->nullable();
             $table->string('username',25)->nullable();
             $table->string('password',255)->nullable();
 

@@ -11,10 +11,17 @@ use App\Http\Resources\DN_DetailResource;
 class DN_DetailController extends Controller
 {
     // View list data DNDetail
-    public function index()
+    public function index($dn_no)
     {
-        // Get data with eager loading of any relationships
-        $data_dndetail = DN_Detail::all(); // Adjust if you have relationships to load
+        $data_dndetail = DN_Detail::where('no_dn', $no_dn)->get();
+
+        if ($data_dndetail->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'DN details not found',
+                'data' => []
+            ], 404);
+        }
 
         return response()->json([
             'success' => true,
