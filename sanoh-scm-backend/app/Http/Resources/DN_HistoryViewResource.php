@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class DN_HistoryViewResource extends JsonResource
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'dn_number' => $this->dn_no,
+            'po_number' => $this->po_no,
+            'dn_status' => $this->status_desc,
+            'send_date' => $this->planConcat(),
+            'receive_date' => $this->receiptConcat(),
+            'detail' => DN_DetailViewResource::collection($this->whenLoaded('poDetail'))
+        ];
+    }
+
+    // concat plan date and plan time
+    private function planConcat(){
+        //value
+        // Convert and format date and time to strings
+        $dateString = date('Y-m-d', strtotime($this->plan_delivery_date));
+        $timeString = date('H:i', strtotime($this->plan_delivery_time));
+
+        $concat = $dateString . ' ' . $timeString;
+
+        return $concat;//dd($concat);
+    }
+
+    // concat receipt date and plan time
+    private function receiptConcat(){
+        //value
+        // Convert and format date and time to strings
+        $dateString = date('Y-m-d', strtotime($this->actual_receipt_date));
+        $timeString = date('H:i', strtotime($this->actual_receipt_time));
+
+        $concat = $dateString . ' ' . $timeString;
+
+        return $concat;//dd($concat);
+        }
+}

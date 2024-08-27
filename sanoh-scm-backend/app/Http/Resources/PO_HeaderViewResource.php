@@ -22,9 +22,9 @@ class PO_HeaderViewResource extends JsonResource
             'pr_no'  => $this->pr_no,
             'delivery_term'  => $this->deliveryTermCalculate(),
             'currency'  => $this->po_currency,
-            'note'  => $this->noteConcat(),
-            'supplier_nama'  => $this->partner->bp_name,
-            'supplier_code'  => $this->partner->bp_code,
+            'note'  => $this->references_2,
+            'supplier_nama'  => $this->supplier_name,
+            'supplier_code'  => $this->supplier_code,
             'planned_receipt_date' => $this->planned_receipt_date,
             'total_amount' => $this->poDetail->sum('amount'),
             'supplier_address' => $this->addrConcat(),
@@ -52,15 +52,15 @@ class PO_HeaderViewResource extends JsonResource
     }
 
     // concat ref 1 and ref 2
-    private function noteConcat(){
-        //value
-        $ref1 = $this->references_1;
-        $ref2 = $this->references_2;
+    // private function noteConcat(){
+    //     //value
+    //     $ref1 = $this->references_1;
+    //     $ref2 = $this->references_2;
 
-        $concat = $ref1.' '.$ref2;
+    //     $concat = $ref1.' '.$ref2;
 
-        return $concat;
-    }
+    //     return $concat;
+    // }
 
     // concat address
     private function addrConcat(){

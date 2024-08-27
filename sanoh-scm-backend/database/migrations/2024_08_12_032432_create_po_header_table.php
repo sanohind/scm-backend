@@ -15,6 +15,8 @@ return new class extends Migration
             $table->string('po_no', 25)->primary();
             $table->string('bp_code', 25);
             $table->foreign('bp_code')->references('bp_code')->on('business_partner')->onDelete('cascade');
+            $table->string('supplier_code',255);
+            $table->string('supplier_name', 255);
             $table->string('po_type_desc', 25);
             $table->date('po_date');
             $table->integer('po_year');

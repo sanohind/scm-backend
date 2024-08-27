@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PrintController;
-use App\Http\Controllers\Api\Api\AuthController;
+use App\Http\Controllers\Api\HistoryController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DN_DetailController;
 use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\PO_DetailController;
@@ -23,7 +24,11 @@ Route::middleware(['auth:sanctum','userRole:supplier']) ->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-// route view
+// route view history
+Route::get('/pohistory/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
+Route::get('/dnhistory/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+
+// route view print
 Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
 Route::get('/dnhview/{dn_no}', [PrintController::class, 'dnHeaderView']);
 Route::get('/lbview/{dn_no}', [PrintController::class, 'labelView']);
