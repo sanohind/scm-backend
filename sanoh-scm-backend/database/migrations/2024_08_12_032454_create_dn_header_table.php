@@ -15,14 +15,14 @@ return new class extends Migration
             $table->string('dn_no', 25)->primary(); // fixed no_dn
             $table->string('po_no', 25);
             $table->foreign('po_no')->references('po_no')->on('po_header')->onDelete('cascade');
-            $table->string('supplier_code',255);
-            $table->string('supplier_name', 255);
-            $table->date('dn_created_date');
-            $table->integer('dn_year');
-            $table->integer('dn_period');
-            $table->date('plan_delivery_date');
-            $table->time('plan_delivery_time');
-            $table->string('status_desc', 25);
+            $table->string('supplier_code',255)->nullable();
+            $table->string('supplier_name', 255)->nullable();
+            $table->date('dn_created_date')->nullable();
+            $table->integer('dn_year')->nullable();
+            $table->integer('dn_period')->nullable();
+            $table->date('plan_delivery_date')->nullable();
+            $table->time('plan_delivery_time')->nullable();
+            $table->string('status_desc', 25)->nullable();
             $table->dateTime('confirm_update_at')->nullable();
             $table->dateTime('dn_printed_at')->nullable();
             $table->dateTime('dn_label_printed_at')->nullable();

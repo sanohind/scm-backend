@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('po_listing_no', 25);
             $table->string('bp_code', 25);
             $table->foreign('bp_code')->references('bp_code')->on('business_partner')->onDelete('cascade');
-            $table->datetime('date');
-            $table->string('file', 255);
+            $table->datetime('date')->nullable();
+            $table->string('file', 255)->nullable();
             $table->datetime('upload_at')->nullable();
 
         });
