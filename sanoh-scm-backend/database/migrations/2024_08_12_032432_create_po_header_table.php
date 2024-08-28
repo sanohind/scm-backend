@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('references_2', 255)->nullable();
             $table->string('attn_name', 25)->nullable();
             $table->string('po_currency', 25)->nullable();
-            $table->integer('pr_no')->nullable();
+            $table->string('pr_no')->nullable();
             $table->date('planned_receipt_date')->nullable();
             $table->string('payment_term', 25)->nullable();
             $table->string('po_origin', 25)->nullable();
