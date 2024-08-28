@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::connection('mysql')->create('po_header', function (Blueprint $table) {
             $table->string('po_no', 25)->primary();
-            $table->string('bp_code', 25);
-            $table->foreign('bp_code')->references('bp_code')->on('business_partner')->onDelete('cascade');
             $table->string('supplier_code',255);
+            $table->foreign('supplier_code')->references('bp_code')->on('business_partner')->onDelete('cascade');
             $table->string('supplier_name', 255);
             $table->string('po_type_desc', 25);
             $table->date('po_date');

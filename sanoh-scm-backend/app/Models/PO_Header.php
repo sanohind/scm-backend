@@ -23,7 +23,8 @@ class PO_Header extends Model
 
     protected $fillable = [
         'po_no',
-        'bp_code',
+        'supplier_code',
+        'supplier_name',
         'po_type_desc',
         'po_date',
         'po_year',
@@ -48,7 +49,7 @@ class PO_Header extends Model
     // bussines_partner relationship
     public function partner(): BelongsTo
     {
-        return $this->belongsTo(PartnerLocal::class, 'bp_code', 'bp_code');
+        return $this->belongsTo(PartnerLocal::class, 'supplier_code', 'bp_code');
     }
 
     // po_detail relationship

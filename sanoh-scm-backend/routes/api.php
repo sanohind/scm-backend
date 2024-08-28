@@ -15,9 +15,15 @@ use App\Http\Controllers\Api\ListingReportController;
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
+// Route sync
+Route::get('/copyPoHeader', [HistoryController::class, 'copyPoHeader']);
+Route::get('/copyPoDetail', [HistoryController::class, 'copyPoDetail']);
+Route::get('/copyDnHeader', [HistoryController::class, 'copyDnHeader']);
+Route::get('/copyDnDetail', [HistoryController::class, 'copyDnDetail']);
+
 //Route Supplier
 Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
-    
+
     // route view history
     Route::get('/pohistory/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
     Route::get('/dnhistory/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
@@ -55,21 +61,21 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 
 //Route Warehouse
 Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
-    
+
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //Route Purchasing
 Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
-    
+
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //Route Super Admin
 Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
-    
+
     // Route for show list of user
     Route::get('/index', [UserController::class, 'index']);
     // Route for edit user form
