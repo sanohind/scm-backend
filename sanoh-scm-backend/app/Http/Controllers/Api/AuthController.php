@@ -51,6 +51,9 @@ class AuthController
         // Return token response
         return response()->json([
             'access_token' => $token,
+            'role' => $user->role,
+            'bp_code' => $user->bp_code,
+            'name' => $user->name,
             'token_type' => 'Bearer'
         ]);
     }
@@ -63,9 +66,6 @@ class AuthController
         // logout success respond
         return response()->json([
             'success' => true,
-            'role' => $user->role,
-            'bp_code' => $user->bp_code,
-            'name' => $user->name,
             'message' => 'User successfully logged out'
         ], 200);
     }
