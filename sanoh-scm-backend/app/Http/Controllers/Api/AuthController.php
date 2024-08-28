@@ -63,6 +63,9 @@ class AuthController
         // logout success respond
         return response()->json([
             'success' => true,
+            'role' => $user->role,
+            'bp_code' => $user->bp_code,
+            'name' => $user->name,
             'message' => 'User successfully logged out'
         ], 200);
     }
