@@ -16,11 +16,72 @@ use App\Http\Controllers\Api\ListingReportController;
 Route::post('/login', [AuthController::class, 'login']);
 
 //Route Supplier
-Route::get('/index', [UserController::class, 'index']);
-Route::middleware(['auth:sanctum','userRole:supplier']) ->group(function () {
+Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
+    
+    // route view history
+    Route::get('/pohistory/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
+    Route::get('/dnhistory/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+
+    // route view print
+    Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
+    Route::get('/dnhview/{dn_no}', [PrintController::class, 'dnHeaderView']);
+    Route::get('/lbview/{dn_no}', [PrintController::class, 'labelView']);
+
+    // Route for show list PO Header
+    Route::get('/indexpoheader',[PO_HeaderController::class, "index"]);
+    // Route for update list PO Header
+    Route::put('/updatepoheader/{po_no}',[PO_HeaderController::class, "update"]);
+
+    // Route for show list PO Detail
+    Route::get('/indexpodetail/{po_no}',[PO_DetailController::class, "index"]);
+
+    // Route for show list DN Header
+    Route::get('/indexdnheader',[DN_HeaderController::class, "index"]);
+
+    // Route for show list DN Detail
+    Route::get('/indexdndetail/{dn_no}',[DN_DetailController::class, "index"]);
+    // Route for edit list DN Detail
+    Route::get('/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
+    // Route for update list DN Detail
+    Route::put('/updatedndetail/{dn_detail_no}',[DN_DetailController::class, "update"]);
+
+    // Route for show list of Listing Report
+    Route::get('/indexlistingreport',[ListingReportController::class, "index"])->name('index');
+    // Route for store Listing Report
+
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+
+//Route Warehouse
+Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
+    
+    //Logout route
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+//Route Purchasing
+Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
+    
+    //Logout route
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+//Route Super Admin
+Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
+    
+    // Route for show list of user
+    Route::get('/index', [UserController::class, 'index']);
+    // Route for edit user form
+    Route::post('/edit/{user}',[UserController::class, "edit"]);
+    // Route for edit user data
+    Route::put('/update/{user}',[UserController::class, "update"]);
+    Route::post('/create',[UserController::class, "store"]);
+    //Logout route
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+
 
 // route view history
 Route::get('/pohistory/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
@@ -34,6 +95,7 @@ Route::get('/lbview/{dn_no}', [PrintController::class, 'labelView']);
 // route testing
 // Route for show list of user
 // Route::get('/index',[UserController::class, "index"])->name('index');
+
 // Route for edit user form
 Route::post('/edit/{user}',[UserController::class, "edit"]);
 // Route for edit user data
