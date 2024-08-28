@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\ListingReportController;
 Route::post('/login', [AuthController::class, 'login']);
 
 // Route sync
+Route::get('/copyBusinessPartner', [SynchronizeController::class, 'copyBusinessPartner']);
 Route::get('/copyPoHeader', [SynchronizeController::class, 'copyPoHeader']);
 Route::get('/copyPoDetail', [SynchronizeController::class, 'copyPoDetail']);
 Route::get('/copyDnHeader', [SynchronizeController::class, 'copyDnHeader']);
