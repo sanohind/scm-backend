@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('mysql')->create('dn_label', function (Blueprint $table) {
             $table->id('dn_label_no', 25);
-            $table->string('dn_detail_no', 25);
+            $table->unsignedBigInteger('dn_detail_no');
             $table->foreign('dn_detail_no')->references('dn_detail_no')->on('dn_detail')->onDelete('cascade');
         });
     }
