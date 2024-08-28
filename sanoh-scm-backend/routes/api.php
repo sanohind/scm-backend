@@ -2,10 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PrintController;
 use App\Http\Controllers\Api\HistoryController;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\DN_DetailController;
 use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\PO_DetailController;
@@ -15,9 +16,12 @@ use App\Http\Controllers\Api\ListingReportController;
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
+// Route Partner
+Route::get('/partner', [PartnerController::class, 'index']);
+
 //Route Supplier
 Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
-    
+
     // route view history
     Route::get('/pohistory/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
     Route::get('/dnhistory/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
@@ -55,21 +59,21 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 
 //Route Warehouse
 Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
-    
+
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //Route Purchasing
 Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
-    
+
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //Route Super Admin
 Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
-    
+
     // Route for show list of user
     Route::get('/index', [UserController::class, 'index']);
     // Route for edit user form

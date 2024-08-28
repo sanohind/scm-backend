@@ -5,13 +5,18 @@ namespace App\Http\Controllers\Api;
 use App\Models\Partner;
 use App\Models\PartnerLocal;
 use Illuminate\Http\Request;
+use App\Http\Resources\PartnerResource;
 
 class PartnerController
 {
     public function index(){
         $users = PartnerLocal::all();
 
-        return view('index', compact('users'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Success Display List DN Detail',
+            'data' => PartnerResource::collection($users)
+        ], 200);
     }
 
     // function for copy the data from sql server to mysql
