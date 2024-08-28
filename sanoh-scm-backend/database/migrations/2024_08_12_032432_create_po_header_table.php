@@ -32,9 +32,9 @@ return new class extends Migration
             $table->integer('po_revision_no');
             $table->date('po_revision_date');
             $table->string('response', 25);
-            $table->dateTime('accept_at');
-            $table->dateTime('decline_at');
-            $table->dateTime('po_printed_at');
+            $table->dateTime('accept_at')->nullable();
+            $table->dateTime('decline_at')->nullable();
+            $table->dateTime('po_printed_at')->nullable();
         });
     }
 

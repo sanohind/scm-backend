@@ -2,10 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PrintController;
 use App\Http\Controllers\Api\HistoryController;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\SynchronizeController;
 use App\Http\Controllers\Api\DN_DetailController;
 use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\PO_DetailController;
@@ -16,10 +17,10 @@ use App\Http\Controllers\Api\ListingReportController;
 Route::post('/login', [AuthController::class, 'login']);
 
 // Route sync
-Route::get('/copyPoHeader', [HistoryController::class, 'copyPoHeader']);
-Route::get('/copyPoDetail', [HistoryController::class, 'copyPoDetail']);
-Route::get('/copyDnHeader', [HistoryController::class, 'copyDnHeader']);
-Route::get('/copyDnDetail', [HistoryController::class, 'copyDnDetail']);
+Route::get('/copyPoHeader', [SynchronizeController::class, 'copyPoHeader']);
+Route::get('/copyPoDetail', [SynchronizeController::class, 'copyPoDetail']);
+Route::get('/copyDnHeader', [SynchronizeController::class, 'copyDnHeader']);
+Route::get('/copyDnDetail', [SynchronizeController::class, 'copyDnDetail']);
 
 //Route Supplier
 Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {

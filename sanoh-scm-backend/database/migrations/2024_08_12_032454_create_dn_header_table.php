@@ -23,9 +23,9 @@ return new class extends Migration
             $table->date('plan_delivery_date');
             $table->time('plan_delivery_time');
             $table->string('status_desc', 25);
-            $table->dateTime('confirm_update_at');
-            $table->dateTime('dn_printed_at');
-            $table->dateTime('dn_label_printed_at');
+            $table->dateTime('confirm_update_at')->nullable();
+            $table->dateTime('dn_printed_at')->nullable();
+            $table->dateTime('dn_label_printed_at')->nullable();
         });
     }
 

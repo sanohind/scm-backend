@@ -26,7 +26,7 @@ return new class extends Migration
 
             // tambahan email
             $table->string('email',255)->nullable();
-            $table->timestamps();
+            $table->timestamps()->nullable();
         });
     }
 
