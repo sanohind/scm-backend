@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('mysql')->create('dn_detail', function (Blueprint $table) {
             $table->id('dn_detail_no', 25);
-            $table->string('dn_no', 25); //fixed no_dn
+            $table->string('dn_no', 25)->nullable(); //fixed no_dn
             $table->foreign('dn_no')->references('dn_no')->on('dn_header')->onDelete('cascade');
             $table->integer('dn_line')->nullable();
             $table->integer('order_origin')->nullable();
