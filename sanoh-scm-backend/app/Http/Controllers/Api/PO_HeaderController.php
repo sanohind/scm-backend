@@ -10,10 +10,10 @@ use App\Http\Resources\PO_HeaderResource;
 
 class PO_HeaderController
 {
-    public function index()
+    public function index($sp_code)
     {
         // Eager load the 'podetail' relationship
-        $data_po = PO_Header::with('poDetail')->get();
+        $data_po = PO_Header::where('supplier_code', $sp_code)->with('poDetail')->get();
 
         return response()->json([
             'status' => 'success',

@@ -107,7 +107,7 @@ Route::put('/update/{user}',[UserController::class, "update"]);
 Route::post('/create',[UserController::class, "store"]);
 
 // Route for show list PO Header
-Route::get('/indexpoheader',[PO_HeaderController::class, "index"]);
+Route::get('/indexpoheader/{sp_code}',[PO_HeaderController::class, "index"]);
 // Route for update list PO Header
 Route::put('/updatepoheader/{po_no}',[PO_HeaderController::class, "update"]);
 
