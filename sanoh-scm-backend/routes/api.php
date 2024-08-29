@@ -30,41 +30,41 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 
 
     // route view history
-    Route::get('/pohistory/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
-    Route::get('/dnhistory/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+    Route::get('/pohistory1/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
+    Route::get('/dnhistory1/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
 
     // route view print
-    Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
-    Route::get('/dnhview/{no_dn}', [PrintController::class, 'dnHeaderView']);
-    Route::get('/lbview/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('/pohview1/{po_no}', [PrintController::class, 'poHeaderView']);
+    Route::get('/dnhview1/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
 
     // Route for show list PO Header
-    Route::get('/indexpoheader',[PO_HeaderController::class, "index"]);
+    Route::get('/indexpoheader1',[PO_HeaderController::class, "index"]);
     // Route for show list PO Detail
-    Route::get('/indexpodetail/{po_no}',[PO_DetailController::class, "index"]);
+    Route::get('/indexpodetail1/{po_no}',[PO_DetailController::class, "index"]);
     // Route for update list PO Header
-    Route::put('/updatepoheader/{po_no}',[PO_HeaderController::class, "update"]);
+    Route::put('/updatepoheader1/{po_no}',[PO_HeaderController::class, "update"]);
 
 
     // Route for show list DN Header
-    Route::get('/indexdnheader',[DN_HeaderController::class, "index"]);
+    Route::get('/indexdnheader1',[DN_HeaderController::class, "index"]);
 
     // Route for show list DN Detail
-    Route::get('/indexdndetail/{no_dn}',[DN_DetailController::class, "index"]);
+    Route::get('/indexdndetail1/{no_dn}',[DN_DetailController::class, "index"]);
     // Route for edit list DN Detail
-    Route::get('/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
+    Route::get('/edit1/{dn_detail_no}',[DN_DetailController::class, "edit"]);
     // Route for update list DN Detail
-    Route::put('/updatedndetail/{dn_detail_no}',[DN_DetailController::class, "update"]);
+    Route::put('/updatedndetail1/{dn_detail_no}',[DN_DetailController::class, "update"]);
 
 
     // Route for show list of Listing Report
-    Route::get('/indexlistingreport',[ListingReportController::class, "index"])->name('index');
+    Route::get('/indexlistingreport1',[ListingReportController::class, "index"])->name('index');
     // Route for store Listing Report
 
     // route view print
-    Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
-    Route::get('/dnhview/{no_dn}', [PrintController::class, 'dnHeaderView']);
-    Route::get('/lbview/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('/pohview1/{po_no}', [PrintController::class, 'poHeaderView']);
+    Route::get('/dnhview1/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
 
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -73,17 +73,17 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 //Route Warehouse
 Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
 
-    Route::get('/partner', [PartnerController::class, 'index']);
+    Route::get('/partner2', [PartnerController::class, 'index']);
 
     // Route for show list DN Header
-    Route::get('/indexdnheader',[DN_HeaderController::class, "index"]);
+    Route::get('/indexdnheader2',[DN_HeaderController::class, "index"]);
 
     // Route for show list DN Detail
-    Route::get('/indexdndetail/{no_dn}',[DN_DetailController::class, "index"]);
+    Route::get('/indexdndetail2/{no_dn}',[DN_DetailController::class, "index"]);
 
-    Route::get('/dnhview/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('/dnhview2/{no_dn}', [PrintController::class, 'dnHeaderView']);
 
-    Route::get('/dnhistory/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+    Route::get('/dnhistory2/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
 
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -92,19 +92,19 @@ Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
 //Route Purchasing
 Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
 
-    Route::get('/partner', [PartnerController::class, 'index']);
+    Route::get('/partner3', [PartnerController::class, 'index']);
     // Route for show list PO Header
-    Route::get('/indexpoheader',[PO_HeaderController::class, "index"]);
+    Route::get('/indexpoheader3',[PO_HeaderController::class, "index"]);
     // Route for show list PO Detail
-    Route::get('/indexpodetail/{po_no}',[PO_DetailController::class, "index"]);
-    Route::get('/pohistory/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
+    Route::get('/indexpodetail3/{po_no}',[PO_DetailController::class, "index"]);
+    Route::get('/pohistory3/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
 
     // Route for show list of Listing Report
-    Route::get('/indexlistingreport',[ListingReportController::class, "index"])->name('index');
+    Route::get('/indexlistingreport3',[ListingReportController::class, "index"])->name('index');
     // Route for store Listing Report
-    Route::post('/createlistingreport',[ListingReportController::class, "store"]);
+    Route::post('/createlistingreport3',[ListingReportController::class, "store"]);
 
-    Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
+    Route::get('/pohview3/{po_no}', [PrintController::class, 'poHeaderView']);
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
@@ -112,15 +112,15 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
 //Route Super Admin
 Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
 
-    Route::get('/partner', [PartnerController::class, 'index']);
+    Route::get('/partner4', [PartnerController::class, 'index']);
 
     // Route for show list of user
-    Route::get('/index', [UserController::class, 'index']);
+    Route::get('/index4', [UserController::class, 'index']);
     // Route for edit user form
-    Route::post('/edit/{user}',[UserController::class, "edit"]);
+    Route::post('/edit4/{user}',[UserController::class, "edit"]);
     // Route for edit user data
-    Route::put('/update/{user}',[UserController::class, "update"]);
-    Route::post('/create',[UserController::class, "store"]);
+    Route::put('/update4/{user}',[UserController::class, "update"]);
+    Route::post('/create4',[UserController::class, "store"]);
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
