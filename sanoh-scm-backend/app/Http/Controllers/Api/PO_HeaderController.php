@@ -22,6 +22,19 @@ class PO_HeaderController
         ], 200);
     }
 
+    //test
+    public function indexAll()
+    {
+        // Eager load the 'podetail' relationship
+        $data_po = PO_Header::with('poDetail')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Success Display List PO Header',
+            'data' => PO_HeaderResource::collection($data_po)
+        ], 200);
+    }
+
     public function update(Request $request, $po_no)
     {
         $po_header = PO_Header::with('poDetail')->find($po_no);

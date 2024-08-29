@@ -13,7 +13,7 @@ class DN_DetailController extends Controller
     // View list data DNDetail
     public function index($dn_no)
     {
-        $data_dndetail = DN_Detail::where('no_dn', $no_dn)->get();
+        $data_dndetail = DN_Detail::where('dn_no', $dn_no)->get();
 
         if ($data_dndetail->isEmpty()) {
             return response()->json([
@@ -27,6 +27,27 @@ class DN_DetailController extends Controller
             'success' => true,
             'message' => 'Success Display List DN Detail',
             'data' => DN_DetailResource::collection($data_dndetail)
+        ], 200);
+    }
+
+    //test
+    public function indexAll()
+    {
+        // Fetch PO details based on the provided po_no
+        $data_podetail = DN_Detail::with('dnHeader')->get();
+
+        if ($data_podetail->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'PO details not found',
+                'data' => []
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Success Display List PO Detail',
+            'data' => DN_DetailResource::collection($data_podetail)
         ], 200);
     }
 

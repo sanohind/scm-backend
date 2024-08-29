@@ -30,4 +30,25 @@ class PO_DetailController extends Controller
             'data' => PO_DetailResource::collection($data_podetail)
         ], 200);
     }
+
+    //test
+    public function indexAll()
+    {
+        // Fetch PO details based on the provided po_no
+        $data_podetail = PO_Detail::with('poHeader')->get();
+
+        if ($data_podetail->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'PO details not found',
+                'data' => []
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Success Display List PO Detail',
+            'data' => PO_DetailResource::collection($data_podetail)
+        ], 200);
+    }
 }

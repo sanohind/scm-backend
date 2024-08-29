@@ -106,19 +106,24 @@ Route::post('/edit/{user}',[UserController::class, "edit"]);
 Route::put('/update/{user}',[UserController::class, "update"]);
 Route::post('/create',[UserController::class, "store"]);
 
+// Test
 // Route for show list PO Header
 Route::get('/indexpoheader/{sp_code}',[PO_HeaderController::class, "index"]);
+Route::get('/indexpoheader',[PO_HeaderController::class, "indexAll"]);
 // Route for update list PO Header
 Route::put('/updatepoheader/{po_no}',[PO_HeaderController::class, "update"]);
 
 // Route for show list PO Detail
 Route::get('/indexpodetail/{po_no}',[PO_DetailController::class, "index"]);
+Route::get('/indexpodetail',[PO_DetailController::class, "indexAll"]);
 
 // Route for show list DN Header
-Route::get('/indexdnheader',[DN_HeaderController::class, "index"]);
+Route::get('/indexdnheader/{po_no}',[DN_HeaderController::class, "index"]);
+Route::get('/indexdnheader',[DN_HeaderController::class, "indexAll"]);
 
 // Route for show list DN Detail
 Route::get('/indexdndetail/{dn_no}',[DN_DetailController::class, "index"]);
+Route::get('/indexdndetail',[DN_DetailController::class, "indexAll"]);
 // Route for edit list DN Detail
 Route::get('/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
 // Route for update list DN Detail
