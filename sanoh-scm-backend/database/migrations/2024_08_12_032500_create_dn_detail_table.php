@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::connection('mysql')->create('dn_detail', function (Blueprint $table) {
             $table->id('dn_detail_no', 25);
-            $table->string('dn_no', 25)->nullable(); //fixed no_dn
-            $table->foreign('dn_no')->references('dn_no')->on('dn_header')->onDelete('cascade');
+            $table->string('no_dn', 25)->nullable(); //fixed no_dn
+            $table->foreign('no_dn')->references('no_dn')->on('dn_header')->onDelete('cascade');
             $table->integer('dn_line')->nullable();
             $table->integer('order_origin')->nullable();
             $table->date('plan_delivery_date')->nullable();
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->string('dn_unit')->nullable();
             $table->integer('dn_snp')->nullable();
             $table->string('reference',255)->nullable();
-            $table->integer('status_desc')->nullable();
+            $table->string('status_desc',255)->nullable();
             $table->integer('qty_confirm')->nullable();
         });
     }

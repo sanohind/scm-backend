@@ -12,7 +12,7 @@ class DN_HeaderViewResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'dn_number' => $this->dn_no,
+            'dn_number' => $this->no_dn,
             'po_number' => $this->po_no,
             'supplier_name' => $this->supplier_name,
             'supplier_code' => $this->supplier_code,

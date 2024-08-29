@@ -25,7 +25,7 @@ class PrintController
         ]);
     }
 
-    public function dnHeaderView($dn_no)
+    public function dnHeaderView($no_dn)
     {
         //get data api to view
         $data_dn = DN_Header::with('dnDetail')->get();
@@ -37,7 +37,7 @@ class PrintController
         ]);
     }
 
-    public function labelView($dn_no)
+    public function labelView($no_dn)
     {
         //get data api to view
         $data_lb = DN_Label::with('dnDetail')->get();

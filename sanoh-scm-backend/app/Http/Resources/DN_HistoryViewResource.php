@@ -15,7 +15,7 @@ class DN_HistoryViewResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'dn_number' => $this->dn_no,
+            'dn_number' => $this->no_dn,
             'po_number' => $this->po_no,
             'dn_status' => $this->status_desc,
             'send_date' => $this->planConcat(),

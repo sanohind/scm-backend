@@ -20,7 +20,7 @@ class DN_Detail extends Model
 
     protected $fillable = [
         'dn_detail_no',
-        'dn_no',
+        'no_dn',
         'dn_line',
         'order_origin',
         'plan_delivery_data',
