@@ -16,7 +16,7 @@ class DN_DetailViewResource extends JsonResource
     {
         return [
             'delivery_note_detail_id' => $this->dn_detail_no,
-            'dn_number' => $this->dn_no,
+            'dn_number' => $this->no_dn,
             'line_no' => $this->dn_line,
             'supplier_part_number' => $this->supplier_item_no,
             'internal_part_number' => $this->part_no,

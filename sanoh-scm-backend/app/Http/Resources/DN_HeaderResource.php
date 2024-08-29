@@ -15,7 +15,7 @@ class DN_HeaderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'dn_no' => $this->dn_no,
+            'no_dn' => $this->no_dn,
             'po_no' => $this->po_no,
             'plan_delivery_date' => $this->plan_delivery_date,
             'status_desc' => $this->status_desc,

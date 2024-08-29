@@ -14,14 +14,14 @@ class DN_LabelResource extends JsonResource
             'lot_number' => $this->dnDetail->lot_number,
             'qr_number' => $this->qrNumber(),
             'po_number' => $this->dnDetail->po_no,
-            'dn_number' => $this->dnDetail->dn_no,
-            'model' => $this->dnDetail->dn_no,
+            'dn_number' => $this->dnDetail->no_dn,
+            'model' => $this->dnDetail->no_dn,
             'customer_name' => 'PT. Sanoh Indonesia',
             'supplier_name' => $this->null,//supplier_name,
             'part_number' => $this->dnDetail->part_no,
             'part_name' => $this->dnDetail->item_desc_a,
             'quantity' => $this->dnDetail->dn_snp,
-            'delivery_date' => $this->dnDetail->dn_no,
+            'delivery_date' => $this->dnDetail->no_dn,
             'printed_date' => $this->dnDetail->plan_delivery_date,
         ];
     }

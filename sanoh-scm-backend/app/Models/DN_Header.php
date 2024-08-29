@@ -14,7 +14,7 @@ class DN_Header extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $primaryKey = "dn_no";
+    protected $primaryKey = "no_dn";
 
     protected $keyType = 'string';
 
@@ -23,7 +23,7 @@ class DN_Header extends Model
     protected $table = "dn_header";
 
     protected $fillable = [
-        'dn_no',
+        'no_dn',
         'po_no',
         'supplier_code',
         'supplier_name',
@@ -47,6 +47,6 @@ class DN_Header extends Model
     // Relationship dndetail
     public function dnDetail(): HasMany
     {
-        return $this->hasMany(DN_Detail::class, 'dn_no', 'dn_no');
+        return $this->hasMany(DN_Detail::class, 'no_dn', 'no_dn');
     }
 }

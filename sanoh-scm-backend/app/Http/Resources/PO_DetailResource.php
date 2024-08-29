@@ -14,6 +14,7 @@ class PO_DetailResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'po_no' => $this->po_no,
             'bp_part_no' => $this->bp_part_no,

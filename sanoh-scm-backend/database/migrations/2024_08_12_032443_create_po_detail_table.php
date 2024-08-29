@@ -13,23 +13,23 @@ return new class extends Migration
     {
         Schema::connection('mysql')->create('po_detail', function (Blueprint $table) {
             $table->id('po_detail_no', 25);
-            $table->string('po_no', 25);
+            $table->string('po_no', 25)->nullable();
             $table->foreign('po_no')->references('po_no')->on('po_header')->onDelete('cascade');
-            $table->integer('po_line');
-            $table->integer('po_sequence');
-            $table->string('item_code', 25);
-            $table->string('code_item_type', 25);
-            $table->string('bp_part_no', 255);
-            $table->string('bp_part_name', 255);
-            $table->string('item_desc_a', 255);
-            $table->string('item_desc_b', 255);
-            $table->date('planned_receipt_date');
-            $table->integer('po_qty');
-            $table->integer('receipt_qty');
-            $table->integer('invoice_qty');
-            $table->string('purchase_unit', 25);
-            $table->integer('price');
-            $table->integer('amount');
+            $table->integer('po_line')->nullable();
+            $table->integer('po_sequence')->nullable();
+            $table->string('item_code', 25)->nullable();
+            $table->string('code_item_type', 25)->nullable();
+            $table->string('bp_part_no', 255)->nullable();
+            $table->string('bp_part_name', 255)->nullable();
+            $table->string('item_desc_a', 255)->nullable();
+            $table->string('item_desc_b', 255)->nullable();
+            $table->date('planned_receipt_date')->nullable();
+            $table->integer('po_qty')->nullable();
+            $table->integer('receipt_qty')->nullable();
+            $table->integer('invoice_qty')->nullable();
+            $table->string('purchase_unit', 25)->nullable();
+            $table->integer('price')->nullable();
+            $table->integer('amount')->nullable();
         });
     }
 

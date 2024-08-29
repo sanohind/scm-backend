@@ -13,6 +13,8 @@ class PartnerLocal extends Model
 
     protected $table = "business_partner";
 
+    protected $primaryKey = "bp_code";
+
     protected $fillable = [
         'bp_code',
         'bp_name',
