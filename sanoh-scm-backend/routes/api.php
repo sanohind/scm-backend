@@ -120,11 +120,11 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
     Route::post('/edit4/{user}',[UserController::class, "edit"]);
     // Route for edit user data
     Route::put('/update4/{user}',[UserController::class, "update"]);
+    Route::put('/updatestatus/{user}',[UserController::class, "updateStatus"]);
     Route::post('/create4',[UserController::class, "store"]);
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
-
 
 // route testing
 // Route for show list of user

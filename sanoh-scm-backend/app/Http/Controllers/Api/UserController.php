@@ -17,7 +17,7 @@ class UserController
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_user = User::orderby('user_id','asc')->with('partner')->get();
+        $data_user = User::orderby('user_id', 'asc')->with('partner')->get();
 
         return response()->json([
             'success' => true,
@@ -36,7 +36,7 @@ class UserController
             'role' => 'required|string|max:25',
             'status' => 'required|string|max:25',
             'username' => 'required|string|unique:user,username|max:25', // username must unique
-            'password' => 'required|string|min:8|max:25',//min and max leght 8/25
+            'password' => 'required|string|min:8|max:25', //min and max leght 8/25
             'email' => 'required|email|unique:user,email|max:255' // email must unique
         ];
 
@@ -66,12 +66,12 @@ class UserController
         $data_create = User::create(array_merge(
             $validator->validated(),
             ['password' => Hash::make($request->password)]
-            ));
+        ));
 
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Data user "'.$data_create->username.'" successfuly created',
+            'message' => 'Data user "' . $data_create->username . '" successfuly created',
             'data' => new UserResource($data_create)
         ]);
     }
@@ -105,8 +105,8 @@ class UserController
             'role' => 'required|string|max:25',
             'status' => 'required|string|max:25',
             'username' => 'required|string|unique:user,username|max:25', // username must unique
-            'password' => 'required|string|min:8|max:25',//min and max leght 8/25
-            'email' => 'required|email|max:255|unique:user,email,'.$data_edit->user_id.',user_id' // email must unique
+            'password' => 'required|string|min:8|max:25', //min and max leght 8/25
+            'email' => 'required|email|max:255|unique:user,email,' . $data_edit->user_id . ',user_id' // email must unique
         ];
 
         // Validator instance
@@ -137,9 +137,52 @@ class UserController
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Data user "'.$data_edit->username.'" successfuly updated',
+            'message' => 'Data user "' . $data_edit->username . '" successfuly updated',
             'data' => new UserResource($data_edit)
         ]);
+    }
 
+    public function updateStatus(Request $request, $user)
+    {
+        // Find user
+        $data_edit = User::findOrFail($user);
+
+        // Fail find user
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'errors' => 'User not found'
+            ], 404);
+        }
+
+        // Data input rules
+        $rules = [
+            'status' => 'required|string|max:25',
+        ];
+
+        // Validator instance
+        $validator = Validator::make($request->all(), $rules);
+
+        // Check validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Update validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Update the user with validated data
+        $validatedData = $validator->validated();
+
+        // Update the user instance
+        $data_edit->update($validatedData);
+
+        // Return value
+        return response()->json([
+            'success' => true,
+            'message' => 'Data user "' . $data_edit->username . '" successfuly updated',
+            'data' => new UserResource($data_edit)
+        ]);
     }
 }

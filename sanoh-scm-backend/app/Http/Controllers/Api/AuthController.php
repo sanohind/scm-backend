@@ -46,7 +46,7 @@ class AuthController
         $user = Auth::user();
 
         // Generate a token
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $request->$user->createToken('auth_token')->plainTextToken;
 
         // Return token response
         return response()->json([
