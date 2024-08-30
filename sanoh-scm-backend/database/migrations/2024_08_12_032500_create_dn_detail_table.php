@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer('order_line')->nullable();
             $table->integer('order_seq')->nullable();
             $table->string('part_no', 25)->nullable();
-            $table->string('supplier_item_no', 25)->nullable();
+            $table->string('supplier_item_no', 255)->nullable();
             $table->string('item_desc_a', 255)->nullable();
             $table->string('item_desc_b', 255)->nullable();
             $table->string('lot_number', 255)->nullable();
