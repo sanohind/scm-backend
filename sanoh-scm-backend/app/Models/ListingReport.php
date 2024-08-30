@@ -19,6 +19,8 @@ class ListingReport extends Model
 
     protected $primaryKey = "po_listing_no";
 
+    public $timestamps = false;
+
     // Column
     protected $fillable = [
         'po_listing_no',

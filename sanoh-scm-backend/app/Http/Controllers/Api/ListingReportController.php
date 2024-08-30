@@ -7,6 +7,7 @@ use App\Models\ListingReport;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ListingReportResource;
+use Carbon\Carbon;
 
 class ListingReportController extends Controller
 {
@@ -28,10 +29,14 @@ class ListingReportController extends Controller
     // Store data user to database
     public function store(Request $request)
     {
+        //add datetime
+        $request->merge(['upload_at' => Carbon::now()]);
+
         $rules =[
             'bp_code' => 'required|string|max:25',
             'date' => 'required|date',
             'file' => 'required|string|max:255',
+            'upload_at' => 'required'
         ];
         // Data input validation
         $validator = Validator::make($request->all(), $rules);
@@ -49,9 +54,9 @@ class ListingReportController extends Controller
 
         // Return value
         return response()->json([
-            'status' => success,
+            'status' => true,
             'message' => 'Success Add Report '.$data_create->file."",
-            'data' => ListingReportResource::collection($data_create)
+            'data' => new ListingReportResource($data_create)
         ], 201);
     }
 }
