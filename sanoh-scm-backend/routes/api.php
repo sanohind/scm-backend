@@ -112,8 +112,8 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
 //Route Super Admin
 Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
 
-    Route::get('/partner4', [PartnerController::class, 'index']);
 
+    Route::get('/partner4', [PartnerController::class, 'index']);
     // Route for show list of user
     Route::get('/index4', [UserController::class, 'index']);
     // Route for edit user form

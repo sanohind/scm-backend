@@ -15,6 +15,8 @@ class PartnerLocal extends Model
 
     protected $primaryKey = "bp_code";
 
+    protected $keyType = 'string';
+
     protected $fillable = [
         'bp_code',
         'bp_name',
