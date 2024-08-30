@@ -19,7 +19,7 @@ class PO_DetailSeeder extends Seeder
         for ($i=0; $i <= 10; $i++) {
             # code...
             PO_Detail::create([
-                'po_detail_no' => Str::random(10),
+                'po_detail_no' => rand(),
                 'po_no' => '07TgGeZhCN',
                 'po_line' => rand(2000, 2024),
                 'po_sequence' => rand(1, 1000),

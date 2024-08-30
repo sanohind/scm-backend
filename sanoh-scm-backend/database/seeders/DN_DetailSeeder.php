@@ -19,7 +19,7 @@ class DN_DetailSeeder extends Seeder
         for ($i=0; $i <= 10; $i++) {
             # code...
             DN_Detail::create([
-                'dn_detail_no' => Str::random(10),
+                'dn_detail_no' => rand(),
                 'no_dn' => 'E8f8qjvZN6',
                 'dn_line' => rand(1, 3),
                 'order_origin' => rand(60, 80),
@@ -35,14 +35,14 @@ class DN_DetailSeeder extends Seeder
                 'supplier_item_no' => Str::random(10),
                 'item_desc_a' => Str::random(10),
                 'item_desc_b' => Str::random(10),
-                'lot_number' => rand(0, 1),
+                'lot_number' => Str::random(10),
                 'dn_qty' => rand(1, 20),
                 'receipt_qty' => rand(1, 20),
-                'dn_unit' => Str::random(10),
-                'dn_snp' => Str::random(10),
+                'dn_unit' => rand(1, 20),
+                'dn_snp' => rand(1, 20),
                 'reference' => Str::random(10),
-                'status_desc' => rand(1, 20),
-                'qty_confirm' => rand(200, 400),
+                'status_desc' => 'inprocess',
+                // 'qty_confirm' => rand(200, 400),
             ]);
         }
     }

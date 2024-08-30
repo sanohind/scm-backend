@@ -16,16 +16,17 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
         //create dummy data
         for ($i=0; $i <= 10; $i++) {
             # code...
             User::create([
                 'bp_code' => 'APFEY',
                 'name' => Str::random(10),
-                'role' => 'supplier',
-                'status' => 'active',
+                'role' => (string)rand(1, 4),
+                'status' => '1',
                 'username' => Str::random(10),
-                'password' => Hash::make('aqil'),
+                'password' => Hash::make('12345678'),
                 'email' => Str::random(10).'@example.com',
             ]);
         }
