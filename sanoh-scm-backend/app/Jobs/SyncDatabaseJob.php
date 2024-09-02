@@ -13,6 +13,7 @@ use App\Models\DN_Detail_ERP;
 use App\Models\DN_Header_ERP;
 use App\Models\PO_Detail_ERP;
 use App\Models\PO_Header_ERP;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -21,7 +22,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 class SyncDatabaseJob implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
@@ -34,15 +35,12 @@ class SyncDatabaseJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle()
     {
         // Synchronization logic
         /*
 
-
-                partner
-
-
+            partner
 
         */
         // get data
@@ -68,12 +66,9 @@ class SyncDatabaseJob implements ShouldQueue
                 ]
             );
         }
-
         /*
 
-                po header
-
-
+            po header
 
         */
         //year and period
@@ -119,11 +114,9 @@ class SyncDatabaseJob implements ShouldQueue
                 ]
             );
         }
-
         /*
 
-                po detail
-
+            po detail
 
         */
         foreach ($passPoNo as $data) {
@@ -155,12 +148,9 @@ class SyncDatabaseJob implements ShouldQueue
                 );
             }
         }
-
         /*
 
-                dn header
-
-
+            dn header
 
         */
         $passDnNo = [];
@@ -188,12 +178,9 @@ class SyncDatabaseJob implements ShouldQueue
                 );
             }
         }
-
         /*
 
-
-                dn detail
-
+            dn detail
 
         */
         foreach ($passDnNo as $data) {
