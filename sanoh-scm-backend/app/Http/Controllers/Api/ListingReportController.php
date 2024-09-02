@@ -35,7 +35,7 @@ class ListingReportController extends Controller
         $rules =[
             'bp_code' => 'required|string|max:25',
             'date' => 'required|date',
-            'file' => 'required|string|max:255',
+            'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
             'upload_at' => 'required'
         ];
         // Data input validation
@@ -47,6 +47,12 @@ class ListingReportController extends Controller
                 'message' => 'Validasi gagal',
                 'errors' => $validator->errors()
             ], 422);
+        }
+
+         // Store the uploaded file
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('file', 'public');
+            $request->merge(['file' => $filePath]);
         }
 
         // Create data

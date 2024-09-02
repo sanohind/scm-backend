@@ -103,9 +103,6 @@ class UserController
             'bp_code' => 'required|string|max:25',
             'name' => 'required|string|max:25',
             'role' => 'required|string|max:25',
-            'status' => 'required|string|max:25',
-            'username' => 'required|string|unique:user,username|max:25', // username must unique
-            'password' => 'required|string|min:8|max:25', //min and max leght 8/25
             'email' => 'required|email|max:255|unique:user,email,' . $data_edit->user_id . ',user_id' // email must unique
         ];
 

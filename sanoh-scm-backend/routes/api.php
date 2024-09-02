@@ -39,7 +39,9 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
 
     // Route for show list PO Header
-    Route::get('/indexpoheader1',[PO_HeaderController::class, "index"]);
+    // Specific Partner
+    Route::get('/indexpoheader1/{sp_code}',[PO_HeaderController::class, "index"]);
+    Route::get('/indexpoheader1',[PO_HeaderController::class, "indexAll"]);
     // Route for show list PO Detail
     Route::get('/indexpodetail1/{po_no}',[PO_DetailController::class, "index"]);
     // Route for update list PO Header
@@ -76,7 +78,11 @@ Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
     Route::get('/partner2', [PartnerController::class, 'index']);
 
     // Route for show list DN Header
-    Route::get('/indexdnheader2',[DN_HeaderController::class, "index"]);
+    // Specific Partner
+    Route::get('/indexdnheader2/{po_no}',[DN_HeaderController::class, "index"]);
+
+    // All
+    Route::get('/indexdnheader2',[DN_HeaderController::class, "indexAll"]);
 
     // Route for show list DN Detail
     Route::get('/indexdndetail2/{no_dn}',[DN_DetailController::class, "index"]);
@@ -94,7 +100,11 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
 
     Route::get('/partner3', [PartnerController::class, 'index']);
     // Route for show list PO Header
-    Route::get('/indexpoheader3',[PO_HeaderController::class, "index"]);
+    // Specific Partner
+    Route::get('/indexpoheader3/{sp_code}',[PO_HeaderController::class, "index"]);
+    //all
+    Route::get('/indexpoheader3',[PO_HeaderController::class, "indexAll"]);
+
     // Route for show list PO Detail
     Route::get('/indexpodetail3/{po_no}',[PO_DetailController::class, "index"]);
     Route::get('/pohistory3/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
@@ -119,13 +129,13 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
     // Route for edit user form
     Route::post('/edit4/{user}',[UserController::class, "edit"]);
     // Route for edit user data
-    Route::put('/update4/{user}',[UserController::class, "update"]);
     Route::put('/updatestatus/{user}',[UserController::class, "updateStatus"]);
     Route::post('/create4',[UserController::class, "store"]);
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+Route::put('/update4/{user}',[UserController::class, "update"]);
 // route testing
 // Route for show list of user
 // Route::get('/index',[UserController::class, "index"])->name('index');
