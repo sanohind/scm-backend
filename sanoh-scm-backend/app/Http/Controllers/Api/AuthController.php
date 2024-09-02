@@ -35,7 +35,7 @@ class AuthController
         $user = User::where('username', $request->username)->first();
 
         // Validate user existence and password with
-        if (!Auth::attempt($request->only(['username','password'])))  {
+        if (!Auth::attempt($request->only(['username', 'password']))) {
             return response()->json([
                 'success' => false,
                 'message' => 'Username or Password Invalid'
@@ -46,7 +46,7 @@ class AuthController
         $user = Auth::user();
 
         // Generate a token
-        $token = $request->$user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         // Return token response
         return response()->json([
@@ -75,4 +75,3 @@ class AuthController
  * 1. Last used token masih null belum ada history lognya
  * 2. expires at token masih null belum ada timeoutnya
  */
-

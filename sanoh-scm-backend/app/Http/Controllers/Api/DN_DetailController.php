@@ -13,7 +13,7 @@ class DN_DetailController extends Controller
     // View list data DNDetail
     public function index($no_dn)
     {
-        $data_dndetail = DN_Detail::where('dn_no', $dn_no)->get();
+        $data_dndetail = DN_Detail::where('no_dn', $no_dn)->get();
 
         if ($data_dndetail->isEmpty()) {
             return response()->json([
