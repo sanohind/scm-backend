@@ -40,7 +40,7 @@ class ListingReportController extends Controller
         // Change file name and file path to storage
         $file = $request->file('file');
         $fileName = time().'_'.$file->getClientOriginalName();
-        $filePath = $file->storeAs('listing_report',$fileName);
+        $filePath = $file->storeAs('public/listing_report',$fileName);
 
         //upload_at value declaration
         $time = Carbon::now();
