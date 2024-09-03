@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\ListingReport;
 use App\Http\Controllers\Controller;
@@ -28,41 +29,59 @@ class ListingReportController extends Controller
 
     // Store data user to database
     public function store(Request $request)
-    {
-        //add datetime
-        $request->merge(['upload_at' => Carbon::now()]);
+{
+    // Add datetime
+    $request->merge(['upload_at' => Carbon::now()]);
 
-        $rules =[
-            'bp_code' => 'required|string|max:25',
-            'date' => 'required|date',
-            'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
-            'upload_at' => 'required'
-        ];
-        // Data input validation
-        $validator = Validator::make($request->all(), $rules);
+    $rules = [
+        'bp_code' => 'required|string|max:25',
+        'date' => 'required|date',
+        'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx,xls|max:10048', // Acceptable file formats
+        'upload_at' => 'required'
+    ];
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+    // Data input validation
+    $validator = Validator::make($request->all(), $rules);
 
-         // Store the uploaded file
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('file', 'public');
-            $request->merge(['file' => $filePath]);
-        }
-
-        // Create data
-        $data_create = ListingReport::create($validator->validated());
-
-        // Return value
+    if ($validator->fails()) {
         return response()->json([
-            'status' => true,
-            'message' => 'Success Add Report '.$data_create->file."",
-            'data' => new ListingReportResource($data_create)
-        ], 201);
+            'status' => 'error',
+            'message' => 'Validation failed',
+            'errors' => $validator->errors()
+        ], 422);
     }
+
+    // Manually move the file to the storage path
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
+        $filename = time() . '_' . $file->getClientOriginalName();
+
+        // Define the storage path
+        $storagePath = storage_path('app/public/listing_report');
+
+        // Ensure the directory exists
+        if (!file_exists($storagePath)) {
+            mkdir($storagePath, 0777, true);
+        }
+
+        // Move the file manually
+        $file->move($storagePath, $filename);
+
+        // Get the relative path to store in the database
+        $filePath = 'listing_report/' . $filename;
+
+        // Merge the file path into the request
+        $request->merge(['file' => $filePath]);
+    }
+
+    // Create data
+    $data_create = ListingReport::create($validator->validated());
+
+    // Return value
+    return response()->json([
+        'status' => true,
+        'message' => 'Success Add Report ' . $data_create->file,
+        'data' => new ListingReportResource($data_create)
+    ], 201);
+}
 }
