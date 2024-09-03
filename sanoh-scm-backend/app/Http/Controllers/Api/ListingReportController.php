@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\ListingReport;
 use App\Http\Controllers\Controller;
@@ -29,40 +30,52 @@ class ListingReportController extends Controller
     // Store data user to database
     public function store(Request $request)
     {
-        //add datetime
-        $request->merge(['upload_at' => Carbon::now()]);
-
-        $rules =[
+        //validate the request data
+        $request->validate([
             'bp_code' => 'required|string|max:25',
             'date' => 'required|date',
-            'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
-            'upload_at' => 'required'
-        ];
-        // Data input validation
-        $validator = Validator::make($request->all(), $rules);
+            'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx,xls|max:10048', // Acceptable file formats
+        ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+        // Change file name and file path to storage
+        $file = $request->file('file');
+        $fileName = time().'_'.$file->getClientOriginalName();
+        $filePath = $file->storeAs('listing_report',$fileName);
 
-         // Store the uploaded file
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('file', 'public');
-            $request->merge(['file' => $filePath]);
-        }
+        //upload_at value declaration
+        $time = Carbon::now();
 
         // Create data
-        $data_create = ListingReport::create($validator->validated());
+        $data_create = ListingReport::create([
+            'bp_code' => $request->input('bp_code'),
+            'date' => $request->input('date'),
+            'file' => Storage::url($filePath),
+            'upload_at' => $time,
+        ]);
 
         // Return value
         return response()->json([
             'status' => true,
-            'message' => 'Success Add Report '.$data_create->file."",
+            'message' => 'Success Add Report ' . $data_create->file,
             'data' => new ListingReportResource($data_create)
         ], 201);
     }
+
+    // Get file by filename
+    public function getFile($filename)
+    {
+        $filePath = 'listing_report/' . $filename;
+
+        if (Storage::exists($filePath)) {
+            // Return the publicly accessible URL
+            return response()->json([
+                'status' => true,
+                'url' => Storage::url($filePath)
+            ], 200);
+        }
+
+        // If file doesn't exist, return a 404 response
+        return response()->json(['message' => 'File not found'], 404);
+    }
+
 }

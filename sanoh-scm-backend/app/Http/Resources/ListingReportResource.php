@@ -19,6 +19,7 @@ class ListingReportResource extends JsonResource
             'bp_code' => $this->bp_code,
             'date' => $this->date,
             'file' => $this->file,
+            'upload_at' => $this->upload_at
         ];
     }
 }
