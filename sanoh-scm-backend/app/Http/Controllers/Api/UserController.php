@@ -84,14 +84,13 @@ class UserController
         return new UserDetailResource($data_edit);
     }
 
-    // Update data to database
     public function update(Request $request, $user)
     {
         // Find user
         $data_edit = User::findOrFail($user);
 
         // Fail find user
-        if (!$user) {
+        if (!$data_edit) {
             return response()->json([
                 'success' => false,
                 'errors' => 'User not found'
@@ -103,7 +102,8 @@ class UserController
             'bp_code' => 'required|string|max:25',
             'name' => 'required|string|max:25',
             'role' => 'required|string|max:25',
-            'email' => 'required|email|max:255|unique:user,email,' . $data_edit->user_id . ',user_id' // email must unique
+            'password' => 'nullable|string|min:8',
+            'email' => 'required|email|max:255|unique:user,email,' . $data_edit->user_id . ',user_id' // email must be unique
         ];
 
         // Validator instance
@@ -134,10 +134,11 @@ class UserController
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Data user "' . $data_edit->username . '" successfuly updated',
+            'message' => 'Data user "' . $data_edit->username . '" successfully updated',
             'data' => new UserResource($data_edit)
         ]);
     }
+
 
     public function updateStatus(Request $request, $user)
     {

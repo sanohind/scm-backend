@@ -124,18 +124,24 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
 
 
     Route::get('/partner4', [PartnerController::class, 'index']);
+
     // Route for show list of user
     Route::get('/index4', [UserController::class, 'index']);
-    // Route for edit user form
-    Route::post('/edit4/{user}',[UserController::class, "edit"]);
-    // Route for edit user data
-    Route::put('/updatestatus/{user}',[UserController::class, "updateStatus"]);
+
+    // Route for create user
     Route::post('/create4',[UserController::class, "store"]);
+
+    // Route for edit user form
+    Route::get('/edit4/{user}',[UserController::class, "edit"]);
+
+    // Route for update  user data
+    Route::put('/update4/{user}',[UserController::class, "update"]);
+    Route::put('/updatestatus/{user}',[UserController::class, "updateStatus"]);
+
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-Route::put('/update4/{user}',[UserController::class, "update"]);
 // route testing
 // Route for show list of user
 // Route::get('/index',[UserController::class, "index"])->name('index');
