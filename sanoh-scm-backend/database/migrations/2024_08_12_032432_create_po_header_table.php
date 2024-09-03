@@ -21,11 +21,11 @@ return new class extends Migration
             $table->integer('po_year')->nullable();
             $table->integer('po_period')->nullable();
             $table->string('po_status', 25)->nullable();
-            $table->string('references_1', 255)->nullable();
-            $table->string('references_2', 255)->nullable();
-            $table->string('attn_name', 25)->nullable();
+            $table->string('reference_1', 255)->nullable();
+            $table->string('reference_2', 255)->nullable();
+            $table->string('attn_name', 255)->nullable();
             $table->string('po_currency', 25)->nullable();
-            $table->string('pr_no')->nullable();
+            $table->string('pr_no',255)->nullable();
             $table->date('planned_receipt_date')->nullable();
             $table->string('payment_term', 25)->nullable();
             $table->string('po_origin', 25)->nullable();
