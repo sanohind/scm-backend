@@ -111,6 +111,7 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
 
     // Route for show list of Listing Report
     Route::get('/indexlistingreport3',[ListingReportController::class, "index"])->name('index');
+    Route::get('/listingreport/file/{filename}', [ListingReportController::class, 'getFile']);
     // Route for store Listing Report
     Route::post('/createlistingreport3',[ListingReportController::class, "store"]);
 
@@ -118,7 +119,6 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
     //Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
 });
-
 //Route Super Admin
 Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
 
