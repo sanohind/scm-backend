@@ -64,8 +64,8 @@ class ListingReportController extends Controller
     // Get file by filename
     public function getFile($filename)
     {
-        $filePath = 'listing_report/' . $filename;
-
+        $filePath = 'public/listing_report/' . $filename;
+        // dd($filePath);
         if (Storage::exists($filePath)) {
             // Return the publicly accessible URL
             return response()->json([
