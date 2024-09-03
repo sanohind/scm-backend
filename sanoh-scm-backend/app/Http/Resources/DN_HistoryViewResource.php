@@ -20,7 +20,7 @@ class DN_HistoryViewResource extends JsonResource
             'dn_status' => $this->status_desc,
             'send_date' => $this->planConcat(),
             'receive_date' => $this->receiptConcat(),
-            'detail' => DN_DetailViewResource::collection($this->whenLoaded('poDetail'))
+            'detail' => DN_DetailViewResource::collection($this->whenLoaded('dnDetail'))
         ];
     }
 

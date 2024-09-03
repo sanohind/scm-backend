@@ -17,7 +17,7 @@ class HistoryController
         // $tes = (string) $bp_code;
         // dd($tes);
         //get data api to view
-        $data_po = PO_Header::with('partner')
+        $data_po = PO_Header::with('partner','poDetail')
                             ->where('supplier_code', $bp_code)
                             ->where('po_status', 'closed')
                             ->get();
@@ -34,7 +34,7 @@ class HistoryController
     {
         $tes = $bp_code;
         //get data api to view
-        $data_dn = DN_Header::with('poHeader')
+        $data_dn = DN_Header::with('poHeader','dnDetail')
                             ->whereHas('poHeader', function($query)  use ($tes)
                             {
                                 $query->where('po_status', 'closed');
