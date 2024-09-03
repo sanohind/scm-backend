@@ -45,6 +45,16 @@ class AuthController
         // Retrieve the authenticated user
         $user = Auth::user();
 
+        // if user status inactive
+        if ($user->status==0) {
+            Auth::logout();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Account is inactive'
+            ], 403);
+        }
+
         // Generate a token
         $token = $user->createToken('auth_token')->plainTextToken;
 
