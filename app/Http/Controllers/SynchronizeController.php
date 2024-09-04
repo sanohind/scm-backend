@@ -12,14 +12,13 @@ use App\Models\PO_Detail;
 // model mysql
 use App\Models\PO_Header;
 use App\Models\PartnerLocal;
-use Illuminate\Http\Request;
 use App\Models\DN_Detail_ERP;
 use App\Models\DN_Header_ERP;
 
 use App\Models\PO_Detail_ERP;
 use App\Models\PO_Header_ERP;
 
-class SynchronizeController extends Controller
+class SynchronizeController
 {
     // Copy data ERP bussiness_partner
     // function for copy the data from sql server to mysql
@@ -193,6 +192,7 @@ class SynchronizeController extends Controller
 
     public function sync()
     {
+        set_time_limit(0);
         /*
 
 

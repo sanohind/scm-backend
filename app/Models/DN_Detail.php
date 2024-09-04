@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
 class DN_Detail extends Model
 {
     use HasFactory, Notifiable;
@@ -23,7 +24,7 @@ class DN_Detail extends Model
         'no_dn',
         'dn_line',
         'order_origin',
-        'plan_delivery_data',
+        'plan_delivery_date',
         'plan_delivery_time',
         'actual_receipt_date',
         'actual_receipt_time',
