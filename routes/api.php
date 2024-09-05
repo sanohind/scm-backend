@@ -17,9 +17,6 @@ use App\Http\Controllers\Api\ListingReportController;
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
-//Logout route
-Route::post('/logout', [AuthController::class, 'logout']);
-
 // Route sync
 Route::get('/sync', [SynchronizeController::class, 'sync']);
 Route::get('/copyBusinessPartner', [SynchronizeController::class, 'copyBusinessPartner']);
@@ -74,7 +71,7 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
 
     //Logout route
-    Route::post('/logout1', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //Route Warehouse
@@ -96,7 +93,7 @@ Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
     Route::get('/dnhistory2/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
 
     //Logout route
-    Route::post('/logout2', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //Route Purchasing
@@ -122,7 +119,7 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
     Route::get('/pohview3/{po_no}', [PrintController::class, 'poHeaderView']);
 
     //Logout route
-    Route::post('/logout3', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 //Route Super Admin
 Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
@@ -144,7 +141,7 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
     Route::put('/updatestatus/{user}',[UserController::class, "updateStatus"]);
 
     //Logout route
-    Route::post('/logout4', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 // route testing
