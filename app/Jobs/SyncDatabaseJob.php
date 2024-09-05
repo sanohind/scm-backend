@@ -37,14 +37,17 @@ class SyncDatabaseJob implements ShouldQueue
      */
     public function handle()
     {
-        // Synchronization logic
+        set_time_limit(0);
         /*
 
-            partner
+
+                partner
+
+
 
         */
         // get data
-        $sqlsrvDataPartner = Partner::All();
+        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'Supplier')->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {
@@ -55,6 +58,8 @@ class SyncDatabaseJob implements ShouldQueue
                 [
                     'bp_name' => $data->bp_name,
                     'bp_status_desc' => $data->bp_status_desc,
+                    'bp_role' => $data->bp_role,
+                    'bp_role_desc' => $data->bp_role_desc,
                     'bp_currency' => $data->bp_currency,
                     'country' => $data->contry,
                     'adr_line_1' => $data->adr_line_1,
@@ -66,9 +71,12 @@ class SyncDatabaseJob implements ShouldQueue
                 ]
             );
         }
+
         /*
 
-            po header
+                po header
+
+
 
         */
         //year and period
@@ -78,6 +86,7 @@ class SyncDatabaseJob implements ShouldQueue
 
         $sqlsrvDataPoHeader = PO_Header_ERP::where('po_period', $actualPeriod)
             ->where('po_year', $actualYear)
+            ->where('po_type_desc', 'PO LOCAL')
             ->get();
 
 
@@ -99,8 +108,8 @@ class SyncDatabaseJob implements ShouldQueue
                     'po_year' => $data->po_year,
                     'po_period' => $data->po_period,
                     'po_status' => $data->po_status,
-                    'references_1' => $data->references_1,
-                    'references_2' => $data->references_2,
+                    'reference_1' => $data->reference_1,
+                    'reference_2' => $data->reference_2,
                     'attn_name' => $data->attn_name,
                     'po_currency' => $data->po_currency,
                     'po_type_desc' => $data->po_type_desc,
@@ -114,9 +123,11 @@ class SyncDatabaseJob implements ShouldQueue
                 ]
             );
         }
+
         /*
 
-            po detail
+                po detail
+
 
         */
         foreach ($passPoNo as $data) {
@@ -148,11 +159,15 @@ class SyncDatabaseJob implements ShouldQueue
                 );
             }
         }
+
         /*
 
-            dn header
+                dn header
+
+
 
         */
+        // dd($passPoNo);
         $passDnNo = [];
         foreach ($passPoNo as $data) {
             $sqlsrvDataDnHeader = DN_Header_ERP::where('po_no', $data)->get();
@@ -178,9 +193,12 @@ class SyncDatabaseJob implements ShouldQueue
                 );
             }
         }
+
         /*
 
-            dn detail
+
+                dn detail
+
 
         */
         foreach ($passDnNo as $data) {

@@ -13,6 +13,6 @@ Artisan::command('inspire', function () {
 // Synchronize Database Job
 // Schedule::job(new SyncDatabaseJob)->twiceDaily(10,18);
 //test
-Schedule::job(new SyncDatabaseJob)->everyMinute();
+Schedule::job(new SyncDatabaseJob)->twiceDaily(8, 18);
 
 // Schedule::job(new PartnerJob)->everyMinute();
