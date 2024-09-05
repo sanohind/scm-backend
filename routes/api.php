@@ -17,6 +17,9 @@ use App\Http\Controllers\Api\ListingReportController;
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
+//Logout route
+Route::post('/logout', [AuthController::class, 'logout']);
+
 // Route sync
 Route::get('/sync', [SynchronizeController::class, 'sync']);
 Route::get('/copyBusinessPartner', [SynchronizeController::class, 'copyBusinessPartner']);
@@ -62,6 +65,7 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     // Route for show list of Listing Report
     Route::get('/indexlistingreport1/{bp_code}',[ListingReportController::class, "index"]);
     Route::get('/indexlistingreport1',[ListingReportController::class, "indexAll"]);
+    Route::get('/listingreport1/file/{filename}', [ListingReportController::class, 'getFile']);
     // Route for store Listing Report
 
     // route view print
@@ -69,8 +73,6 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     Route::get('/dnhview1/{no_dn}', [PrintController::class, 'dnHeaderView']);
     Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
 
-    //Logout route
-    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //Route Warehouse
@@ -91,8 +93,6 @@ Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
 
     Route::get('/dnhistory2/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
 
-    //Logout route
-    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //Route Purchasing
@@ -116,8 +116,6 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
     Route::post('/createlistingreport3',[ListingReportController::class, "store"]);
 
     Route::get('/pohview3/{po_no}', [PrintController::class, 'poHeaderView']);
-    //Logout route
-    Route::post('/logout', [AuthController::class, 'logout']);
 });
 //Route Super Admin
 Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
@@ -138,14 +136,12 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
     Route::put('/update4/{user}',[UserController::class, "update"]);
     Route::put('/updatestatus/{user}',[UserController::class, "updateStatus"]);
 
-    //Logout route
-    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 // route testing
 // Route for show list of user
 // Route::get('/index',[UserController::class, "index"])->name('index');
-
+Route::get('/listingreporttest/file/{filename}', [ListingReportController::class, 'getFile']);
 
 
 
