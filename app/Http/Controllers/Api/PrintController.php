@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\DN_LabelResource;
 use App\Http\Resources\DN_HeaderViewResource;
 use App\Http\Resources\PO_HeaderViewResource;
+use PhpParser\Node\Stmt\Label;
 
 class PrintController
 {
@@ -58,6 +59,9 @@ class PrintController
                 $label[] = new DN_LabelResource($dn_detail);
             }
         }
+
+        // create data log label
+        // DN_Label::create()
 
         return response()->json([
             'success' => true,

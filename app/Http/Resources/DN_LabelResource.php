@@ -23,7 +23,7 @@ class DN_LabelResource extends JsonResource
             'part_name' => $this->item_desc_a,
             'quantity' => $this->dn_snp,
             'delivery_date' => $this->deliveryDate(),
-            'printed_date' => now(), // Updated to current date
+            'printed_date' => $this->printedDate(), // Updated to current date
         ];
     }
 
@@ -43,13 +43,28 @@ class DN_LabelResource extends JsonResource
     // format delivery_date
     private function deliveryDate(){
         $plan_delivery_date = Carbon::parse($this->plan_delivery_date);
-        $plan_delivery_time = Carbon::parse($this->plan_delivery_time);
+        // $plan_delivery_time = Carbon::parse($this->plan_delivery_time);
 
-        $formattedTime = $plan_delivery_time->format('H:i');
-        $formattedDate = $plan_delivery_date->format('dmy');
+        // $formattedTime = $plan_delivery_time->format('H:i');
+        $formattedDate = $plan_delivery_date->format('d M Y');
 
-        $concat = $formattedDate.' '.$formattedTime;
+        // $concat = $formattedDate.' '.$formattedTime;
 
-        return $concat;
+        // return $concat;
+        return $formattedDate;
+    }
+
+    // format delivery_date
+    private function printedDate(){
+        $printed_date = Carbon::now();
+        // $plan_delivery_time = Carbon::parse($this->plan_delivery_time);
+
+        // $formattedTime = $plan_delivery_time->format('H:i');
+        $formattedDate = $printed_date->format('dmy H:i');
+
+        // $concat = $formattedDate.' '.$formattedTime;
+
+        // return $concat;
+        return $formattedDate;
     }
 }
