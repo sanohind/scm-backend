@@ -86,7 +86,6 @@ Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
 
     // Route for show list DN Detail
     Route::get('/indexdndetail2/{no_dn}',[DN_DetailController::class, "index"]);
-
     Route::get('/dnhview2/{no_dn}', [PrintController::class, 'dnHeaderView']);
 
     Route::get('/dnhistory2/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);

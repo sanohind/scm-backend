@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\DN_DetailViewResource;
 use App\Models\DN_Label;
+use App\Models\DN_Detail;
 use App\Models\DN_Header;
 use App\Models\PO_Header;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class PrintController
     public function poHeaderView($po_no)
     {
         //get data api to view
-        $data_po = PO_Header::with('poDetail')->get();
+        $data_po = PO_Header::with('poDetail')->where('po_no',$po_no)->get();
 
         return response()->json([
             'success' => true,
@@ -28,7 +30,7 @@ class PrintController
     public function dnHeaderView($no_dn)
     {
         //get data api to view
-        $data_dn = DN_Header::with('dnDetail')->get();
+        $data_dn = DN_Header::with('dnDetail')->where('no_dn',$no_dn)->get();
 
         return response()->json([
             'success' => true,
@@ -37,15 +39,35 @@ class PrintController
         ]);
     }
 
+    // label / kanban
     public function labelView($no_dn)
     {
-        //get data api to view
-        $data_lb = DN_Label::with('dnDetail')->get();
+        // get data
+        $dn_header = DN_Header::with('dnDetail')->where('no_dn', $no_dn)->first();
+
+        // variable for store array
+        $label = [];
+
+        // initialize looping each dn_detail with relationship from dn_header
+        foreach ($dn_header->dnDetail as $dn_detail) {
+            // Calculate no_of_kanban = dn_qty/dn_snp
+            $no_of_kanban = ceil($dn_detail->dn_qty / $dn_detail->dn_snp);
+
+            // Generate label based of no_of_kanbana
+            for ($i = 0; $i < $no_of_kanban; $i++) {
+                $label[] = new DN_LabelResource($dn_detail);
+            }
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan Label',
-            'data' => DN_LabelResource::collection($data_lb)
+            'message' => 'Labels generated successfully',
+            'data' => $label,
         ]);
     }
+
+
+
+
+
 }
