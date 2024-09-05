@@ -13,7 +13,21 @@ use Carbon\Carbon;
 class ListingReportController extends Controller
 {
     // View list data Listing Report
-    public function index()
+    public function index($bp_code)
+    {
+        //get data api to view
+        // Using eager loading request data to database for efficiency data
+        //in case calling data relation
+        $data_listingreport = ListingReport::with('listingreport')->where('bp_code',$bp_code)->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Success Display Listing Report',
+            'data' => ListingReportResource::collection($data_listingreport)
+        ], 200);
+    }
+
+    public function indexAll()
     {
         //get data api to view
         // Using eager loading request data to database for efficiency data

@@ -49,7 +49,7 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 
 
     // Route for show list DN Header
-    Route::get('/indexdnheader1',[DN_HeaderController::class, "index"]);
+    Route::get('/indexdnheader1/{bp_code}',[DN_HeaderController::class, "index"]);
 
     // Route for show list DN Detail
     Route::get('/indexdndetail1/{no_dn}',[DN_DetailController::class, "index"]);
@@ -60,7 +60,8 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 
 
     // Route for show list of Listing Report
-    Route::get('/indexlistingreport1',[ListingReportController::class, "index"])->name('index');
+    Route::get('/indexlistingreport1/{bp_code}',[ListingReportController::class, "index"]);
+    Route::get('/indexlistingreport1',[ListingReportController::class, "indexAll"]);
     // Route for store Listing Report
 
     // route view print
