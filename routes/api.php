@@ -49,7 +49,7 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 
 
     // Route for show list DN Header
-    Route::get('/indexdnheader1/{bp_code}',[DN_HeaderController::class, "index"]);
+    Route::get('/indexdnheader1/{po_no}',[DN_HeaderController::class, "index"]);
 
     // Route for show list DN Detail
     Route::get('/indexdndetail1/{no_dn}',[DN_DetailController::class, "index"]);
