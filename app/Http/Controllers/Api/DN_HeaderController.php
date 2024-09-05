@@ -7,17 +7,22 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\DN_HeaderResource;
+use Illuminate\Support\Facades\Auth;
 
 class DN_HeaderController extends Controller
 {
-    public function index($po_no)
+    public function index()
     {
+        $sp_code = Auth::user()->bp_code;
+
+        // dd($sp_code);
+
         // Eager load the 'podetail' relationship
-        $data_po = DN_Header::where('po_no', $po_no)->with('poHeader')->get();
+        $data_po = DN_Header::where('supplier_code', $sp_code)->with('poHeader')->get();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Success Display List PO Header',
+            'message' => 'Success Display List DN Header',
             'data' => DN_HeaderResource::collection($data_po)
         ], 200);
     }

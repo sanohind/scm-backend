@@ -13,7 +13,9 @@ class PO_HeaderController
     public function index($sp_code)
     {
         // Eager load the 'podetail' relationship
-        $data_po = PO_Header::where('supplier_code', $sp_code)->with('poDetail')->get();
+        $data_po = PO_Header::where('supplier_code', $sp_code)
+        ->whereNotIn('po_status', ['Closed','closed','close'])
+        ->with('poDetail')->get();
 
         return response()->json([
             'status' => 'success',
