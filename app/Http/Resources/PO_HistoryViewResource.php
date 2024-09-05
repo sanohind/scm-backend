@@ -18,6 +18,7 @@ class PO_HistoryViewResource extends JsonResource
             'po_number' => $this->po_no,
             'po_date' => $this->po_date,
             'po_status' => $this->po_status,
+            'note' => $this->reference_1,
             'detail' => PO_DetailViewResource::collection($this->whenLoaded('poDetail')),
         ];
     }
