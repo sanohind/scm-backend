@@ -110,7 +110,7 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
     Route::get('/pohistory3/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
 
     // Route for show list of Listing Report
-    Route::get('/indexlistingreport3',[ListingReportController::class, "index"])->name('index');
+    Route::get('/indexlistingreport3/{bp_code}',[ListingReportController::class, "index"])->name('index');
     Route::get('/listingreport/file/{filename}', [ListingReportController::class, 'getFile']);
     // Route for store Listing Report
     Route::post('/createlistingreport3',[ListingReportController::class, "store"]);
