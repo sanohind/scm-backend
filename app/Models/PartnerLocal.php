@@ -21,6 +21,8 @@ class PartnerLocal extends Model
         'bp_code',
         'bp_name',
         'bp_status_desc',
+        'bp_role',
+        'bp_role_desc',
         'bp_currency',
         'country',
         'adr_line_1',

@@ -202,7 +202,7 @@ class SynchronizeController
 
         */
         // get data
-        $sqlsrvDataPartner = Partner::All();
+        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'Supplier')->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {
@@ -213,6 +213,8 @@ class SynchronizeController
                 [
                     'bp_name' => $data->bp_name,
                     'bp_status_desc' => $data->bp_status_desc,
+                    'bp_role' => $data->bp_role,
+                    'bp_role_desc' => $data->bp_role_desc,
                     'bp_currency' => $data->bp_currency,
                     'country' => $data->contry,
                     'adr_line_1' => $data->adr_line_1,
@@ -239,6 +241,7 @@ class SynchronizeController
 
         $sqlsrvDataPoHeader = PO_Header_ERP::where('po_period', $actualPeriod)
             ->where('po_year', $actualYear)
+            ->where('po_type_desc', 'PO LOCAL')
             ->get();
 
 
@@ -319,6 +322,7 @@ class SynchronizeController
 
 
         */
+        // dd($passPoNo);
         $passDnNo = [];
         foreach ($passPoNo as $data) {
             $sqlsrvDataDnHeader = DN_Header_ERP::where('po_no', $data)->get();
