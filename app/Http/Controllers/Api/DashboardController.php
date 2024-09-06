@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\DN_Header;
 use App\Models\PO_Header;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\DashboardViewResource;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-class DashboardController extends Controller
+class DashboardController
 {
     /**
      * Display a listing of the resource.

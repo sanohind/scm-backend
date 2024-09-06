@@ -32,6 +32,22 @@ class DN_HeaderController extends Controller
         ], 200);
     }
 
+    public function indexWarehouse($sp_code)
+    {
+        //get data api to view
+        // Using eager loading request data to database for efficiency data
+        //in case calling data relation
+        $data_dnheader = DN_Header::with('poHeader')
+        ->where('supplier_code', $sp_code)
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Success Display List DN Header',
+            'data' => DN_HeaderResource::collection($data_dnheader)
+        ], 200);
+    }
+
     //test
     // View list data DNHeader
     public function indexAll()

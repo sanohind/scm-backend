@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\PO_DetailController;
 use App\Http\Controllers\Api\PO_HeaderController;
 use App\Http\Controllers\Api\ListingReportController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Api\DashboardController;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -73,7 +73,7 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
 
     //Logout route
-    Route::post('/logout1', [AuthController::class, 'logout']);
+    Route::post('supplier/logout', [AuthController::class, 'logout']);
 
 });
 
@@ -84,7 +84,7 @@ Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
 
     // Route for show list DN Header
     // Specific Partner
-    Route::get('/indexdnheader2/{po_no}',[DN_HeaderController::class, "index"]);
+    Route::get('/indexdnheader2/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
 
     // All
     Route::get('/indexdnheader2',[DN_HeaderController::class, "indexAll"]);
@@ -96,7 +96,7 @@ Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
     Route::get('/dnhistory2/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
 
     //Logout route
-    Route::post('/logout2', [AuthController::class, 'logout']);
+    Route::post('warehouse/logout', [AuthController::class, 'logout']);
 });
 
 //Route Purchasing
@@ -122,7 +122,7 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
     Route::get('/pohview3/{po_no}', [PrintController::class, 'poHeaderView']);
 
     //Logout route
-    Route::post('/logout3', [AuthController::class, 'logout']);
+    Route::post('purchasing/logout', [AuthController::class, 'logout']);
 });
 //Route Super Admin
 Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
@@ -144,7 +144,7 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
     Route::put('/updatestatus/{user}',[UserController::class, "updateStatus"]);
 
     //Logout route
-    Route::post('/logout4', [AuthController::class, 'logout']);
+    Route::post('super/logout4', [AuthController::class, 'logout']);
 });
 
 // route testing
