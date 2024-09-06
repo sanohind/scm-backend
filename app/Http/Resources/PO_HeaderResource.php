@@ -18,7 +18,7 @@ class PO_HeaderResource extends JsonResource
             'po_no' => $this->po_no,
             'po_date' => $this->po_date,
             'planned_receipt_date' => $this->planned_receipt_date,
-            'note' => $this->references_1,
+            'note' => $this->reference_1,
             'po_revision_no' => $this->po_revision_no,
             'po_revision_date' => $this->po_revision_date,
             'po_status' => $this->po_status,

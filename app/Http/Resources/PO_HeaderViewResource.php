@@ -22,7 +22,7 @@ class PO_HeaderViewResource extends JsonResource
             'pr_no'  => $this->pr_no,
             'delivery_term'  => $this->deliveryTermCalculate(),
             'currency'  => $this->po_currency,
-            'note'  => $this->references_2,
+            'note'  => $this->reference_1,
             'supplier_name'  => $this->supplier_name,
             'supplier_code'  => $this->supplier_code,
             'planned_receipt_date' => $this->planned_receipt_date,
