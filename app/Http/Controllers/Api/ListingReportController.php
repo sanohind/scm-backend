@@ -48,7 +48,7 @@ class ListingReportController extends Controller
         $request->validate([
             'bp_code' => 'required|string|max:25',
             'date' => 'required|date',
-            'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx,xls|max:10048', // Acceptable file formats
+            'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx,xls,csv|max:10048', // Acceptable file formats
         ]);
 
         // Change file name and file path to storage

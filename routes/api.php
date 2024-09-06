@@ -13,9 +13,11 @@ use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\PO_DetailController;
 use App\Http\Controllers\Api\PO_HeaderController;
 use App\Http\Controllers\Api\ListingReportController;
+use App\Http\Controllers\DashboardController;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
+
 
 // Route sync
 Route::get('/sync', [SynchronizeController::class, 'sync']);
@@ -27,6 +29,7 @@ Route::get('/copyDnDetail', [SynchronizeController::class, 'copyDnDetail']);
 
 //Route Supplier
 Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // route view history
     Route::get('/pohistory1/{bp_code}', [HistoryController::class, 'poHeaderHistory']);

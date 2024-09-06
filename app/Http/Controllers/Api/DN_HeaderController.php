@@ -18,7 +18,12 @@ class DN_HeaderController extends Controller
         // dd($sp_code);
 
         // Eager load the 'podetail' relationship
-        $data_po = DN_Header::where('supplier_code', $sp_code)->with('poHeader')->get();
+        $data_po = DN_Header::with('poHeader','dnDetail')
+        ->where('supplier_code', $sp_code)
+        ->whereHas('poHeader', function ($query){
+            $query->whereNotIn('po_status', ['Closed','closed','close']);
+        })
+        ->get();
 
         return response()->json([
             'status' => 'success',
