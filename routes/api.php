@@ -144,7 +144,7 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
     Route::put('/updatestatus/{user}',[UserController::class, "updateStatus"]);
 
     //Logout route
-    Route::post('super/logout4', [AuthController::class, 'logout']);
+    Route::post('admin/logout', [AuthController::class, 'logout']);
 });
 
 // route testing
