@@ -60,10 +60,12 @@ class DN_DetailController extends Controller
     }
 
     // Update data to database
-    public function update(Request $request, $dn_detail_no)
+    public function update(Request $request, $no_dn, $dn_line)
     {
         // Find the record by id
-        $dn_detail = DN_Detail::findOrFail($dn_detail_no);
+        $dn_detail = DN_Detail::where('no_dn', $no_dn)
+        ->where('dn_line', $dn_line)
+        ->findOrFail();
 
         if (!$dn_detail) {
             return response()->json([
@@ -73,7 +75,6 @@ class DN_DetailController extends Controller
         }
 
         $rules = [
-            'dn_detail_no' => 'required|string|max:25',
             'qty_confirm' => 'required|integer',
         ];
 

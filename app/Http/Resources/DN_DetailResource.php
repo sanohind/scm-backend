@@ -15,6 +15,8 @@ class DN_DetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'dn_detail_no' => $this->dn_detail_no,
+            'dn_line' => $this->dn_line,
             'part_no' => $this->part_no,
             'item_desc_a' => $this->item_desc_a,
             'dn_unit' => $this->dn_unit,

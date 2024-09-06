@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     // Route for edit list DN Detail
     Route::get('/edit1/{dn_detail_no}',[DN_DetailController::class, "edit"]);
     // Route for update list DN Detail
-    Route::put('/updatedndetail1/{dn_detail_no}',[DN_DetailController::class, "update"]);
+    Route::put('/updatedndetail1/{no_dn}/{dn_line}',[DN_DetailController::class, "update"]);
 
 
     // Route for show list of Listing Report
