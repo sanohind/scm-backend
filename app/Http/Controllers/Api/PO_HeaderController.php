@@ -7,24 +7,43 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\PO_HeaderResource;
+use Carbon\Carbon;
 
 class PO_HeaderController
 {
+    // To get PO Header data based supplier_code
     public function index($sp_code)
     {
-        // Eager load the 'podetail' relationship
+        // Eager load the 'poDetail' relationship
         $data_po = PO_Header::where('supplier_code', $sp_code)
-        ->whereNotIn('po_status', ['Closed','closed','close'])
+        ->whereNotIn('po_status', ['Closed','closed','close','Cancelled','cancelled','cancel'])
         ->with('poDetail')->get();
 
+        // Check if user available
+        if (!$data_po) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User Not Found'
+            ], 404);
+        }
+
+        // Check if data empty
+        if ($data_po->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'PO Header data not found / empty / all PO data is Closed'
+            ], 404);
+        }
+
+        // If data isn't empty
         return response()->json([
-            'status' => 'success',
+            'status' => true,
             'message' => 'Success Display List PO Header',
             'data' => PO_HeaderResource::collection($data_po)
         ], 200);
     }
 
-    //test
+    // Test to get all po header data
     public function indexAll()
     {
         // Eager load the 'podetail' relationship
@@ -37,23 +56,35 @@ class PO_HeaderController
         ], 200);
     }
 
+    // For update response column in po header
     public function update(Request $request, $po_no)
     {
         $po_header = PO_Header::with('poDetail')->find($po_no);
 
+        // Check if PO header not found
         if (!$po_header) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'PO Not Found'
+                'message' => 'PO Header Not Found'
             ], 404);
         }
 
+        // Rules data request
         $rules = [
             'response' => 'required|string|max:25',
         ];
 
-        $validator = Validator::make($request->all(), $rules);
+        // Message if data request error or invalid
+        $messages = [
+            'response.required' => 'The response field is required.',
+            'response.string' => 'The response must be a string.',
+            'response.max' => 'The response cannot be longer than 25 characters.',
+        ];
 
+        // Validator to check the rules isn't violated
+        $validator = Validator::make($request->all(), $rules,$messages);
+
+        // Check if validator fail
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
@@ -62,8 +93,23 @@ class PO_HeaderController
             ], 422);
         }
 
-        $po_header->update($validator->validated());
+        // Update coloumn based of value requested
+        // If Accepted
+        if ($request->response == "Accepted") {
+            $po_header->update([
+                'response' => $request->input('response'),
+                'accept_at' => Carbon::now()->format('Y-m-d H:i')
+            ]);
+        }
+        // If Decline
+        elseif ($request->response == "Declined") {
+            $po_header->update([
+                'response' => $request->input('response'),
+                'decline_at' => Carbon::now()->format('Y-m-d H:i')
+            ]);
+        }
 
+        // Return respond
         return response()->json([
             'status' => 'success',
             'message' => 'PO Edited Success',

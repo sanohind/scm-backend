@@ -11,6 +11,7 @@ use GuzzleHttp\Psr7\Header;
 class HistoryController
 {
     // this controller is for get the data that needed for history
+    // PO History
     public function poHeaderHistory($bp_code)
     {
         // $user = Auth::user();
@@ -19,26 +20,27 @@ class HistoryController
         //get data api to view
         $data_po = PO_Header::with('partner','poDetail')
                             ->where('supplier_code', $bp_code)
-                            ->where('po_status', 'closed')
+                            ->whereIn('po_status', ['Closed','closed','close','Cancelled','cancelled','cancel'])
                             ->get();
 
         // dd($data_po);
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List PO',
+            'message' => 'Berhasil Menampilkan List PO History',
             'data' => PO_HistoryViewResource::collection($data_po)
         ]);
     }
 
+    // DN History
     public function dnHeaderHistory($bp_code)
     {
-        $tes = $bp_code;
+        $code = $bp_code;
         //get data api to view
         $data_dn = DN_Header::with('poHeader','dnDetail')
-                            ->whereHas('poHeader', function($query)  use ($tes)
+                            ->whereHas('poHeader', function($query)  use ($code)
                             {
-                                $query->where('po_status', 'closed');
-                                $query->where('supplier_code', $tes);
+                                $query->whereIn('po_status', ['Closed','closed','close','Cancelled','cancelled','cancel']);
+                                $query->where('supplier_code', $code);
                             })
         ->get();
 

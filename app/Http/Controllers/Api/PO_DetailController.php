@@ -10,20 +10,31 @@ use App\Http\Resources\PO_DetailResource;
 
 class PO_DetailController extends Controller
 {
-    // View list data PODetail
+    // To get PO Detail data based supplier_code
     public function index($po_no)
     {
-        // Fetch PO details based on the provided po_no
-        $data_podetail = PO_Detail::where('po_no', $po_no)->get();
+        // Eager load the 'poHeader' relationship
+        $data_podetail = PO_Detail::where('po_no', $po_no)
+        ->with('poHeader')
+        ->get();
 
-        if ($data_podetail->isEmpty()) {
+        // Check if PO Header available
+        if (!$data_podetail) {
             return response()->json([
-                'success' => false,
-                'message' => 'PO details not found',
-                'data' => []
+                'status' => 'error',
+                'message' => 'PO Number Not Found'
             ], 404);
         }
 
+        // Check if data empty
+        if ($data_podetail->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'PO details not found / empty'
+            ], 404);
+        }
+
+        // If data isn't empty
         return response()->json([
             'success' => true,
             'message' => 'Success Display List PO Detail',
@@ -31,12 +42,13 @@ class PO_DetailController extends Controller
         ], 200);
     }
 
-    //test
+    // Test function to get all data
     public function indexAll()
     {
-        // Fetch PO details based on the provided po_no
+        // Eager load the 'poHeader' relationship
         $data_podetail = PO_Detail::with('poHeader')->get();
 
+         // Check if data empty
         if ($data_podetail->isEmpty()) {
             return response()->json([
                 'success' => false,
@@ -45,6 +57,7 @@ class PO_DetailController extends Controller
             ], 404);
         }
 
+        // If data isn't empty
         return response()->json([
             'success' => true,
             'message' => 'Success Display List PO Detail',
