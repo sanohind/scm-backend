@@ -47,7 +47,9 @@ class SyncDatabaseJob implements ShouldQueue
 
         */
         // get data
-        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'Supplier')->get();
+        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'LIKE','%Supplier%')
+        ->where('contry', 'IDN')
+        ->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {
@@ -235,5 +237,7 @@ class SyncDatabaseJob implements ShouldQueue
                 );
             }
         }
+
+        return response()->json(['message' => 'Data successfuly Sync']);
     }
 }
