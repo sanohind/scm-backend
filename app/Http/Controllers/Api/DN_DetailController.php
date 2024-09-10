@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+
 use App\Models\DN_Detail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\DN_DetailResource;
+use Illuminate\Support\Facades\Validator;
 
 class DN_DetailController extends Controller
 {
@@ -60,43 +61,24 @@ class DN_DetailController extends Controller
     }
 
     // Update data to database
-    public function update(Request $request, $no_dn, $dn_line)
-    {
-        // Find the record by id
-        $dn_detail = DN_Detail::where('no_dn', $no_dn)
-        ->where('dn_line', $dn_line)
-        ->findOrFail();
+public function update(Request $request)
+{
+    $data = $request->validate([
+        'updates.*.dn_detail_no' => 'required|integer|exists:dn_detail,dn_detail_no',
+        'updates.*.qty_confirm' => 'required|integer|min:0',
+    ]);
 
-        if (!$dn_detail) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'DN Detail Not Found'
-            ], 404);
-        }
+    $updates = $data['updates'];
 
-        $rules = [
-            'qty_confirm' => 'required|integer',
-        ];
-
-        // Validate the request data
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validate Fail',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        // Update the record with the validated data
-        $dn_detail->update($validator->validated());
-
-        // Return value
-        return response()->json([
-            'success' => true,
-            'message' => 'Success Edit Quantity ' . $dn_detail->qty_confirm . '',
-            'data' => new DN_DetailResource($dn_detail)
-        ], 200);
+    foreach ($updates as $update) {
+        // Find the record to update
+        $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->with('dnHeader')->first();
+        // Update the record
+        $record->qty_confirm = $update['qty_confirm'];
+        $record->save();
     }
+
+    return response()->json(['message' => 'DN details updated successfully']);
+}
+
 }
