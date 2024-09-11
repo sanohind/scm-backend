@@ -37,7 +37,7 @@ class DN_HeaderController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_dnheader = DN_Header::with('poHeader')
+        $data_dnheader = DN_Header::with('poHeader','dnDetail')
         ->where('supplier_code', $sp_code)
         ->get();
 

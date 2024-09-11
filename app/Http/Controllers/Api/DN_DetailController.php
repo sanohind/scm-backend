@@ -19,8 +19,7 @@ class DN_DetailController extends Controller
         if ($data_dndetail->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'DN details not found',
-                'data' => []
+                'message' => 'DN details not found'
             ], 404);
         }
 
@@ -40,8 +39,7 @@ class DN_DetailController extends Controller
         if ($data_podetail->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'PO details not found',
-                'data' => []
+                'message' => 'PO details not found'
             ], 404);
         }
 
@@ -61,24 +59,23 @@ class DN_DetailController extends Controller
     }
 
     // Update data to database
-public function update(Request $request)
-{
-    $data = $request->validate([
-        'updates.*.dn_detail_no' => 'required|integer|exists:dn_detail,dn_detail_no',
-        'updates.*.qty_confirm' => 'required|integer|min:0',
-    ]);
+    public function update(Request $request)
+    {
+        $data = $request->validate([
+            'updates.*.dn_detail_no' => 'required|integer|exists:dn_detail,dn_detail_no',
+            'updates.*.qty_confirm' => 'required|integer|min:0',
+        ]);
 
-    $updates = $data['updates'];
+        $updates = $data['updates'];
 
-    foreach ($updates as $update) {
-        // Find the record to update
-        $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->with('dnHeader')->first();
-        // Update the record
-        $record->qty_confirm = $update['qty_confirm'];
-        $record->save();
+        foreach ($updates as $update) {
+            // Find the record to update
+            $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->with('dnHeader')->first();
+            // Update the record
+            $record->qty_confirm = $update['qty_confirm'];
+            $record->save();
+        }
+
+        return response()->json(['message' => 'DN details updated successfully']);
     }
-
-    return response()->json(['message' => 'DN details updated successfully']);
-}
-
 }
