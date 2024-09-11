@@ -19,7 +19,7 @@ class HistoryController
         //get data api to view
         $data_po = PO_Header::with('partner','poDetail')
                             ->where('supplier_code', $bp_code)
-                            ->where('po_status', 'closed')
+                            ->whereIn('po_status', ['Closed','closed','close','Cancelled','cancelled'])
                             ->get();
 
         // dd($data_po);
@@ -37,7 +37,7 @@ class HistoryController
         $data_dn = DN_Header::with('poHeader','dnDetail')
                             ->whereHas('poHeader', function($query)  use ($tes)
                             {
-                                $query->where('po_status', 'closed');
+                                $query->whereIn('po_status', ['Closed','closed','close','Cancelled','cancelled']);
                                 $query->where('supplier_code', $tes);
                             })
         ->get();
