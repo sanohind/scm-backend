@@ -63,36 +63,57 @@ class DN_DetailController extends Controller
     // Update data to database
     public function update(Request $request)
     {
-        $data = $request->validate([
-            'no_dn' => 'required|string',
-            'updates' => 'required|array',
-            'updates.*.dn_detail_no' => 'required|integer|exists:dn_detail,dn_detail_no',
-            'updates.*.qty_confirm' => 'required|integer|min:0',
-        ]);
+        try {
+            // Dump the request data to inspect the incoming data
+            // dd($request->all()); // Uncomment this for debugging if needed
 
-        $update_header = DN_Header::where('no_dn', $data['no_dn'])->first();
-
-        if ($update_header) {
-            $time = Carbon::now()->format('Ymd H:i');
-            $update_header->update([
-                'confirm_update_at' => $time,
+            // Validate request data
+            $data = $request->validate([
+                'no_dn' => 'required|string',
+                'updates' => 'required|array',
+                'updates.*.dn_detail_no' => 'required|integer|exists:dn_detail,dn_detail_no',
+                'updates.*.qty_confirm' => 'required|integer|min:0',
             ]);
-        }
 
-        // Update multiple data DN_Detail column qty_confirm
-        foreach ($data['updates'] as $update) {
-            $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->first();
+            // Dump the validated data to verify
+            // dd($data); // Uncomment this for debugging if needed
 
-            if ($record) {
-                $record->update([
-                    'qty_confirm' => $update['qty_confirm'],
+            // Update DN_Header with current timestamp
+            $update_header = DN_Header::where('no_dn', $data['no_dn'])->first();
+
+            if ($update_header) {
+                $time = Carbon::now()->format('Y-m-d H:i:s'); // Correct datetime format
+                $update_header->update([
+                    'confirm_update_at' => $time,
                 ]);
             } else {
-                // Handle the case where the record is not found
-                return response()->json(['error' => 'DN Detail not found for: ' . $update['dn_detail_no']], 404);
+                return response()->json(['error' => 'Header not found for: ' . $data['no_dn']], 404);
             }
-        }
 
-        return response()->json(['message' => 'DN details updated successfully']);
+            // Update DN_Detail records
+            foreach ($data['updates'] as $update) {
+                $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->first();
+
+                if ($record) {
+                    $record->update([
+                        'qty_confirm' => $update['qty_confirm'],
+                    ]);
+                } else {
+                    // Handle the case where the record is not found
+                    return response()->json(['error' => 'DN Detail not found for: ' . $update['dn_detail_no']], 404);
+                }
+            }
+
+            return response()->json(['message' => 'DN details updated successfully']);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation errors
+            $errors = $e->errors();
+            return response()->json(['error' => 'Validation failed', 'details' => $errors], 422);
+
+        } catch (\Exception $e) {
+            // Handle other types of exceptions
+            return response()->json(['error' => 'An unexpected error occurred', 'details' => $e->getMessage()], 500);
+        }
     }
 }
