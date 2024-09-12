@@ -7,6 +7,8 @@ use App\Models\DN_Detail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DN_DetailResource;
+use App\Models\DN_Header;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class DN_DetailController extends Controller
@@ -62,18 +64,35 @@ class DN_DetailController extends Controller
     public function update(Request $request)
     {
         $data = $request->validate([
+            'no_dn' => 'required|string',
+            'updates' => 'required|array',
             'updates.*.dn_detail_no' => 'required|integer|exists:dn_detail,dn_detail_no',
             'updates.*.qty_confirm' => 'required|integer|min:0',
         ]);
 
-        $updates = $data['updates'];
+        // update data DN_header column confirm_update_at
+        $data_header= $data['no_dn'];
 
-        foreach ($updates as $update) {
+        $update_header = DN_Header::where('no_dn', $data_header)->first();
+
+        if($update_header){
+            $time = Carbon::now()->format('Ymd H:i');
+            $update_header->update([
+                'confirm_update_at' => $time
+            ]);
+        }
+
+        // update multiple data DN_Detail column qty_confirm
+        $data_detail = $data['updates'];
+
+        foreach ($data_detail as $update) {
             // Find the record to update
             $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->with('dnHeader')->first();
             // Update the record
-            $record->qty_confirm = $update['qty_confirm'];
-            $record->save();
+            $record->update([
+                'qty_confirm' => $update['qty_confirm'],
+            ]);
+
         }
 
         return response()->json(['message' => 'DN details updated successfully']);
