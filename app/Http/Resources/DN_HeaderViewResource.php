@@ -24,6 +24,7 @@ class DN_HeaderViewResource extends JsonResource
                     return (new DN_DetailViewResource($detail))->valueForTotalBox();
                 }
             ),
+            'confirm_update_at' => $this->confirm_update_at,
             'printed_date' => $this->dn_printed_at,
             'detail' => DN_DetailViewResource::collection($this->whenLoaded('dnDetail'))
         ];
