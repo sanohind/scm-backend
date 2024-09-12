@@ -70,29 +70,27 @@ class DN_DetailController extends Controller
             'updates.*.qty_confirm' => 'required|integer|min:0',
         ]);
 
-        // update data DN_header column confirm_update_at
-        $data_header= $data['no_dn'];
+        $update_header = DN_Header::where('no_dn', $data['no_dn'])->first();
 
-        $update_header = DN_Header::where('no_dn', $data_header)->first();
-
-        if($update_header){
+        if ($update_header) {
             $time = Carbon::now()->format('Ymd H:i');
             $update_header->update([
-                'confirm_update_at' => $time
+                'confirm_update_at' => $time,
             ]);
         }
 
-        // update multiple data DN_Detail column qty_confirm
-        $data_detail = $data['updates'];
+        // Update multiple data DN_Detail column qty_confirm
+        foreach ($data['updates'] as $update) {
+            $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->first();
 
-        foreach ($data_detail as $update) {
-            // Find the record to update
-            $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->with('dnHeader')->first();
-            // Update the record
-            $record->update([
-                'qty_confirm' => $update['qty_confirm'],
-            ]);
-
+            if ($record) {
+                $record->update([
+                    'qty_confirm' => $update['qty_confirm'],
+                ]);
+            } else {
+                // Handle the case where the record is not found
+                return response()->json(['error' => 'DN Detail not found for: ' . $update['dn_detail_no']], 404);
+            }
         }
 
         return response()->json(['message' => 'DN details updated successfully']);
