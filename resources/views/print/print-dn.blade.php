@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <title>Delivery Note PT Sanoh Indonesia</title>
-    <link rel="icon" type="image/png" href="../../assets/icon_sanoh.png">
+    <link rel="icon" type="image/png" href="{{asset("/images/icon_sanoh.png")}}">
 
     <style>
         body {
@@ -389,7 +389,7 @@ if (index % rowsPerPage === 0) {
     pageContent += `
         <div class="header">
             <div class="logo">
-                <img src="../../assets/logo-sanoh.png" alt="Sanoh Logo">
+                <img src="{{asset("/images/logo-sanoh.png")}}" alt="Sanoh Logo">
             </div>
             <div class="company-info">
                 <p><b>PT. SANOH INDONESIA</b> <br>Jl. Inti II, Blok C-4 No.10, Kawasan Industri Hyundai, Cikarang, Kab. Bekasi<br>
@@ -532,7 +532,7 @@ if (items.length === 0) {
     pageContent = `
             <div class="header">
                 <div class="logo">
-                    <img src="../../assets/logo-sanoh.png" alt="Sanoh Logo">
+                    <img src="{{asset("/images/logo-sanoh.png")}}" alt="Sanoh Logo">
                 </div>
                 <div class="company-info">
                     <p><b>PT. SANOH INDONESIA</b> <br>Jl. Inti II, Blok C-4 No.10, Kawasan Industri Hyundai, Cikarang, Kab. Bekasi<br>

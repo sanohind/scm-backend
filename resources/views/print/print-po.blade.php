@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <title>Purchase Order PT Sanoh Indonesia</title>
-    <link rel="icon" type="image/png" href="../../assets/icon_sanoh.png">
+    <link rel="icon" type="image/png" href="{{asset("/images/icon_sanoh.png")}}">
     <style>
         body {
             font-family: "Poppins", sans-serif;
@@ -316,7 +316,7 @@ function renderTable(data, items) {
                 <div class="container">
                     <div class="header">
                         <div class="logo">
-                            <img src="../../assets/logo_sanoh_address.png" alt="Sanoh Logo">
+                            <img src="{{asset("/images/logo_sanoh_address.png")}}" alt="Sanoh Logo">
                         </div>
                         <div class="company-info">
                             <h3>Purchase Order</h3>
