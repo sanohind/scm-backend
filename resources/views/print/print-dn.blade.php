@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <title>Delivery Note PT Sanoh Indonesia</title>
-    <link rel="icon" type="image/png" href="../../assets/icon_sanoh.png">
+    <link rel="icon" type="image/png" href="{{asset("/images/icon_sanoh.png")}}">
 
     <style>
         body {
@@ -307,6 +307,7 @@
     </div>
         <!-- Page Content Container -->
 
+<script>
 // Helper function to concatenate part descriptions
 function concatenatePartName(part_name) {
     return part_name;
@@ -388,42 +389,42 @@ if (index % rowsPerPage === 0) {
     pageContent += `
         <div class="header">
             <div class="logo">
-                <img src="../../assets/logo-sanoh.png" alt="Sanoh Logo">
+                <img src="{{asset("/images/logo-sanoh.png")}}" alt="Sanoh Logo">
             </div>
             <div class="company-info">
                 <p><b>PT. SANOH INDONESIA</b> <br>Jl. Inti II, Blok C-4 No.10, Kawasan Industri Hyundai, Cikarang, Kab. Bekasi<br>
                     Phone +62 21 89907963</p>
             </div>
             <div class="delivery-note">
-                <h3>DELIVERY NOTE<br><span id="dnNumber">${header.dn_number || 'N/A'}</span></h3>
+                <h3>DELIVERY NOTE<br><span id="dnNumber">{{ $header['dn_number'] }}</span></h3>
             </div>
         </div>
         <div class="details">
             <div class="details-left">
                 <div class="detail-item">
-                    <strong>Supplier Code</strong> <span id="supplierCode">: ${header.supplier_code || 'N/A'}</span>
+                    <strong>Supplier Code</strong> <span id="supplierCode">: {{ $header['supplier_code'] }}</span>
                 </div>
                 <div class="detail-item">
-                    <strong>Supplier Name</strong> <span id="supplierName">: ${header.supplier_name || 'N/A'}</span>
+                    <strong>Supplier Name</strong> <span id="supplierName">: {{ $header['supplier_name'] }}</span>
                 </div>
                 <div class="detail-item">
-                    <strong>DN Number</strong> <span id="dnNumberDetail">: ${header.dn_number || 'N/A'}</span>
+                    <strong>DN Number</strong> <span id="dnNumberDetail">: {{ $header['dn_number'] }}</span>
                 </div>
                 <div class="detail-item">
-                    <strong>PO Number</strong> <span id="poNumber">: ${header.po_number || 'N/A'}</span>
+                    <strong>PO Number</strong> <span id="poNumber">: {{ $header['po_number'] }}</span>
                 </div>
             </div>
             <div class="details-right">
                 <div class="detail-item">
-                    <strong>Planned Received Date</strong> <span id="plannedReceivedDate">: ${header.planned_receipt_date || 'N/A'}</span>
+                    <strong>Planned Received Date</strong> <span id="plannedReceivedDate">: {{ $header['planned_receipt_date'] }}</span>
                 </div>
                 <div class="detail-item">
-                    <strong>Actual Received Date</strong> <span id="actualReceivedDate">: : ${header.actual_received_date || '_______________'}</span>
+                    <strong>Actual Received Date</strong> <span id="actualReceivedDate">: : {{ $header['planned_receipt_date || '_______________''] }}</span>
                 </div>
                 <div class="detail-item">
                     <div class="total-box">
                         <strong class="box-label">Total Box</strong>
-                        <span id="totalBox" class="box-number">${header.total_box || '0'}</span>
+                        <span id="totalBox" class="box-number">{{ $header['total_box'] }}</span>
                     </div>
                 </div>
             </div>
@@ -452,15 +453,15 @@ if (index % rowsPerPage === 0) {
     // Menambahkan item ke tabel
     pageContent += `
         <tr>
-            <td>${index + 1}</td>
-            <td><b>${item.supplier_part_number || 'N/A'}</b><br>${item.internal_part_number || 'N/A'}</td>
-            <td>${item.part_name || 'N/A'}</td>
-            <td>${item.pcs_per_kamban || '0'}</td>
-            <td>${item.no_of_kamban || '0'}</td>
-            <td>${item.total_quantity || '0'}</td>
-            <td>${item.confirmation_supp || ''}</td>
-            <td>${item.confirmation_sanoh || ''}</td>
-            <td>${item.box_quantity || '0'}</td>
+            <td>{{ $index + 1 }}</td>
+            <td><b>{{ $item['supplier_part_number'] }}</b><br>{{ $item['internal_part_number'] }}</td>
+            <td>{{ $item['part_name'] }}</td>
+            <td>{{ $item['pcs_per_kamban'] }}</td>
+            <td>{{ $item['no_of_kamban'] }}</td>
+            <td>{{ $item['total_quantity'] }}</td>
+            <td>{{ $item['confirmation_supp|| ''' ] }}</td>
+            <td>{{ $item['confirmation_sanoh|| ''' ] }}</td>
+            <td>{{ $item['box_quantity'] }}</td>
         </tr>
     `;
 });
@@ -531,7 +532,7 @@ if (items.length === 0) {
     pageContent = `
             <div class="header">
                 <div class="logo">
-                    <img src="../../assets/logo-sanoh.png" alt="Sanoh Logo">
+                    <img src="{{asset("/images/logo-sanoh.png")}}" alt="Sanoh Logo">
                 </div>
                 <div class="company-info">
                     <p><b>PT. SANOH INDONESIA</b> <br>Jl. Inti II, Blok C-4 No.10, Kawasan Industri Hyundai, Cikarang, Kab. Bekasi<br>
@@ -544,29 +545,29 @@ if (items.length === 0) {
             <div class="details">
                 <div class="details-left">
                     <div class="detail-item">
-                        <strong>Supplier Code</strong> <span id="supplierCode">: ${header.supplier_code || 'N/A'}</span>
+                        <strong>Supplier Code</strong> <span id="supplierCode">: {{ $header['supplier_code'] }}</span>
                     </div>
                     <div class="detail-item">
-                        <strong>Supplier Name</strong> <span id="supplierName">: ${header.supplier_name || 'N/A'}</span>
+                        <strong>Supplier Name</strong> <span id="supplierName">: {{ $header['supplier_name'] }}</span>
                     </div>
                     <div class="detail-item">
-                        <strong>DN Number</strong> <span id="dnNumberDetail">: ${header.dn_number || 'N/A'}</span>
+                        <strong>DN Number</strong> <span id="dnNumberDetail">: {{ $header['dn_number'] }}</span>
                     </div>
                     <div class="detail-item">
-                        <strong>PO Number</strong> <span id="poNumber">: ${header.po_number || 'N/A'}</span>
+                        <strong>PO Number</strong> <span id="poNumber">: {{ $header['po_number'] }}</span>
                     </div>
                 </div>
                 <div class="details-right">
                     <div class="detail-item">
-                        <strong>Planned Received Date</strong> <span id="plannedReceivedDate">: ${header.planned_receipt_date || 'N/A'}</span>
+                        <strong>Planned Received Date</strong> <span id="plannedReceivedDate">: {{ $header['planned_receipt_date'] }}</span>
                     </div>
                     <div class="detail-item">
-                        <strong>Actual Received Date</strong> <span id="actualReceivedDate">: : ${header.actual_received_date || '_______________'}</span>
+                        <strong>Actual Received Date</strong> <span id="actualReceivedDate">: : {{ $header['planned_receipt_date || '_______________''] }}</span>
                     </div>
                     <div class="detail-item">
                         <div class="total-box">
                             <strong class="box-label">Total Box</strong>
-                            <span id="totalBox" class="box-number">${header.total_box || '0'}</span>
+                            <span id="totalBox" class="box-number">{{ $header['total_box'] }}</span>
                         </div>
                     </div>
                 </div>
@@ -597,5 +598,6 @@ if (items.length === 0) {
 
         return pageContent;
 };
+</script>
 </body>
 </html>
