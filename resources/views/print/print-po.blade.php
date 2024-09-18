@@ -326,14 +326,14 @@ function renderTable(data, items) {
                     </div>
                     <div class="details">
                         <div class="details-left">
-                            <div><strong>To</strong> <span>: <strong>${data.supplier_name}</strong></span></div>
-                            <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${data.supplier_code}</strong></span></div>
-                            <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${data.supplier_address}</strong></span></div>
+                            <div><strong>To</strong> <span>: <strong>{{ $data['supplier_name'] }}</strong></span></div>
+                            <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>{{ $data['supplier_code'] }}</strong></span></div>
+                            <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>{{ $data['supplier_address'] }}</strong></span></div>
                             <br>
-                            <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Phone Number: ${data.phone_number}</span></div>
-                            <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fax Number: ${data.fax_number}</span></div>
+                            <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Phone Number: {{ $data['phone_number'] }}</span></div>
+                            <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fax Number: {{ $data['fax_number'] }}</span></div>
                             <br>
-                            <div><strong>Attn</strong> <span>: ${data.attn}</span></div>
+                            <div><strong>Attn</strong> <span>: {{ $data['attn'] }}</span></div>
                             <br>
                             <div><span>Please supply the following</span></div>
                             <br>
@@ -342,31 +342,31 @@ function renderTable(data, items) {
                         <div class="details-right">
                             <div class="row">
                                 <div class="label">P/O NO</div>
-                                <div class="value">: ${data.po_number}</div>
+                                <div class="value">: {{ $data['po_number'] }}</div>
                             </div>
                             <div class="row">
                                 <div class="label">Date</div>
-                                <div class="value">: ${data.po_date}</div>
+                                <div class="value">: {{ $data['po_date'] }}</div>
                             </div>
                             <div class="row">
                                 <div class="label">P/O Type</div>
-                                <div class="value">: ${data.po_type}</div>
+                                <div class="value">: {{ $data['po_type'] }}</div>
                             </div>
                             <div class="row">
                                 <div class="label">PR</div>
-                                <div class="value">: ${data.pr_no}</div>
+                                <div class="value">: {{ $data['pr_no'] }}</div>
                             </div>
                             <div class="row">
                                 <div class="label">Planned Receipt</div>
-                                <div class="value">: ${data.planned_receipt_date}</div>
+                                <div class="value">: {{ $data['planned_receipt_date'] }}</div>
                             </div>
                             <div class="row">
                                 <div class="label">Delivery Terms</div>
-                                <div class="value">: ${data.delivery_term}</div>
+                                <div class="value">: {{ $data['delivery_term'] }}</div>
                             </div>
                             <div class="row">
                                 <div class="label">Currency</div>
-                                <div class="value">: ${data.currency}</div>
+                                <div class="value">: {{ $data['currency'] }}</div>
                             </div>
                         </div>
                     </div>

@@ -18,6 +18,10 @@ use App\Http\Controllers\Api\DashboardController;
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
+// route view print
+Route::get('/dnhview/{no_dn}', [PrintController::class, 'dnHeaderView']);
+Route::get('/lbview/{no_dn}', [PrintController::class, 'labelView']);
+Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
 
 // Route sync
 Route::get('/sync', [SynchronizeController::class, 'sync']);
@@ -34,11 +38,6 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     // route view history
     Route::get('/pohistory1/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
     Route::get('/dnhistory1/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
-
-    // route view print
-    Route::get('/pohview1/{po_no}', [PrintController::class, 'poHeaderView']);
-    Route::get('/dnhview1/{no_dn}', [PrintController::class, 'dnHeaderView']);
-    Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
 
     // Route for show list PO Header
     // Specific Partner
@@ -67,15 +66,10 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     Route::get('/listingreport1/file/{filename}', [ListingReportController::class, 'getFile']);
     // Route for store Listing Report
 
-    // route view print
-    Route::get('/pohview1/{po_no}', [PrintController::class, 'poHeaderView']);
-    Route::get('/dnhview1/{no_dn}', [PrintController::class, 'dnHeaderView']);
-    Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
-
     //Logout route
     Route::post('supplier/logout', [AuthController::class, 'logout']);
-
 });
+
 
 //Route Warehouse
 Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
