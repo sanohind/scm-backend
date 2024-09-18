@@ -19,39 +19,40 @@ class PrintController
 {
     // this controller is for get the data that needed for print report
     public function poHeaderView($po_no)
-    {
-        // Get data for pdf
-        $data_po = PO_Header::with('poDetail')
-            ->where('po_no', $po_no)
-            ->first();
+{
+    // Get data for pdf
+    $data_po = PO_Header::with('poDetail')
+        ->where('po_no', $po_no)
+        ->first();
 
-        // Return if po false/not found
-        if (!$data_po) {
-            return response()->json([
-                'success' => false,
-                'message' => 'PO not found!',
-            ], 404);
-        }
-
-        try {
-            // Processed data get to resource
-            $value = new PO_HeaderViewResource($data_po);
-
-            // For generate pdf view
-            $pdf = PDF::loadView('print.print-po', ['data' => $value]);
-
-            // For Stream pdf view
-            return $pdf->stream('Purchase_Order_' . $po_no . '.pdf');
-        } catch (\Exception $e) {
-
-            // Exception for pdf generate error
-            \Log::error("PDF generation error: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to generate PDF.',
-            ], 500);
-        }
+    // Return if PO is not found
+    if (!$data_po) {
+        return response()->json([
+            'success' => false,
+            'message' => 'PO not found!',
+            'po_no' => $po_no,  // Log the PO number in the response for debugging
+        ], 404);
     }
+
+    try {
+        // Load the data into a resource if needed
+        $value = new PO_HeaderViewResource($data_po);
+
+        // Generate the PDF view
+        $pdf = PDF::loadView('print.print-po', ['data' => $value]);
+
+        // Stream the PDF directly to the browser
+        return $pdf->stream('Purchase_Order_' . $po_no . '.pdf');
+    } catch (\Exception $e) {
+        // Log and handle any exceptions
+        \Log::error("PDF generation error: " . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to generate PDF.',
+        ], 500);
+    }
+}
+
 
     public function dnHeaderView($no_dn)
     {
