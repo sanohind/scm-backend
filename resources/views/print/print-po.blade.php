@@ -285,6 +285,7 @@
 <!-- Page Content Container -->
 <div id="page-content"></div>
 
+<script>
 // Function to calculate delivery term
 function calculateDeliveryTerm(po_date, planned_receipt_date) {
     const date1 = new Date(po_date);
@@ -390,14 +391,14 @@ function renderTable(data, items) {
         // Add item rows
         pageContent += `
             <tr>
-                <td>${index + 1}</td>
-                <td>${item.seq_no}</td>
-                <td>${item.part_name} <br> ${item.part_number}</td>
-                <td>${item.delivery_date}</td>
-                <td>${item.quantity}</td>
-                <td>${item.unit}</td>
-                <td>${item.unit_price}</td>
-                <td>${item.amount}</td>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $item['seq_no'] }}</td>
+                <td>{{ $item['part_name'] }} <br> {{ $item['part_number'] }}</td>
+                <td>{{ $item['delivery_date'] }}</td>
+                <td>{{ $item['quantity'] }}</td>
+                <td>{{ $item['unit'] }}</td>
+                <td>{{ $item['unit_price'] }}</td>
+                <td>{{ $item['amount'] }}</td>
             </tr>`;
         subtotal = data.total_amount;
     });
@@ -408,17 +409,17 @@ function renderTable(data, items) {
         <tr>
             <th colspan="6"></th>
             <th style="text-align: right;">Subtotal</th>
-            <th style="text-align: right;">${subtotal}</th>
+            <th style="text-align: right;">{{ $subtotal }}</th>
         </tr>
         <tr>
             <th colspan="6"></th>
             <th style="text-align: right;">PPN 11%</th>
-            <th style="text-align: right;">${(subtotal * 0.11).toFixed(2)}</th>
+            <th style="text-align: right;">{{ $subtotal * 0.11}}.toFixed(2)}</th>
         </tr>
         <tr>
             <th colspan="6"></th>
             <th style="text-align: right;">Total</th>
-            <th style="text-align: right;">${(subtotal * 1.11).toFixed(2)}</th>
+            <th style="text-align: right;">{{ $subtotal * 1.11}}.toFixed(2)}</th>
         </tr>
 
             </tbody>
@@ -427,7 +428,7 @@ function renderTable(data, items) {
             <div style="display: flex; margin-bottom: 5px;">
                 <div style="min-width: 100px; font-weight: bold;">Note</div>
                 <div style="min-width: 10px;">:</div>
-                <div>${data.note}</div>
+                <div>{{ $data['note'] }}</div>
             </div>
             <div style="display: flex; margin-bottom: 5px;">
                 <div style="min-width: 100px; font-weight: bold;">Delivery</div>
@@ -436,7 +437,7 @@ function renderTable(data, items) {
             <div style="display: flex; margin-bottom: 5px;">
                 <div style="min-width: 100px; font-weight: bold;">Terms</div>
                 <div style="min-width: 10px;">:</div>
-                <div>${data.terms}</div>
+                <div>{{ $data['terms'] }}</div>
             </div>
             <div style="display: flex;">
                 <div style="min-width: 100px; font-weight: bold;">Delivery Place</div>
@@ -445,7 +446,7 @@ function renderTable(data, items) {
                     PT. SANOH INDONESIA <br>
                     JL. INTI II BLOK C4 NO. 10 KAWASAN INDUSTRI HYUNDAI, <br>
                     LEMAH ABANG - BEKASI 17750 <br>
-                    <div>${data.phone_number} ${data.fax_number}</div>
+                    <div>{{ $data['phone_number'] }} {{ $data['fax_number'] }}</div>
                 </div>
             </div>
         </div>
@@ -453,7 +454,7 @@ function renderTable(data, items) {
     <div style="display: flex; justify-content: space-between; margin-top: 150px;">
         <div style="text-align: left; font-size: 12px;">
             <p>Accepted and Confirmed</p>
-            <p>${data.supplier_name}</p>
+            <p>{{ $data['supplier_name'] }}</p>
         </div>
 
         <table style="border-collapse: collapse; text-align: center; width: 60%;">
@@ -487,6 +488,8 @@ function renderTable(data, items) {
 
     return pageContent;
 }
+
+</script>
 
 </body>
 

@@ -351,6 +351,7 @@
 
     <div class="page" id="page-content"></div>
 
+<script>
 // Render table content for the purchase order
 function renderLabel(header, items) {
     let pageContent = '';
@@ -366,13 +367,13 @@ function renderLabel(header, items) {
                     <td colspan="5" class="header-text">
                         <div class="part-no-container">
                             <span class="part-no-label">PART NO</span>
-                            <span class="part-no-value">${item['part_number'] || 'N/A'}</span>
+                            <span class="part-no-value">{{ $item['part_number'] }}</span>
                         </div>
                     </td>
                     <td class="header-text left-text">
                         <div class="lot-no-container">
                             <span class="lot-no-label">LOT NO</span>
-                            <span class="lot-no-value">${item['lot_number'] || 'N/A'}</span>
+                            <span class="lot-no-value">{{ $item['lot_number'] }}</span>
                         </div>
                     </td>
                 </tr>
@@ -383,26 +384,26 @@ function renderLabel(header, items) {
                     <td colspan="5" class="header-text">
                         <div class="part-name-container">
                             <span class="part-name-label">PART NAME</span>
-                            <span class="part-name-value">${item['part_name'] || 'N/A'}</span>
+                            <span class="part-name-value">{{ $item['part_name'] }}</span>
                         </div>
                     </td>
                     <td class="header-text">
                         <div class="quantity-container">
                             <span class="quantity-label">QUANTITY</span><br>
-                            <span class="quantity-value">${item['quantity'] || 'N/A'}</span>
+                            <span class="quantity-value">{{ $item['quantity'] }}</span>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="4">
-                        <span class="company-name">${item['customer_name'] || 'N/A'}</span>
+                        <span class="company-name">{{ $item['customer_name'] }}</span>
                     </td>
                     <td colspan="2" class="header-text">
-                        <span class="pl-number">${item['po_number'] || 'N/A'}</span>
+                        <span class="pl-number">{{ $item['po_number'] }}</span>
                     </td>
                     <td class="header-text right-text">
                         <span class="delivery-date-label" style="line-height: 0.8; margin: 0;">DATE DELIVERY</span><br>
-                        <span class="delivery-date-value" style="line-height: 0.8; margin: 0;">${item['delivery_date'] || 'N/A'}</span>
+                        <span class="delivery-date-value" style="line-height: 0.8; margin: 0;">{{ $item['delivery_date'] }}</span>
                     </td>
                 </tr>
                 <tr>
@@ -414,18 +415,18 @@ function renderLabel(header, items) {
                     </td>
                     <td colspan="2" class="header-text left-text no-border">
                         <span class="printed-date-label">PRINTED DATE</span><br>
-                        <span class="printed-date-value">${item['printed_date'] || 'N/A'}</span>
+                        <span class="printed-date-value">{{ $item['printed_date'] }}</span>
                 </tr>
                 <tr>
                     <td colspan="7">
                         <div class="qr-code-container">
                             <div class="qr-code" style="margin-left: 13px;">
-                                <div id="qrcode-left-${index}"></div>
-                                <span>${item['qr_number'] || 'N/A'}</span>
+                                <div id="qrcode-left-{{ $index }}"></div>
+                                <span>{{ $item['qr_number'] }}</span>
                             </div>
                             <div class="qr-code-right">
-                                <div id="qrcode-right-${index}"></div>
-                                <span>${item['po_number'] || 'N/A'}</span>
+                                <div id="qrcode-right-{{ $index }}"></div>
+                                <span>{{ $item['po_number'] }}</span>
                             </div>
                         </div>
                     </td>
@@ -458,5 +459,6 @@ function generateQRCodes(qrNumber, poNumber, index) {
         correctLevel: QRCode.CorrectLevel.L,
     });
 }
+</script>
 </body>
 </html>
