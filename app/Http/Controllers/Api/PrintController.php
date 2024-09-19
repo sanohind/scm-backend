@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\DN_Label;
+// use Barryvdh\DomPDF\Facade as PDF;
+use PDF;
 use App\Models\DN_Detail;
 use App\Models\DN_Header;
 use App\Models\PO_Header;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\Label;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\DN_LabelResource;
 use App\Http\Resources\DN_DetailViewResource;
 use App\Http\Resources\DN_HeaderViewResource;
 use App\Http\Resources\PO_HeaderViewResource;
+
 
 class PrintController
 {
@@ -38,6 +40,12 @@ class PrintController
         // Load the data into a resource if needed
         $value = new PO_HeaderViewResource($data_po);
 
+        $viewPath = resource_path('views/print/print-po.blade.php');
+        if (!file_exists($viewPath)) {
+            \Log::error("Blade view file not found: " . $viewPath);
+            throw new \Exception("Blade view file not found.");
+        }
+
         // Generate the PDF view
         $pdf = PDF::loadView('print.print-po', ['data' => $value]);
 
@@ -45,7 +53,7 @@ class PrintController
         return $pdf->stream('Purchase_Order_' . $po_no . '.pdf');
     } catch (\Exception $e) {
         // Log and handle any exceptions
-        \Log::error("PDF generation error: " . $e->getMessage());
+        // \Log::error("PDF generation error: " . $e->getMessage());
         return response()->json([
             'success' => false,
             'message' => 'Failed to generate PDF.',
