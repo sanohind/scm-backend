@@ -7,6 +7,7 @@
     <title>Document</title>
 </head>
 <body>
+    <img src="{{asset('images/icon_sanoh.png')}}" alt="" srcset="">
     <p>supplier code = {{ $data['supplier_code'] }}</p>
 </body>
 </html>
