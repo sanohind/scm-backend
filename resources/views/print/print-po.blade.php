@@ -7,7 +7,8 @@
     <title>Document</title>
 </head>
 <body>
-    <img src="{{asset('images/icon_sanoh.png')}}" alt="" srcset="">
+    <img src="{{asset('images/icon_sanoh.png')}}" alt="sanoh" srcset="">
+    <img src="{{asset('images/dashboard_admin.png')}}" alt="sanoh2" srcset="">
     <p>supplier code = {{ $data['supplier_code'] }}</p>
 </body>
 </html>
