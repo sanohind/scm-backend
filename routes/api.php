@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\PO_DetailController;
 use App\Http\Controllers\Api\PO_HeaderController;
 use App\Http\Controllers\Api\ListingReportController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\SynchronizeManualController;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -74,6 +75,10 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 //Route Warehouse
 Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
 
+    // Route sync data
+    Route::get('/syncWarehouse', [SynchronizeManualController::class, 'syncManual']);
+
+    // Route get partner data
     Route::get('/partner2', [PartnerController::class, 'index']);
 
     // Route for show list DN Header
@@ -95,7 +100,10 @@ Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
 
 //Route Purchasing
 Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
+    // Route sync data
+    Route::get('/syncPurchasing', [SynchronizeManualController::class, 'syncManual']);
 
+    // Route get partner
     Route::get('/partner3', [PartnerController::class, 'index']);
     // Route for show list PO Header
     // Specific Partner
