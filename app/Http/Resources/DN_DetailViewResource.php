@@ -24,7 +24,8 @@ class DN_DetailViewResource extends JsonResource
             'pcs_per_kamban' => $this->dn_snp,
             'no_of_kamban' => $this->noOfKanban(),
             'total_quantity' => $this->dn_qty,
-            'box_quantity' => $this->noOfKanban()
+            'box_quantity' => $this->noOfKanban(),
+            'qty_confirm' => $this->qty_confirm
         ];
     }
 
