@@ -23,6 +23,7 @@ class PO_DetailViewResource extends JsonResource
             'part_name' => $this->bp_part_name,
             'delivery_date' => $this->planned_receipt_date,
             'quantity' => $this->po_qty,
+            'receipt_qty' => $this->receipt_qty,
             'unit' => $this->purchase_unit,
             'unit_price' => $this->price,
             'amount' => $this->amount,
