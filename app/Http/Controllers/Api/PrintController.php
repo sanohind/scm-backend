@@ -45,7 +45,7 @@ class PrintController
         $data_dn = DN_Header::with('dnDetail')->where('no_dn',$no_dn)->first();
 
         // print_at
-        $data_update = PO_Header::where('no_dn', $no_dn)->first();
+        $data_update = DN_Header::where('no_dn', $no_dn)->first();
         $data_update->update([
             'dn_printed_at' => Carbon::now()->format('Y-m-d H:i')
         ]);
@@ -64,7 +64,7 @@ class PrintController
         $dn_header = DN_Header::with('dnDetail')->where('no_dn', $no_dn)->first();
 
         // print_at
-        $data_update = PO_Header::where('no_dn', $no_dn)->first();
+        $data_update = DN_Header::where('no_dn', $no_dn)->first();
         $data_update->update([
             'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i')
         ]);
