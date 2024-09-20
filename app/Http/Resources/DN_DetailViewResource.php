@@ -46,6 +46,13 @@ class DN_DetailViewResource extends JsonResource
        $snp = $this->dn_snp;
        $qty = $this->dn_qty;
 
+       // check if data zero
+        if ($snp == 0) {
+            return 0; // Or handle it differently if needed
+        } elseif ($qty == 0) {
+            return 0;
+        }
+
        $total = $qty / $snp;
 
        return $total;
