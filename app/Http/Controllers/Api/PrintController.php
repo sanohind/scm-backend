@@ -24,14 +24,13 @@ class PrintController
     public function poHeaderView($po_no)
     {
         //get data api to view
-        $data_po = PO_Header::with('poDetail')->where('po_no',$po_no)->first();
+        $data_po = PO_Header::with('poDetail')->where('po_no',$po_no)->get();
 
         // print_at
-        if ($data_po) {
-            $data_po->update([
-                'po_printed_at' => Carbon::now()->format('Y-m-d H:i')
-            ]);
-        }
+        $data_update = PO_Header::where('po_no', $po_no)->first();
+        $data_update->update([
+            'po_printed_at' => Carbon::now()->format('Y-m-d H:i')
+        ]);
 
         return response()->json([
             'success' => true,
@@ -46,11 +45,10 @@ class PrintController
         $data_dn = DN_Header::with('dnDetail')->where('no_dn',$no_dn)->first();
 
         // print_at
-        if ($data_dn) {
-            $data_dn->update([
-                'dn_printed_at' => Carbon::now()->format('Y-m-d H:i')
-            ]);
-        }
+        $data_update = PO_Header::where('no_dn', $no_dn)->first();
+        $data_update->update([
+            'dn_printed_at' => Carbon::now()->format('Y-m-d H:i')
+        ]);
 
         return response()->json([
             'success' => true,
@@ -66,11 +64,10 @@ class PrintController
         $dn_header = DN_Header::with('dnDetail')->where('no_dn', $no_dn)->first();
 
         // print_at
-        if ($dn_header) {
-            $dn_header->update([
-                'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i')
-            ]);
-        }
+        $data_update = PO_Header::where('no_dn', $no_dn)->first();
+        $data_update->update([
+            'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i')
+        ]);
 
         // variable for store array
         $label = [];
