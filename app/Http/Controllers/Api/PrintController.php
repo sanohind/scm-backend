@@ -61,7 +61,7 @@ class PrintController
     public function labelView($no_dn)
     {
         // get data
-        $dn_header = DN_Header::with('dnDetail')->where('no_dn', $no_dn)->get();
+        $dn_header = DN_Header::with('dnDetail')->where('no_dn', $no_dn)->first();
 
         // print_at
         $data_update = DN_Header::where('no_dn', $no_dn)->first();
