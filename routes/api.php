@@ -59,6 +59,10 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     // Route for update list DN Detail
     Route::put('/updatedndetail1',[DN_DetailController::class, "update"]);
 
+    // route view print
+    Route::get('/pohview1/{po_no}', [PrintController::class, 'poHeaderView']);
+    Route::get('/dnhview1/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('/lbview1/{no_dn}', [PrintController::class, 'labelView']);
 
     // Route for show list of Listing Report
     Route::get('/indexlistingreport1/{bp_code}',[ListingReportController::class, "index"]);

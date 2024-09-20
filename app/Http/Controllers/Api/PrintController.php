@@ -21,80 +21,37 @@ class PrintController
 {
     // this controller is for get the data that needed for print report
     public function poHeaderView($po_no)
-{
-    // Get data for pdf
-    $data_po = PO_Header::with('poDetail')
-        ->where('po_no', $po_no)
-        ->first();
+    {
+        //get data api to view
+        $data_po = PO_Header::with('poDetail')->where('po_no',$po_no)->get();
 
-    // Return if PO is not found
-    if (!$data_po) {
+        // print_at
+        $data_po->update([
+            'po_printed_at' => Carbon::now()->format('Y-m-d H:i')
+        ]);
+
         return response()->json([
-            'success' => false,
-            'message' => 'PO not found!',
-            'po_no' => $po_no,  // Log the PO number in the response for debugging
-        ], 404);
+            'success' => true,
+            'message' => 'Berhasil Menampilkan List PO',
+            'data' => PO_HeaderViewResource::collection($data_po)
+        ]);
     }
-
-    try {
-        // Load the data into a resource if needed
-        $value = new PO_HeaderViewResource($data_po);
-
-        $viewPath = resource_path('views/print/print-po.blade.php');
-        if (!file_exists($viewPath)) {
-            \Log::error("Blade view file not found: " . $viewPath);
-            throw new \Exception("Blade view file not found.");
-        }
-
-        // Generate the PDF view
-        $pdf = PDF::loadView('print.print-po', ['data' => $value]);
-
-        // Stream the PDF directly to the browser
-        return $pdf->stream('Purchase_Order_' . $po_no . '.pdf');
-    } catch (\Exception $e) {
-        // Log and handle any exceptions
-        // \Log::error("PDF generation error: " . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to generate PDF.',
-        ], 500);
-    }
-}
-
 
     public function dnHeaderView($no_dn)
     {
-        // Get data for pdf
-        $data_dn = DN_Header::with('dnDetail')
-        ->where('no_dn',$no_dn)
-        ->first();
+        //get data api to view
+        $data_dn = DN_Header::with('dnDetail')->where('no_dn',$no_dn)->get();
 
-        // Return if po false/not found
-        if (!$data_dn) {
-            return response()->json([
-                'success' => false,
-                'message' => 'PO not found!',
-            ], 404);
-        }
+        // print_at
+        $data_dn->update([
+            'dn_printed_at' => Carbon::now()->format('Y-m-d H:i')
+        ]);
 
-        try {
-            // Processed data get to resource
-            $value = new DN_HeaderViewResource($data_dn);
-
-            // For generate pdf view
-            $pdf = PDF::loadView('print.print-dn', ['data' => $value]);
-
-            // For Stream pdf view
-            return $pdf->stream('Delivery_Note_' . $no_dn . '.pdf');
-        } catch (\Exception $e) {
-
-            // Exception for pdf generate error
-            \Log::error("PDF generation error: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to generate PDF.',
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil Menampilkan List DN',
+            'data' => DN_HeaderViewResource::collection($data_dn)
+        ]);
     }
 
     // label / kanban
@@ -102,6 +59,11 @@ class PrintController
     {
         // get data
         $dn_header = DN_Header::with('dnDetail')->where('no_dn', $no_dn)->first();
+
+        // print_at
+        $dn_header->update([
+            'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i')
+        ]);
 
         // variable for store array
         $label = [];
@@ -117,22 +79,13 @@ class PrintController
             }
         }
 
-        try {
-            // For generate pdf view
-            $pdf = PDF::loadView('print.print-label', ['data' => $label]);
-
-            // For Stream pdf view
-            return $pdf->stream('Label_' . $no_dn . '.pdf');
-        } catch (\Exception $e) {
-
-            // Exception for pdf generate error
-            \Log::error("PDF generation error: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to generate PDF.',
-            ], 500);
-        }
         // create data log label
         // DN_Label::create()
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Labels generated successfully',
+            'data' => $label,
+        ]);
     }
 }
