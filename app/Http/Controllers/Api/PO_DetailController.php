@@ -29,7 +29,7 @@ class PO_DetailController extends Controller
         // Check if data empty
         if ($data_podetail->isEmpty()) {
             return response()->json([
-                'success' => false,
+                'success' => true,
                 'message' => 'PO details not found / empty',
                 'data' => []
             ], 404);
