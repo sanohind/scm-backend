@@ -16,6 +16,7 @@ class PO_DetailController extends Controller
         // Eager load the 'poHeader' relationship
         $data_podetail = PO_Detail::where('po_no', $po_no)
         ->with('poHeader')
+        ->orderBy('planned_receipt_date', 'asc')
         ->get();
 
         // Check if PO Header available

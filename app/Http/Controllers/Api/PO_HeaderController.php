@@ -16,6 +16,7 @@ class PO_HeaderController
     {
         // Eager load the 'poDetail' relationship
         $data_po = PO_Header::where('supplier_code', $sp_code)
+        ->orderBy('po_date', 'desc')
         ->whereNotIn('po_status', ['Closed','closed','close','Cancelled','cancelled','cancel'])
         ->with('poDetail')->get();
 

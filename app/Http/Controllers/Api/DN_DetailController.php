@@ -16,7 +16,9 @@ class DN_DetailController extends Controller
     // View list data DNDetail
     public function index($no_dn)
     {
-        $data_dndetail = DN_Detail::where('no_dn', $no_dn)->get();
+        $data_dndetail = DN_Detail::where('no_dn', $no_dn)
+        ->orderBy('plan_delivery_date', 'asc')
+        ->get();
 
         if ($data_dndetail->isEmpty()) {
             return response()->json([

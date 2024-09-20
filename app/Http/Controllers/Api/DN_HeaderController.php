@@ -19,9 +19,11 @@ class DN_HeaderController extends Controller
 
         // Eager load the 'podetail' relationship
         $data_po = DN_Header::with('poHeader','dnDetail')
+        ->orderBy('plan_delivery_date', 'desc')
         ->where('supplier_code', $sp_code)
+        ->whereNotIn('status_desc', ['Closed','closed','close','Confirmed','confirmed'])
         ->whereHas('poHeader', function ($query){
-            $query->whereNotIn('po_status', ['Closed','closed','close']);
+            $query->whereNotIn('po_status', ['Closed','closed','close','Confirmed','confirmed']);
         })
         ->get();
 
