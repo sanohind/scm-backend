@@ -31,7 +31,8 @@ class PO_HeaderController
         if ($data_po->isEmpty()) {
             return response()->json([
                 'status' => false,
-                'message' => 'PO Header data not found / empty / all PO data is Closed'
+                'message' => 'PO Header data not found / empty / all PO data is Closed',
+                'data' => []
             ], 404);
         }
 
