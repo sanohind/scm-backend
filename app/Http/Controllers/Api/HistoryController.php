@@ -34,9 +34,10 @@ class HistoryController
     // DN History
     public function dnHeaderHistory($bp_code)
     {
-        $code = $bp_code;
+        // $code = $bp_code;
         //get data api to view
         $data_dn = DN_Header::with('poHeader','dnDetail')
+        ->where('supplier_code', $bp_code)
         ->orderBy('plan_delivery_date', 'desc')
         ->whereIn('status_desc', ['Closed','closed','close','Confirmed','confirmed'])
         ->get();
