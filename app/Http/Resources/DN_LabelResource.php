@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +18,7 @@ class DN_LabelResource extends JsonResource
             'po_number' => $this->dnHeader->po_no,
             // 'dn_number' => $this->no_dn,
             // 'model' => $this->no_dn,
-            'customer_name' => 'PT. Sanoh Indonesia',
+            'customer_name' => Str::upper('PT. Sanoh Indonesia'),
             'supplier_name' => $this->dnHeader->supplier_name, // Updated supplier_name
             'part_number' => $this->part_no,
             'part_name' => $this->item_desc_a,
