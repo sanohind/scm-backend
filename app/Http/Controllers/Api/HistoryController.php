@@ -38,11 +38,6 @@ class HistoryController
         //get data api to view
         $data_dn = DN_Header::with('poHeader','dnDetail')
         ->where('supplier_code', $bp_code)
-        ->whereHas('poHeader', function($query)  use ($bp_code)
-                            {
-                                $query->whereIn('po_status', ['Closed','closed','close','Cancelled','cancelled','cancel','In Process','Created','Sent']);
-                                $query->where('supplier_code', $bp_code);
-                            })
         ->orderBy('plan_delivery_date', 'desc')
         ->whereIn('status_desc', ['Closed','closed','close','Confirmed','confirmed'])
         ->get();

@@ -51,9 +51,10 @@ class ListingReportController extends Controller
         $request->validate([
             'bp_code' => 'required|string|max:25',
             'date' => 'required|date',
-            'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx,xls,csv|max:10048', // Acceptable file formats
+            'file' => 'required|mimes:pdf|max:5000',
         ], [
-            'file.max' => 'The uploaded file exceeds the maximum allowed size of 10 MB.', // Custom error message
+            'file.max' => 'The uploaded file exceeds the maximum allowed size of 5 MB.',
+            'file.mimes' => 'The uploaded file must be a PDF.',
         ]);
 
         // Change file name and file path to storage
