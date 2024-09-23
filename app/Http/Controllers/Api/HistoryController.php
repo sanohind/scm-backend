@@ -40,6 +40,7 @@ class HistoryController
         ->where('supplier_code', $bp_code)
         ->whereHas('poHeader', function($query)  use ($bp_code)
                             {
+                                $query->whereIn('po_status', ['Closed','closed','close','Cancelled','cancelled','cancel','In Process','Created','Sent']);
                                 $query->where('supplier_code', $bp_code);
                             })
         ->orderBy('plan_delivery_date', 'desc')
