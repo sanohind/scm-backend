@@ -34,7 +34,7 @@ class PrintController
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List PO',
+            'message' => 'PO Generated Successfully',
             'data' => PO_HeaderViewResource::collection($data_po)
         ]);
     }
@@ -52,7 +52,7 @@ class PrintController
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List DN',
+            'message' => 'DN Generated Successfully',
             'data' => DN_HeaderViewResource::collection($data_dn)
         ]);
     }

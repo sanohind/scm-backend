@@ -53,7 +53,7 @@ class PO_HeaderController
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Success Display List PO Header',
+            'message' => 'Display List PO Header Successfully',
             'data' => PO_HeaderResource::collection($data_po)
         ], 200);
     }
@@ -114,7 +114,7 @@ class PO_HeaderController
         // Return respond
         return response()->json([
             'status' => 'success',
-            'message' => 'PO Edited Success',
+            'message' => 'PO Edited Successfully',
             'data' => new PO_HeaderResource($po_header)
         ], 200);
     }

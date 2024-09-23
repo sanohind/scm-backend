@@ -29,7 +29,7 @@ class DN_HeaderController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Success Display List DN Header',
+            'message' => 'Display List DN Header Successfully',
             'data' => DN_HeaderResource::collection($data_po)
         ], 200);
     }
@@ -40,12 +40,13 @@ class DN_HeaderController extends Controller
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
         $data_dnheader = DN_Header::with('poHeader','dnDetail')
+        ->orderBy('plan_delivery_date', 'desc')
         ->where('supplier_code', $sp_code)
         ->get();
 
         return response()->json([
             'success' => true,
-            'message' => 'Success Display List DN Header',
+            'message' => 'Display List DN Header Successfully',
             'data' => DN_HeaderResource::collection($data_dnheader)
         ], 200);
     }
@@ -61,7 +62,7 @@ class DN_HeaderController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Success Display List DN Header',
+            'message' => 'Display List DN Header Successfully',
             'data' => DN_HeaderResource::collection($data_dnheader)
         ], 200);
     }

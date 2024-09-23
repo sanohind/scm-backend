@@ -261,7 +261,7 @@ class SynchronizeManualController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Success Sync Data... '
+            'message' => 'Sync Data Successfully'
         ],200);
     }
 }

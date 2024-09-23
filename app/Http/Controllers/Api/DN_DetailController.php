@@ -29,7 +29,7 @@ class DN_DetailController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Success Display List DN Detail',
+            'message' => 'Display List DN Detail Successfully',
             'data' => DN_DetailResource::collection($data_dndetail)
         ], 200);
     }
@@ -43,13 +43,13 @@ class DN_DetailController extends Controller
         if ($data_podetail->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'PO details not found'
+                'message' => 'PO Detail Not Found'
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'Success Display List PO Detail',
+            'message' => 'Display List PO Detail Successfully',
             'data' => DN_DetailResource::collection($data_podetail)
         ], 200);
     }
@@ -102,7 +102,7 @@ class DN_DetailController extends Controller
                     ]);
                 } else {
                     // Handle the case where the record is not found
-                    return response()->json(['error' => 'DN Detail not found for: ' . $update['dn_detail_no']], 404);
+                    return response()->json(['error' => 'DN Detail Not Found For: ' . $update['dn_detail_no']], 404);
                 }
             }
 

@@ -42,7 +42,7 @@ class DashboardController
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan Dashboard',
+            'message' => 'Display Dashboard Successfully',
             'data' => [
                 'po_active' => $data_po_active,
                 'po_in_progress' => $data_po_in_proccess,

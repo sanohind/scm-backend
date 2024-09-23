@@ -76,7 +76,7 @@ class ListingReportController extends Controller
         // Return value
         return response()->json([
             'status' => true,
-            'message' => 'Success Add Report ' . $data_create->file,
+            'message' => 'Add Performance Report Successfully ' . $data_create->file,
             'data' => new ListingReportResource($data_create)
         ], 201);
     }

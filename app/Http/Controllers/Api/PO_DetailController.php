@@ -39,7 +39,7 @@ class PO_DetailController extends Controller
         // If data isn't empty
         return response()->json([
             'success' => true,
-            'message' => 'Success Display List PO Detail',
+            'message' => 'Display List PO Detail Successfully',
             'data' => PO_DetailResource::collection($data_podetail)
         ], 200);
     }
@@ -62,7 +62,7 @@ class PO_DetailController extends Controller
         // If data isn't empty
         return response()->json([
             'success' => true,
-            'message' => 'Success Display List PO Detail',
+            'message' => 'Display List PO Detail Successfully',
             'data' => PO_DetailResource::collection($data_podetail)
         ], 200);
     }

@@ -21,7 +21,7 @@ class UserController
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List User',
+            'message' => 'Display List User Successfully',
             'data' => UserResource::collection($data_user)
         ]);
     }
@@ -71,7 +71,7 @@ class UserController
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Data user "' . $data_create->username . '" successfuly created',
+            'message' => 'Data User "' . $data_create->username . '" Successfully Created',
             'data' => new UserResource($data_create)
         ]);
     }
@@ -134,7 +134,7 @@ class UserController
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Data user "' . $data_edit->username . '" successfully updated',
+            'message' => 'Data User "' . $data_edit->username . '" Successfully Updated',
             'data' => new UserResource($data_edit)
         ]);
     }
@@ -149,7 +149,7 @@ class UserController
         if (!$user) {
             return response()->json([
                 'success' => false,
-                'errors' => 'User not found'
+                'errors' => 'User Not Found'
             ], 404);
         }
 
@@ -165,7 +165,7 @@ class UserController
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Update validation error',
+                'message' => 'Update Validation Error',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -179,7 +179,7 @@ class UserController
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Data user "' . $data_edit->username . '" successfuly updated',
+            'message' => 'Data User "' . $data_edit->username . '" Successfully Updated',
             'data' => new UserResource($data_edit)
         ]);
     }

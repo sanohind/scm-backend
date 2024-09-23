@@ -224,6 +224,6 @@ class SynchronizeController
             }
         }
 
-        return response()->json(['message' => 'Data successfuly Sync']);
+        return response()->json(['message' => 'Sync Data successfuly ']);
     }
 }

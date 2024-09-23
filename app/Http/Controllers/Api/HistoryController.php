@@ -26,7 +26,7 @@ class HistoryController
         // dd($data_po);
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List PO History',
+            'message' => 'Display List PO History Successfully',
             'data' => PO_HistoryViewResource::collection($data_po)
         ]);
     }
@@ -44,7 +44,7 @@ class HistoryController
 
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil Menampilkan List DN',
+            'message' => 'Display List DN History Successfully',
             'data' => DN_HistoryViewResource::collection($data_dn)
         ]);
     }

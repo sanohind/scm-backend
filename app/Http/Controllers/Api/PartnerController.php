@@ -14,7 +14,7 @@ class PartnerController
 
         return response()->json([
             'success' => true,
-            'message' => 'Success Display List DN Detail',
+            'message' => 'Display List DN Detail Successfully',
             'data' => PartnerResource::collection($users)
         ], 200);
     }
