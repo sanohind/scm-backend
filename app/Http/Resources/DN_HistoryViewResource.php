@@ -18,7 +18,7 @@ class DN_HistoryViewResource extends JsonResource
             'dn_number' => $this->no_dn,
             'po_number' => $this->po_no,
             'dn_status' => $this->status_desc,
-            'po_status' => $this->po_status,
+            'po_status' => $this->poHeader->po_status,
             'send_date' => $this->planConcat(),
             'receive_date' => $this->receiptConcat(),
             'detail' => DN_DetailViewResource::collection($this->whenLoaded('dnDetail'))
