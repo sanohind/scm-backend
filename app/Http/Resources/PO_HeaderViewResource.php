@@ -96,7 +96,7 @@ class PO_HeaderViewResource extends JsonResource
         return $ppn;
     }
 
-    // Function for calculate total
+    // Function for calculate total_amount + ppn 11%
     private function total(){
         $totalAmount = $this->poDetail->sum('amount');
 
