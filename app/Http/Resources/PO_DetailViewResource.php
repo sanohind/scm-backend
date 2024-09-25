@@ -25,8 +25,8 @@ class PO_DetailViewResource extends JsonResource
             'quantity' => $this->po_qty,
             'receipt_qty' => $this->receipt_qty,
             'unit' => $this->purchase_unit,
-            'unit_price' => $this->price,
-            'amount' => $this->amount,
+            'unit_price' => number_format($this->price,2,',','.'),
+            'amount' => number_format($this->amount,2,',','.'),
         ];
     }
 }

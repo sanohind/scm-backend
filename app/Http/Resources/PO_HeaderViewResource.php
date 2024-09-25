@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Number;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PO_HeaderViewResource extends JsonResource
@@ -26,7 +27,9 @@ class PO_HeaderViewResource extends JsonResource
             'supplier_name'  => $this->supplier_name,
             'supplier_code'  => $this->supplier_code,
             'planned_receipt_date' => $this->planned_receipt_date,
-            'total_amount' => $this->poDetail->sum('amount'),
+            'total_amount' => $this->totalAmountValue(),
+            'ppn' => number_format($this->calculatePpn(), 2,',','.'),
+            'total' => number_format($this->total(), 2,',','.'),
             'supplier_address' => $this->addrConcat(),
             'phone_number' => $this->partner->bp_phone,
             'fax_number' => $this->partner->bp_fax,
@@ -73,6 +76,35 @@ class PO_HeaderViewResource extends JsonResource
         $concat = $addr1.' '.$addr2.' '.$addr3.' '.$addr4;
 
         return $concat;
+    }
+
+    // Function for sum each
+    private function totalAmountValue(){
+        $totalAmount = $this->poDetail->sum('amount');
+
+        $format_to_number = number_format($totalAmount, 2,',','.') ;
+
+        return $format_to_number;
+    }
+
+    // Function for calculate PPN 11%
+    private function calculatePpn(){
+        $totalAmount = $this->poDetail->sum('amount');
+
+        $ppn = $totalAmount * 0.11;
+
+        return $ppn;
+    }
+
+    // Function for calculate total
+    private function total(){
+        $totalAmount = $this->poDetail->sum('amount');
+
+        $ppn = $this->calculatePpn();
+
+        $total = $totalAmount + $ppn;
+
+        return $total;
     }
 
 }
