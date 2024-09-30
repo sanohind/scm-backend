@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\PO_Header;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PartnerLocal extends Model
 {
@@ -34,4 +36,9 @@ class PartnerLocal extends Model
     ];
 
     public $timestamps = false;
+
+    public function poHeaders(): HasMany
+    {
+        return $this->hasMany(PO_Header::class, 'supplier_code', 'bp_code');
+    }
 }

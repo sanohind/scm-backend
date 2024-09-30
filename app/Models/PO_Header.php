@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\PO_Detail;
 use App\Models\PartnerLocal;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -50,6 +52,11 @@ class PO_Header extends Model
     public function partner(): BelongsTo
     {
         return $this->belongsTo(PartnerLocal::class, 'supplier_code', 'bp_code');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'supplier_code', 'bp_code');
     }
 
     // po_detail relationship

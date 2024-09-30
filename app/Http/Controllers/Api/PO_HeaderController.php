@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Mail\PoResponseInternal;
+use App\Models\User;
+use Carbon\Carbon;
 use App\Models\PO_Header;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\PO_HeaderResource;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class PO_HeaderController
 {
@@ -109,6 +112,15 @@ class PO_HeaderController
                 'response' => $request->input('response'),
                 'decline_at' => Carbon::now()->format('Y-m-d H:i')
             ]);
+        }
+
+        // Variable for get email purchasing
+        $emailPurchasing = User::where('role', 3)->pluck('email');
+
+        // Mail response to internal
+        foreach ($emailPurchasing as $email) {
+            # code...
+            Mail::to($email)->send(new PoResponseInternal(po_header: $po_header));
         }
 
         // Return respond

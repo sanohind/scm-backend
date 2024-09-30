@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\MailPoNotificationJob;
 use App\Jobs\PartnerJob;
 use App\Jobs\SyncDatabaseJob;
 use Illuminate\Foundation\Inspiring;
@@ -14,5 +15,7 @@ Artisan::command('inspire', function () {
 // Schedule::job(new SyncDatabaseJob)->twiceDaily(10,18);
 //test
 Schedule::job(new SyncDatabaseJob)->twiceDaily(8, 18);
+
+Schedule::job(new MailPoNotificationJob())->everyTenSeconds();
 
 // Schedule::job(new PartnerJob)->everyMinute();
