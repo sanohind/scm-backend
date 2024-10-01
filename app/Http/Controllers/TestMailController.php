@@ -34,8 +34,8 @@ class TestMailController extends Controller
                 ];
             });
 
-
-            // dd($collection);
+            \Log::info('Generated Collection:', $collection->toArray());
+            dd($collection);
 
 
             Mail::to($data->email)->send(new PoResponseSupplier( po_header: $collection));

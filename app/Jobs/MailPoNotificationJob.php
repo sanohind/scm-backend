@@ -2,16 +2,19 @@
 
 namespace App\Jobs;
 
-use App\Mail\PoResponseSupplier;
 use App\Models\User;
 use App\Models\PO_Header;
+use App\Mail\PoResponseSupplier;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 
 class MailPoNotificationJob implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.

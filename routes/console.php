@@ -1,21 +1,19 @@
 <?php
 
-use App\Jobs\MailPoNotificationJob;
-use App\Jobs\PartnerJob;
 use App\Jobs\SyncDatabaseJob;
+use App\Jobs\MailPoNotificationJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Schedule;
 
+
+// Synchronize Database Job
+Schedule::job(new SyncDatabaseJob)->twiceDaily(8, 18);
+
+// Mail to supplier
+Schedule::job(new MailPoNotificationJob)->dailyAt('10:00');
+
+//test
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-// Synchronize Database Job
-// Schedule::job(new SyncDatabaseJob)->twiceDaily(10,18);
-//test
-Schedule::job(new SyncDatabaseJob)->twiceDaily(8, 18);
-
-Schedule::job(new MailPoNotificationJob())->everyTenSeconds();
-
-// Schedule::job(new PartnerJob)->everyMinute();
