@@ -41,6 +41,7 @@ class PO_Header extends Model
         'po_revision_no',
         'po_revision_date',
         'response',
+        'reason',
         'accept_at',
         'decline_at',
         'po_printed_at',

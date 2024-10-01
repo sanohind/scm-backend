@@ -16,9 +16,9 @@ class PO_HeaderController
     {
         // Eager load the 'poDetail' relationship
         $data_po = PO_Header::where('supplier_code', $sp_code)
-        ->orderBy('po_date', 'desc')
-        ->whereNotIn('po_status', ['Closed','closed','close','Cancelled','cancelled','cancel'])
-        ->with('poDetail')->get();
+            ->orderBy('po_date', 'desc')
+            ->whereNotIn('po_status', ['Closed', 'closed', 'close', 'Cancelled', 'cancelled', 'cancel'])
+            ->with('poDetail')->get();
 
         // Check if user available
         if (!$data_po) {
@@ -76,15 +76,38 @@ class PO_HeaderController
             'response' => 'required|string|max:25',
         ];
 
+        // Rules based on response value
+        switch ($request->response) {
+            // Value Accepted
+            case 'Accepted':
+                // No rules return
+                break;
+
+            // Value Declined
+            case 'Declined':
+                // dd($request->input('reason'));
+                $rules['reason'] = 'required|string|max:255';
+                break;
+
+                default:
+                return response()->json([
+                    'status' => false,
+                    'error' => 'Invalid response value.'
+                ], 400);
+            }
+
         // Message if data request error or invalid
         $messages = [
             'response.required' => 'The response field is required.',
             'response.string' => 'The response must be a string.',
             'response.max' => 'The response cannot be longer than 25 characters.',
+            'reason.required' => 'The reason field is required.',
+            'reason.string' => 'The reason must be a string.',
+            'reason.max' => 'The reason cannot be longer than 255 characters.',
         ];
 
         // Validator to check the rules isn't violated
-        $validator = Validator::make($request->all(), $rules,$messages);
+        $validator = Validator::make($request->all(), $rules, $messages);
 
         // Check if validator fail
         if ($validator->fails()) {
@@ -105,8 +128,10 @@ class PO_HeaderController
         }
         // If Decline
         elseif ($request->response == "Declined") {
+            // dd($request->input('reason'));
             $po_header->update([
                 'response' => $request->input('response'),
+                'reason' => $request->input('reason'),
                 'decline_at' => Carbon::now()->format('Y-m-d H:i')
             ]);
         }

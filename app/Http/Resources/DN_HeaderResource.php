@@ -17,9 +17,11 @@ class DN_HeaderResource extends JsonResource
         return [
             'no_dn' => $this->no_dn,
             'po_no' => $this->po_no,
+            'dn_created_date'=> $this->dn_created_date,
             'plan_delivery_date' => $this->planConcat(),
             'status_desc' => $this->status_desc,
             'confirm_update_at' => $this->confirm_update_at,
+            // 'progress' =>a,
             'detail' => DN_DetailResource::collection($this->whenLoaded('dnDetail'))
         ];
     }
@@ -34,5 +36,12 @@ class DN_HeaderResource extends JsonResource
         $concat = $dateString . ' ' . $timeString;
 
         return $concat;//dd($concat);
-        }
+    }
+
+    // private function progress(){
+    //     $count_confirmed = a;
+    //     $count_ = a;
+
+    // }
+
 }
