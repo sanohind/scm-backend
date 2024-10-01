@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TestMailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -25,6 +26,7 @@ Route::get('/lbview/{no_dn}', [PrintController::class, 'labelView']);
 Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
 
 // Route sync
+Route::get('/mail', [TestMailController::class,'mail']);
 Route::get('/sync', [SynchronizeController::class, 'sync']);
 Route::get('/copyBusinessPartner', [SynchronizeController::class, 'copyBusinessPartner']);
 Route::get('/copyPoHeader', [SynchronizeController::class, 'copyPoHeader']);
