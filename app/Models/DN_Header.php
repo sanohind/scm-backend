@@ -33,6 +33,7 @@ class DN_Header extends Model
         'plan_delivery_date',
         'plan_delivery_time',
         'status_desc',
+        'packing_slip',
         'confirm_update_at',
         'dn_printed_at',
         'dn_label_printed_at',

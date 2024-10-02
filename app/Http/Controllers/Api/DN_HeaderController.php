@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Models\DN_Header;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\DN_HeaderResource;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\DN_HeaderResource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Validator;
 
 class DN_HeaderController extends Controller
 {
@@ -38,7 +39,6 @@ class DN_HeaderController extends Controller
     {
         //get data api to view
         // Using eager loading request data to database for efficiency data
-        //in case calling data relation
         $data_dnheader = DN_Header::with('poHeader','dnDetail')
         ->orderBy('plan_delivery_date', 'desc')
         ->where('supplier_code', $sp_code)

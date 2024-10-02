@@ -20,8 +20,9 @@ class DN_HeaderResource extends JsonResource
             'dn_created_date'=> $this->dn_created_date,
             'plan_delivery_date' => $this->planConcat(),
             'status_desc' => $this->status_desc,
+            'packing_slip' => $this->packing_slip,
             'confirm_update_at' => $this->confirm_update_at,
-            // 'progress' =>a,
+            'progress' =>$this->progress(),
             'detail' => DN_DetailResource::collection($this->whenLoaded('dnDetail'))
         ];
     }
@@ -33,15 +34,18 @@ class DN_HeaderResource extends JsonResource
         $dateString = date('Y-m-d', strtotime($this->plan_delivery_date));
         $timeString = date('H:i', strtotime($this->plan_delivery_time));
 
-        $concat = $dateString . ' ' . $timeString;
+        $concat = "$dateString $timeString";
 
         return $concat;//dd($concat);
     }
 
-    // private function progress(){
-    //     $count_confirmed = a;
-    //     $count_ = a;
+    // Function for check Dn progress when confirmed in warehouse
+    private function progress(){
+        $count_total = $this->dnDetail->count();
+        $count_confirmed = $this->dnDetail->where('status_desc', 'Confirmed')->count();
 
-    // }
+        return  "$count_confirmed out of $count_total";
+
+    }
 
 }

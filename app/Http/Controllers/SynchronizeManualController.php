@@ -212,6 +212,7 @@ class SynchronizeManualController extends Controller
                         'plan_delivery_date' => $data->plan_delivery_date,
                         'plan_delivery_time' => $data->plan_delivery_time,
                         'status_desc' => $data->status_desc,
+                        'packing_slip' => $data->packing_slip,
                     ]
                 );
             }
