@@ -18,7 +18,7 @@ class PO_HeaderResource extends JsonResource
             'po_no' => $this->po_no,
             'po_date' => $this->po_date,
             'planned_receipt_date' => $this->planned_receipt_date,
-            'note' => $this->reference_1,
+            'note' => $this->note(),
             'po_revision_no' => $this->po_revision_no,
             'po_revision_date' => $this->po_revision_date,
             'po_status' => $this->po_status,
@@ -26,6 +26,12 @@ class PO_HeaderResource extends JsonResource
             'reason' => $this->reason,
             'detail' => PO_DetailResource::collection($this->whenLoaded('poDetail'))
         ];
+    }
+
+    private function note(){
+        $value = ($this->reference_2 == null || $this->reference_2 == '') ? $this->reference_1 : $this->reference_2;
+
+        return $value;
     }
 }
 

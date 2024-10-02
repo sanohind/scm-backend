@@ -23,8 +23,8 @@ class PO_HeaderViewResource extends JsonResource
             'pr_no'  => $this->pr_no,
             'delivery_term'  => $this->deliveryTermCalculate(),
             'currency'  => $this->po_currency,
-            'note'  => $this->reference_1,
-            'supplier_name'  => $this->supplier_name,
+            'note'  => $this->note(),
+            'supplier_name'  => $this->partner->adr_line_1 , //supplier_name, old value
             'supplier_code'  => $this->supplier_code,
             'planned_receipt_date' => $this->planned_receipt_date,
             'total_amount' => $this->totalAmountValue(),
@@ -68,12 +68,13 @@ class PO_HeaderViewResource extends JsonResource
     // concat address
     private function addrConcat(){
         //value
-        $addr1 = $this->partner->adr_line_1;
+        // $addr1 = $this->partner->adr_line_1;
         $addr2 = $this->partner->adr_line_2;
         $addr3 = $this->partner->adr_line_3;
-        $addr4 = $this->partner->adr_line_4;
+        // $addr4 = $this->partner->adr_line_4;
 
-        $concat = $addr1.' '.$addr2.' '.$addr3.' '.$addr4;
+        // $concat = $addr1.' '.$addr2.' '.$addr3.' '.$addr4; old concat
+        $concat = $addr2.' '.$addr3;
 
         return $concat;
     }
@@ -105,6 +106,12 @@ class PO_HeaderViewResource extends JsonResource
         $total = $totalAmount + $ppn;
 
         return $total;
+    }
+
+    private function note(){
+        $value = ($this->reference_2 == null || $this->reference_2 == '') ? $this->reference_1 : $this->reference_2;
+
+        return $value;
     }
 
 }
