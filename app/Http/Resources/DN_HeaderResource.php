@@ -42,9 +42,20 @@ class DN_HeaderResource extends JsonResource
     // Function for check Dn progress when confirmed in warehouse
     private function progress(){
         $count_total = $this->dnDetail->count();
-        $count_confirmed = $this->dnDetail->where('status_desc', 'Confirmed')->count();
+        $count_confirmed = 0;
 
-        return  "$count_confirmed out of $count_total";
+        foreach ($this->dnDetail as $data) {
+            $dn_qty = $data->dn_qty;
+            $recipt_qty = $data->receipt_qty;
+
+            $check_qty = $dn_qty - $recipt_qty;
+
+            if($check_qty == 0){
+                $count_confirmed++;
+            }
+        }
+
+        return  "$count_confirmed / $count_total";
 
     }
 
