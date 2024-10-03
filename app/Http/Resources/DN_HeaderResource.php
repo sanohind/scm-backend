@@ -20,7 +20,6 @@ class DN_HeaderResource extends JsonResource
             'dn_created_date'=> $this->dn_created_date,
             'plan_delivery_date' => $this->planConcat(),
             'status_desc' => $this->status_desc,
-            'packing_slip' => $this->packing_slip,
             'confirm_update_at' => $this->confirm_update_at,
             'progress' =>$this->progress(),
             'detail' => DN_DetailResource::collection($this->whenLoaded('dnDetail'))
