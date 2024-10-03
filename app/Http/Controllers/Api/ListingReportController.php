@@ -66,12 +66,16 @@ class ListingReportController extends Controller
         $time = Carbon::now();
 
         // Create data
-        $data_create = ListingReport::create([
+        $data_create = ListingReport::updateOrCreate(
+            [
+                'date' => $request->input('date'),
+            ],
+            [
             'bp_code' => $request->input('bp_code'),
-            'date' => $request->input('date'),
             'file' => Storage::url($filePath),
             'upload_at' => $time,
-        ]);
+            ]
+        );
 
         // Return value
         return response()->json([
