@@ -1,22 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    {{-- header --}}
-    <h2>PO RESPONSE</h2>
+<x-mail::header :url="$url" />
+<x-mail::message>
+{{-- header --}}
+<h2>Purchase Order Response</h2>
 
-    {{-- Content --}}
-    <p>Supplier_code = {{ $data['supplier_code'] }}</p>
-    <p>Po_code = {{ $data['po_no'] }}</p>
-    <p>Status po = {{ $data['response'] }}</p>
-    <p>Reason = {{ $data['response'] }}</p> {{-- column for reason--}}
+Purchase Order Response:
 
-    {{-- Footer --}}
-    <footer>Footer</footer>
-</body>
-</html>
+{{-- Content --}}
+<x-mail::panel>
+    <p>Supplier code = {{ $data['supplier_code'] }}</p>
+    <p>PO number = {{ $data['po_no'] }}</p>
+    <p>Status PO = {{ $data['response'] }}</p>
+    @if ( $data['response'] == 'Declined')
+        <p>Reason = {{ $data['reason'] }}</p> {{-- column for reason--}}
+    @endif
+</x-mail::panel>
+
+<x-mail::button :url="$url">
+View Purchase Order
+</x-mail::button>
+
+{{-- Footer --}}
+Thanks,<br>
+<p>PT. SANOH INDONESIA</p>
+{{-- {{ config('app.name') }} --}}
+</x-mail::message>
