@@ -36,7 +36,11 @@ class PoResponseInternal  extends Mailable
      */
     public function content(): Content
     {
-        return new Content(view: 'email.internal-content-email', with: ['data' => $this->po_header]);
+        return new Content(markdown: 'email.internal-content-email',
+         with: [
+            'data' => $this->po_header,
+            'url' => 'https://sms.sanohindonesia.co.id',
+        ]);
     }
 
     /**

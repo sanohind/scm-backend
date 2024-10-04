@@ -34,6 +34,7 @@ Route::get('/copyPoDetail', [SynchronizeController::class, 'copyPoDetail']);
 Route::get('/copyDnHeader', [SynchronizeController::class, 'copyDnHeader']);
 Route::get('/copyDnDetail', [SynchronizeController::class, 'copyDnDetail']);
 
+Route::put('/updatepoheader1/{po_no}',[PO_HeaderController::class, "update"]);
 //Route Supplier
 Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
@@ -49,7 +50,6 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
     // Route for show list PO Detail
     Route::get('/indexpodetail1/{po_no}',[PO_DetailController::class, "index"]);
     // Route for update list PO Header
-    Route::put('/updatepoheader1/{po_no}',[PO_HeaderController::class, "update"]);
 
 
     // Route for show list DN Header

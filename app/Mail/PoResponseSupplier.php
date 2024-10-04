@@ -41,7 +41,11 @@ class PoResponseSupplier extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.supplier-content-email', with: ['data' => $this->po_header],
+            markdown: 'email.supplier-content-email',
+            with: [
+                'data' => $this->po_header,
+                'url' => 'https://sms.sanohindonesia.co.id'
+            ],
         );
     }
 
