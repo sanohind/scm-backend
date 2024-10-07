@@ -14,7 +14,7 @@ class DN_HeaderViewResource extends JsonResource
         return [
             'dn_number' => $this->no_dn,
             'po_number' => $this->po_no,
-            'supplier_name' => $this->supplier_name,
+            'supplier_name' => $this->partner->adr_line_1, //$this->supplier_name,
             'supplier_code' => $this->supplier_code,
             'planned_receipt_date' => $this->planConcat(),
             // 'actual_received_date' => $this->planConcat(), kosongkan karna ditulis tangan
@@ -37,7 +37,7 @@ class DN_HeaderViewResource extends JsonResource
     $dateString = date('Y-m-d', strtotime($this->plan_delivery_date));
     $timeString = date('H:i', strtotime($this->plan_delivery_time));
 
-    $concat = $dateString . ' ' . $timeString;
+    $concat = "$dateString $timeString";
 
     return $concat;//dd($concat);
     }

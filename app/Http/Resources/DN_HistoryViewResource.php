@@ -33,7 +33,7 @@ class DN_HistoryViewResource extends JsonResource
         $dateString = date('Y-m-d', strtotime($this->plan_delivery_date));
         $timeString = date('H:i', strtotime($this->plan_delivery_time));
 
-        $concat = $dateString . ' ' . $timeString;
+        $concat = "$dateString $timeString";
 
         return $concat;//dd($concat);
     }
@@ -45,7 +45,7 @@ class DN_HistoryViewResource extends JsonResource
         $dateString = date('Y-m-d', strtotime($this->actual_receipt_date));
         $timeString = date('H:i', strtotime($this->actual_receipt_time));
 
-        $concat = $dateString . ' ' . $timeString;
+        $concat = "$dateString $timeString";
 
         return $concat;//dd($concat);
         }
