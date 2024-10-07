@@ -42,7 +42,7 @@ class PrintController
     public function dnHeaderView($no_dn)
     {
         //get data api to view
-        $data_dn = DN_Header::with('dnDetail')->where('no_dn',$no_dn)->get();
+        $data_dn = DN_Header::with('dnDetail','partner')->where('no_dn',$no_dn)->get();
 
         // print_at
         $data_update = DN_Header::where('no_dn', $no_dn)->first();

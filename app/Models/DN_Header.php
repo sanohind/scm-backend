@@ -40,6 +40,10 @@ class DN_Header extends Model
     ];
 
     // Relationship poheader
+    public function partner(): BelongsTo
+    {
+        return $this->belongsTo(PartnerLocal::class, 'supplier_code', 'bp_code');
+    }
     public function poHeader(): BelongsTo
     {
         return $this->belongsTo(PO_Header::class, 'po_no', 'po_no');

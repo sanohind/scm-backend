@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\DN_Header;
 use App\Models\PO_Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,5 +41,9 @@ class PartnerLocal extends Model
     public function poHeaders(): HasMany
     {
         return $this->hasMany(PO_Header::class, 'supplier_code', 'bp_code');
+    }
+    public function dnHeaders(): HasMany
+    {
+        return $this->hasMany(DN_Header::class, 'supplier_code', 'bp_code');
     }
 }
