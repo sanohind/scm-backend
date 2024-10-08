@@ -30,8 +30,8 @@ class DN_HistoryViewResource extends JsonResource
     private function planConcat(){
         //value
         // Convert and format date and time to strings
-        $dateString = date('Y-m-d', strtotime($this->plan_delivery_date));
-        $timeString = date('H:i', strtotime($this->plan_delivery_time));
+        $dateString = date('Y-m-d', $this->plan_delivery_date);
+        $timeString = date('H:i', $this->plan_delivery_time);
 
         $concat = "$dateString $timeString";
 
