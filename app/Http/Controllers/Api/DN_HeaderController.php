@@ -40,6 +40,7 @@ class DN_HeaderController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         $data_dnheader = DN_Header::with('poHeader','dnDetail')
+        ->whereNotIn('status_desc', ['Closed','closed','close','Confirmed','confirmed'])
         ->orderBy('plan_delivery_date', 'desc')
         ->where('supplier_code', $sp_code)
         ->get();
