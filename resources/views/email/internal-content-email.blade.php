@@ -1,9 +1,9 @@
-<x-mail::header :url="$url" />
+{{-- <x-mail::header :url="$url" hidden/> --}}
 <x-mail::message>
 {{-- header --}}
-<h2>Purchase Order Response</h2>
+<h2>Dear Respective In-Charge,</h2>
 
-Purchase Order Response:
+A new notification status PO has been submit by Supplier. Please login to check the same.
 
 {{-- Content --}}
 <x-mail::panel>
@@ -23,4 +23,6 @@ View Purchase Order
 Thanks,<br>
 <p>PT. SANOH INDONESIA</p>
 {{-- {{ config('app.name') }} --}}
+<br>
+<p>Note : This is a system generated e-mail. We request that you do not reply to this mail ID.</p>
 </x-mail::message>

@@ -31,7 +31,7 @@ class PoResponseSupplier extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Po Response Supplier',
+            subject: 'A NEW NOTIFICATION from SMS',
         );
     }
 

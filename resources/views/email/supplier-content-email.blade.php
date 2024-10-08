@@ -1,14 +1,15 @@
 <x-mail::header :url="$url" />
 <x-mail::message>
 {{-- header --}}
-<h2>Purchase Order Open</h2>
+<h2>Dear Respective In-Charge,</h2>
 
-Purchase Order Open Today:
+A new information has been sent to your SMS Portal. Please login to check the same.
 
 {{-- Content --}}
 <x-mail::panel>
 {{-- @dd($data) --}}
     @if (isset($data) && count($data) > 0)
+    <p>Purchase Order Open Today:</p>
     @foreach ($data as $index => $po)
         <p>{{ $index + 1 }}. {{ $po['po_no'] }}</p>
     @endforeach
@@ -25,4 +26,6 @@ View Purchase Order
 Thanks,<br>
 <p>PT. SANOH INDONESIA</p>
 {{-- {{ config('app.name') }} --}}
+<br>
+<p>Note : This is a system generated e-mail. We request that you do not reply to this mail ID.</p>
 </x-mail::message>

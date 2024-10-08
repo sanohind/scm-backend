@@ -28,7 +28,7 @@ class PoResponseInternal  extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Po Response');
+        return new Envelope(subject: 'A NEW NOTIFICATION from SMS');
     }
 
     /**
