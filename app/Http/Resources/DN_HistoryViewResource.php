@@ -42,8 +42,8 @@ class DN_HistoryViewResource extends JsonResource
     private function receiptConcat(){
         //value
         // Convert and format date and time to strings
-        $dateString = date('Y-m-d', strtotime($this->actual_receipt_date));
-        $timeString = date('H:i', strtotime($this->actual_receipt_time));
+        $dateString = date('Y-m-d', $this->actual_receipt_date);
+        $timeString = date('H:i', $this->actual_receipt_time);
 
         $concat = "$dateString $timeString";
 
