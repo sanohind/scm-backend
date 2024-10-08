@@ -18,9 +18,9 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\SynchronizeManualController;
 
 // Route Default
-Route::get("", function () {
-    return view("index");
-});
+// Route::get("", function () {
+//     return view("index");
+// });
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
