@@ -1,5 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\PartnerController;
 
+
+// Route Default
+Route::get("", function () {
+    return view("index");
+});
