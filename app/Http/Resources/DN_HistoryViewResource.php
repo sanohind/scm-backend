@@ -21,7 +21,7 @@ class DN_HistoryViewResource extends JsonResource
             'po_status' => $this->poHeader->po_status,
             'send_date' => $this->planConcat(),
             'receive_date' => $this->receiptConcat(),
-            'no_packing_slip' => $this->packing_slip,
+            'packing_slip' => $this->packing_slip,
             'detail' => DN_DetailViewResource::collection($this->whenLoaded('dnDetail'))
         ];
     }
@@ -42,8 +42,10 @@ class DN_HistoryViewResource extends JsonResource
     private function receiptConcat(){
         //value
         // Convert and format date and time to strings
-        $dateString = date('Y-m-d', $this->actual_receipt_date);
-        $timeString = date('H:i', $this->actual_receipt_time);
+        $dnDetail = $this->dnDetail->first();
+
+        $dateString = date('Y-m-d', strtotime($dnDetail->actual_receipt_date));
+        $timeString = date('H:i', strtotime($dnDetail->actual_receipt_time));
 
         $concat = "$dateString $timeString";
 
