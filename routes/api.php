@@ -3,6 +3,7 @@
 use App\Http\Controllers\TestMailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\SubcontController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PrintController;
@@ -160,13 +161,19 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
     Route::post('admin/logout', [AuthController::class, 'logout']);
 });
 
+// Route subcont
+Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
+    // Route subcont
+    Route::get('/indexsubitem', [SubcontController::class,'indexItem']);
+    Route::get('/indexsubtrans', [SubcontController::class,'indexTrans']);
+    Route::post('/item', [SubcontController::class,'item']);
+    Route::post('/subtrans', [SubcontController::class,'transaction']);
+});
+
 // route testing
 // Route for show list of user
 // Route::get('/index',[UserController::class, "index"])->name('index');
 Route::get('/listingreporttest/file/{filename}', [ListingReportController::class, 'getFile']);
-
-
-
 
 /* Route::middleware('api')->group(function () {
     Route::get('/poheader', [PO_HeaderController::class, 'index']);
