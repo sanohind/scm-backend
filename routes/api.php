@@ -82,6 +82,7 @@ Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
 
     // Route for forcast
     Route::get('supplier/forecast/index',[ForecastController::class,'indexSupplier']);
+    Route::get('supplier/forecast/get/file/{filename}', [ForecastController::class,"getFile"]);
 
 
     //Logout route
@@ -141,9 +142,10 @@ Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
     Route::get('/pohview3/{po_no}', [PrintController::class, 'poHeaderView']);
 
     // Route for Forecast
-    Route::get('/purchasing/forecast/{bp_code}', [ForecastController::class,"indexPurchasing"]);
+    Route::get('/purchasing/forecast/index/{bp_code}', [ForecastController::class,"indexPurchasing"]);
     Route::post('/purchasing/forecast/store', [ForecastController::class,"store"]);
     Route::delete('/purchasing/forecast/delete/{forecast}', [ForecastController::class,"destroy"]);
+    Route::get('purchasing/forecast/get/file/{filename}', [ForecastController::class,"getFile"]);
 
     //Logout route
     Route::post('purchasing/logout', [AuthController::class, 'logout']);
@@ -184,7 +186,7 @@ Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
 // Route for show list of user
 // Route::get('/index',[UserController::class, "index"])->name('index');
 Route::get('/listingreporttest/file/{filename}', [ListingReportController::class, 'getFile']);
-Route::get('/forecast/file/{filename}', [ForecastController::class,"getFile"]);
+Route::get('/forecasttest/file/{filename}', [ForecastController::class,"getFile"]);
 /* Route::middleware('api')->group(function () {
     Route::get('/poheader', [PO_HeaderController::class, 'index']);
     Route::post('/poheader', [PO_HeaderController::class, 'store']);
