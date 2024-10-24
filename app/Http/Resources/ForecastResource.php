@@ -27,7 +27,7 @@ class ForecastResource extends JsonResource
     // only return the filename
     private function chopStr(){
         $string = $this->file;
-        $chopFile = Str::chopStart($string, '/storage/listing_report/');
+        $chopFile = Str::chopStart($string, '/storage/forecast/');
 
         return $chopFile;
     }
