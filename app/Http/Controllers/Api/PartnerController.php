@@ -10,7 +10,9 @@ use App\Http\Resources\PartnerResource;
 class PartnerController
 {
     public function index(){
-        $users = PartnerLocal::all();
+        $users = PartnerLocal::select("bp_code","bp_name","adr_line_1")
+        ->where('bp_code', 'like', 'SLS%')
+        ->get();
 
         return response()->json([
             'success' => true,

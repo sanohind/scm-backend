@@ -87,18 +87,18 @@ class ListingReportController extends Controller
 
     // Get file by filename
     public function getFile($filename)
-{
-    $filePath = 'public/listing_report/' . $filename;
+    {
+        $filePath = 'public/listing_report/' . $filename;
 
-    // Check if the file exists in the storage
-    if (Storage::exists($filePath)) {
-        // Return the file as a download
-        return Storage::download($filePath);
+        // Check if the file exists in the storage
+        if (Storage::exists($filePath)) {
+            // Return the file as a download
+            return Storage::download($filePath);
+        }
+
+        // If the file doesn't exist, return a 404 response
+        return response()->json(['message' => 'File not found'], 404);
     }
-
-    // If the file doesn't exist, return a 404 response
-    return response()->json(['message' => 'File not found'], 404);
-}
 
 
 }
