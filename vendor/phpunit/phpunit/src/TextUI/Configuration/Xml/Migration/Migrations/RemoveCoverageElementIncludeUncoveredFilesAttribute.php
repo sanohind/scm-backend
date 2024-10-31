@@ -9,14 +9,26 @@
  */
 namespace PHPUnit\TextUI\XmlConfiguration;
 
-use PHPUnit\Exception;
-use RuntimeException;
+use DOMDocument;
+use DOMElement;
 
 /**
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
  *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
-final class MigrationBuilderException extends RuntimeException implements Exception
+final readonly class RemoveCoverageElementIncludeUncoveredFilesAttribute implements Migration
 {
+    public function migrate(DOMDocument $document): void
+    {
+        $node = $document->getElementsByTagName('coverage')->item(0);
+
+        if (!$node instanceof DOMElement || $node->parentNode === null) {
+            return;
+        }
+
+        if ($node->hasAttribute('includeUncoveredFiles')) {
+            $node->removeAttribute('includeUncoveredFiles');
+        }
+    }
 }
