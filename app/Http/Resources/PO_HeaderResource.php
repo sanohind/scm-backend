@@ -24,7 +24,6 @@ class PO_HeaderResource extends JsonResource
             'po_status' => $this->po_status,
             'response' => $this->response,
             'reason' => $this->reason,
-            'detail' => PO_DetailResource::collection($this->whenLoaded('poDetail'))
         ];
     }
 

@@ -22,7 +22,6 @@ class DN_HistoryViewResource extends JsonResource
             'send_date' => $this->planConcat(),
             'receive_date' => $this->receiptConcat(),
             'packing_slip' => $this->packing_slip,
-            'detail' => DN_DetailViewResource::collection($this->whenLoaded('dnDetail'))
         ];
     }
 

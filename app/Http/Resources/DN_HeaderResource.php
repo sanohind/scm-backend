@@ -22,7 +22,6 @@ class DN_HeaderResource extends JsonResource
             'status_desc' => $this->status_desc,
             'confirm_update_at' => $this->confirm_update_at,
             'progress' =>$this->progress(),
-            'detail' => DN_DetailResource::collection($this->whenLoaded('dnDetail'))
         ];
     }
 
