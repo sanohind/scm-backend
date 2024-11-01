@@ -16,7 +16,6 @@ class PO_DetailResource extends JsonResource
     {
 
         return [
-            'po_no' => $this->po_no,
             'bp_part_no' => $this->bp_part_no,
             'item_desc_a' => $this->item_desc_a,
             'price' => $this->price,

@@ -25,12 +25,21 @@ class DN_DetailController extends Controller
                 'success' => false,
                 'message' => 'DN details not found'
             ], 404);
-        }
+        }   
 
+        $dateString = date('Y-m-d', strtotime($data_dndetail->first()->dnHeader->plan_delivery_date));
+        $timeString = date('H:i', strtotime($data_dndetail->first()->dnHeader->plan_delivery_time));
+        $concat = "$dateString $timeString";
+        
         return response()->json([
             'success' => true,
             'message' => 'Display List DN Detail Successfully',
-            'data' => DN_DetailResource::collection($data_dndetail)
+            'data' => [
+                'no_dn' => $no_dn,
+                'po_no' => $data_dndetail->first()->dnHeader->po_no,
+                'plan_delivery_date' => $concat,
+                'confirm_update_at' => $data_dndetail->first()->dnHeader->confirm_update_at,
+                'detail' => DN_DetailResource::collection($data_dndetail)]
         ], 200);
     }
 

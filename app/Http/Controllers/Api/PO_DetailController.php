@@ -33,15 +33,19 @@ class PO_DetailController extends Controller
                 'success' => true,
                 'message' => 'PO details not found / empty',
                 'data' => []
-            ], 404);
+            ], 200);
         }
 
         // If data isn't empty
         return response()->json([
             'success' => true,
             'message' => 'Display List PO Detail Successfully',
-            'data' => PO_DetailResource::collection($data_podetail)
-        ], 200);
+            'data' => [
+                'po_no' => $po_no,
+                'planned_receipt_date' => $data_podetail->first()->poHeader->planned_receipt_date,
+                'note' => ($data_podetail->first()->poHeader->reference_2 == null) ? $data_podetail->first()->poHeader->reference_1 : $data_podetail->first()->poHeader->reference_2,
+                'detail' => PO_DetailResource::collection($data_podetail)]
+            ],200);
     }
 
     // Test function to get all data
@@ -56,7 +60,7 @@ class PO_DetailController extends Controller
                 'success' => false,
                 'message' => 'PO details not found',
                 'data' => []
-            ], 404);
+            ], 200);
         }
 
         // If data isn't empty
