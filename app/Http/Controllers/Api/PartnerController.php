@@ -11,7 +11,7 @@ class PartnerController
 {
     public function index(){
         $users = PartnerLocal::select("bp_code","bp_name","adr_line_1")
-        ->where('bp_code', 'like', 'SLS%')
+        ->where('bp_code', 'like', 'SL%')
         ->get();
 
         return response()->json([
