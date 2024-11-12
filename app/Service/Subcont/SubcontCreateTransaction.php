@@ -13,15 +13,14 @@ use Illuminate\Support\Facades\Auth;
 class SubcontCreateTransaction
 {
     /**
-     * Create a new class instance.
+     * Create new transaction bussiness logic
+     * @param mixed $data
+     * @throws \Exception
+     * @return bool
      */
-    public function __construct()
-    {
-        //
-    }
-
     public function createTransactionSubcont($data): bool
     {
+        // Get sub_item_id
         $subItemId = SubcontItem::where('item_code', $data["item_code"])
             ->where('bp_code', Auth::user()->bp_code)
             ->value('sub_item_id');
@@ -61,7 +60,16 @@ class SubcontCreateTransaction
         return $result;
     }
 
-
+    /**
+     * Calculating the new request stock
+     * @param string $status
+     * @param string $type
+     * @param int $qtyOk
+     * @param int $qtyNg
+     * @param \App\Models\SubcontStock $stock
+     * @throws \Exception
+     * @return bool
+     */
     private function calculatingStock(string $status, string $type, int $qtyOk, int $qtyNg, SubcontStock $stock): bool
     {
         switch ($status) {
@@ -175,6 +183,12 @@ class SubcontCreateTransaction
         return true;
     }
 
+    /**
+     * Check the item stock record
+     * @param mixed $item_code
+     * @param mixed $subItemId
+     * @return bool
+     */
     private function checkStockRecordAvaibility($item_code, $subItemId): bool
     {
         // Check if data stock exist

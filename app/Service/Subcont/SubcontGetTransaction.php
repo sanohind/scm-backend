@@ -8,6 +8,10 @@ use App\Http\Resources\SubcontTransactionResource;
 
 class SubcontGetTransaction
 {
+    /**
+     * Get all log user transaction
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function getAllTransactionSubcont() {
         // Show all subcont transaction data based on authorized user
         $user = Auth::user()->bp_code;

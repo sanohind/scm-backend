@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class SubcontCreateItem
 {
+    /**
+     * create new data item subcont
+     * @param mixed $data
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function createItemSubcont($data) {
         // Store logic
         SubcontItem::create([

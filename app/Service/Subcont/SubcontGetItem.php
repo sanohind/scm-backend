@@ -10,13 +10,9 @@ use App\Http\Resources\SubcontItemResource;
 class SubcontGetItem
 {
     /**
-     * Create a new class instance.
+     * Get subcont item data based of user session
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function __construct()
-    {
-        //
-    }
-
     public function getAllItemSubcont(){
         // Show all subcont item data based on authorized user
         $user = Auth::user()->bp_code;
@@ -34,7 +30,7 @@ class SubcontGetItem
             ->where('bp_code', $user)
             ->orderBy('item_code', 'asc')
             ->get();
-        // dd($data);
+
         // Check if data exist
         if ($data->isEmpty()) {
             // response when empty

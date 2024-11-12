@@ -32,22 +32,26 @@ class SubcontController
         ) {}
 
     /**
-     * Summary of indexItem
+     * To get item record user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function indexItem()
     {
-        $result = $this->subcontGetItem->getAllItemSubcont();
-        // try {
-        // } catch (\Exception $ex) {
-        //     return response()->json([
-        //         'error' => $ex->getMessage()." (On line ".$ex->getLine().")".$ex->getFile()
-        //     ],500);
-        // }
+        try {
+            $result = $this->subcontGetItem->getAllItemSubcont();
+        } catch (\Exception $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()." (On line ".$ex->getLine().")".$ex->getFile()
+            ],500);
+        }
 
         return $result;
     }
 
+    /**
+     * to get transaction record user
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function indexTrans()
     {
         try {
@@ -61,6 +65,10 @@ class SubcontController
         return $result;
     }
 
+    /**
+     * Get list item user
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function getListItem() {
         try {
             $result = $this->subcontGetListItem->getList();
@@ -74,6 +82,11 @@ class SubcontController
         return $result;
     }
 
+    /**
+     * Create new item
+     * @param \App\Http\Requests\SubcontItemRequest $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function CreateItem(SubcontItemRequest $request)
     {
         try {
@@ -87,7 +100,11 @@ class SubcontController
         return $result;
     }
 
-    // Transaction business logic
+    /**
+     * Create new transaction
+     * @param \App\Http\Requests\SubcontTransactionRequest $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function createTransaction(SubcontTransactionRequest $request)
     {
         try {
@@ -114,4 +131,3 @@ class SubcontController
     }
 }
 
-// note = still trying to figure it out how the message logic should be (18/10/2024 = inprogress)|21/10/2024 =  Done

@@ -9,6 +9,10 @@ use App\Http\Resources\SubcontItemResource;
 
 class SubcontGetListItem
 {
+    /**
+     * Get list of item based of user session
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function getList() {
         // Show all subcont item data based on authorized user
         $user = Auth::user()->bp_code;
