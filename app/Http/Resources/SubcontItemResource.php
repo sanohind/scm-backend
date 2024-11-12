@@ -15,11 +15,16 @@ class SubcontItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'item_code' => $this->item_code,
-            'bp_code' => $this->bp_code,
-            'item_name' => $this->item_name,
-            'fresh_stock'=> $this->subStock->fresh_stock,
-            'replating_stock'=> $this->subStock->replating_stock,
+            'part_number' => $this->item_code,
+            'part_name' => $this->item_name,
+            // Fresh
+            'incoming_fresh_stock'=> $this->subStock->incoming_fresh_stock,
+            'ready_fresh_stock'=> $this->subStock->process_fresh_stock,
+            'ng_fresh_stock'=> $this->subStock->ng_fresh_stock,
+            // Replating
+            'incoming_replating_stock'=> $this->subStock->incoming_replating_stock,
+            'ready_replating_stock'=> $this->subStock->process_replating_stock,
+            'ng_replating_stock'=> $this->subStock->ng_replating_stock,
         ];
     }
 }

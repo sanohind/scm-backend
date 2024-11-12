@@ -26,7 +26,7 @@ class SubcontTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "transaction_type"=> "required|string|in:In,Out",
+            "transaction_type"=> "required|string|in:In,Out,Process",
             "item_code"=> "required|string|max:50",
             "status"=> "required|string|in:Fresh,Replating",
             "qty_ok"=> "int",
@@ -40,7 +40,7 @@ class SubcontTransactionRequest extends FormRequest
             // Transaction Type
             "transaction_type.required" => "The transaction type is required.",
             "transaction_type.string" => "The transaction type must be a valid string.",
-            "transaction_type.in" => "The transaction type must be either 'In' or 'Out'.",
+            "transaction_type.in" => "The transaction type must be 'In', 'Out', or 'Process' .",
 
             // Item Code
             "item_code.required" => "The item_code is required.",

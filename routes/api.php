@@ -212,10 +212,11 @@ Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
     Route::get('subcont/performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
 
     // Route subcont
+    Route::get('subcont/item/list', [SubcontController::class,'getListItem']);
     Route::get('subcont/item/index', [SubcontController::class,'indexItem']);
     Route::get('subcont/trasaction/index', [SubcontController::class,'indexTrans']);
-    Route::post('subcont/item/store', [SubcontController::class,'item']);
-    Route::post('subcont/transaction/store', [SubcontController::class,'transaction']);
+    Route::post('subcont/item/store', [SubcontController::class,'createItem']);
+    Route::post('subcont/transaction/store', [SubcontController::class,'createTransaction']);
 
     // Route for forcast
     Route::get('subcont/forecast/index',[ForecastController::class,'indexSupplier']);

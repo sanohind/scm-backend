@@ -24,8 +24,12 @@ class SubcontStock extends Model
         "sub_stock_id",
         "sub_item_id",
         "item_code",
-        "fresh_stock",
-        "replating_stock",
+        "incoming_fresh_stock",
+        "incoming_replating_stock",
+        "process_fresh_stock",
+        "process_replating_stock",
+        "ng_fresh_stock",
+        "ng_replating_stock",
     ];
 
     public function subItem(): BelongsTo

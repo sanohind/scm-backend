@@ -16,8 +16,12 @@ return new class extends Migration
             $table->integer('sub_item_id');
             $table->foreign('sub_item_id')->references('sub_item_id')->on('subcont_item')->onDelete('cascade');
             $table->string('item_code',length: 50);
-            $table->integer('fresh_stock')->default(0);
-            $table->integer('replating_stock')->default(0);
+            $table->integer('incoming_fresh_stock')->default(0);
+            $table->integer('incoming_replating_stock')->default(0);
+            $table->integer('process_fresh_stock')->default(0);
+            $table->integer('process_replating_stock')->default(0);
+            $table->integer('ng_fresh_stock')->default(0);
+            $table->integer('ng_replating_stock')->default(0);
         });
     }
 
