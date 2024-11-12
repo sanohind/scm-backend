@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Service\Subcont;
+
+use App\Models\SubcontItem;
+use Illuminate\Support\Facades\Auth;
+
+class SubcontCreateItem
+{
+    public function createItemSubcont($data) {
+        // Store logic
+        SubcontItem::create([
+            "bp_code" => Auth::user()->bp_code,
+            "item_code" => $data["item_code"],
+            "item_name" => $data["item_name"],
+        ]);
+
+        // Response
+        return response()->json([
+            "status" => true,
+            "message" => "Data Successfuly Stored"
+        ], 200);
+    }
+}
