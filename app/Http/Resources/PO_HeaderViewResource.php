@@ -83,7 +83,9 @@ class PO_HeaderViewResource extends JsonResource
     private function totalAmountValue(){
         $totalAmount = $this->poDetail->sum('amount');
 
-        $format_to_number = number_format($totalAmount, 2,',','.') ;
+        $round = round($totalAmount);
+
+        $format_to_number = number_format($round, 2,',','.') ;
 
         return $format_to_number;
     }
@@ -94,7 +96,9 @@ class PO_HeaderViewResource extends JsonResource
 
         $ppn = $totalAmount * 0.11;
 
-        return $ppn;
+        $round = round($ppn);
+
+        return $round;
     }
 
     // Function for calculate total_amount + ppn 11%
@@ -105,7 +109,9 @@ class PO_HeaderViewResource extends JsonResource
 
         $total = $totalAmount + $ppn;
 
-        return $total;
+        $round = round($total);
+
+        return $round;
     }
 
     private function note(){
