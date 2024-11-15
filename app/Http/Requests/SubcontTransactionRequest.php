@@ -25,18 +25,27 @@ class SubcontTransactionRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             "transaction_type"=> "required|string|in:In,Out,Process",
             "item_code"=> "required|string|max:50",
             "status"=> "required|string|in:Fresh,Replating",
             "qty_ok"=> "int",
             "qty_ng"=> "int",
         ];
+
+        ($this->transaction_type !== 'Process') ? $rules["delivery_note"] = "required|string|max:255" : $rules["delivery_note"] = "nullable|string|max:255";
+
+        return $rules;
     }
 
     public function messages(): array
     {
         return [
+            // Delivery Note
+            "delivery_note.required" => "The delivery note is required.",
+            "delivery_note.string" => "The delivery note must be a valid string.",
+            "delivery_note.max" => "The delivery note length max 255.",
+
             // Transaction Type
             "transaction_type.required" => "The transaction type is required.",
             "transaction_type.string" => "The transaction type must be a valid string.",

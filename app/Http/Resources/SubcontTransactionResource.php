@@ -14,6 +14,17 @@ class SubcontTransactionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'sub_transaction_id' => $this->sub_transaction_id,
+            'transaction_date' => $this->transaction_date,
+            'transaction_time' => $this->transaction_time,
+            'transaction_type'=> $this->transaction_type,
+            'delivery_note' => $this->delivery_note,
+            'part_number' => $this->item_code,
+            'part_name' => $this->subItem->item_name,
+            'status' => $this->status,
+            'qty_ok' => $this->qty_ok,
+            'qty_ng' => $this->qty_ng,
+        ];
     }
 }

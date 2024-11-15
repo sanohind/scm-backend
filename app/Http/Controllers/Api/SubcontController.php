@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\FilterByDateRequest;
 use App\Service\Subcont\SubcontCreateItem;
 use App\Service\Subcont\SubcontCreateTransaction;
 use App\Service\Subcont\SubcontGetListItem;
@@ -11,6 +12,7 @@ use App\Models\Subcont;
 use App\Models\SubcontItem;
 use App\Models\SubcontStock;
 use App\Models\SubcontTransaction;
+use FontLib\TrueType\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Service\Subcont\SubcontGetItem;
@@ -19,6 +21,7 @@ use App\Http\Resources\SubcontItemResource;
 use App\Http\Requests\SubcontTransactionRequest;
 use App\Http\Resources\SubcontTransactionResource;
 use LDAP\Result;
+use Illuminate\Http\Request;
 
 class SubcontController
 {
@@ -52,10 +55,10 @@ class SubcontController
      * to get transaction record user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function indexTrans()
+    public function indexTrans(FilterByDateRequest $request)
     {
         try {
-            $result = $this->subcontGetTransaction->getAllTransactionSubcont();
+            $result = $this->subcontGetTransaction->getTransactionFilterByDateSubcont($request->validated());
         } catch (\Exception $ex) {
             return response()->json([
                 'error' => $ex->getMessage()

@@ -25,11 +25,18 @@ class SubcontCreateTransaction
             ->where('bp_code', Auth::user()->bp_code)
             ->value('sub_item_id');
 
-        $result = DB::transaction(function () use ($data, $subItemId) {
+
+            $result = DB::transaction(function () use ($data, $subItemId) {
+            if ($data["delivery_note"] == null || $data["delivery_note"] == '') {
+                $today = Carbon::now()->format("dmY");
+                $unique_dn_process = uniqid("PC/$today/");
+            }
 
             SubcontTransaction::create([
+                'delivery_note' => ($data['delivery_note'] == null) ? $unique_dn_process : $data['delivery_note'],
                 'sub_item_id' => $subItemId,
-                'transaction_date' => Carbon::now(),
+                'transaction_date' => Carbon::now()->format("Y-m-d"),
+                'transaction_time' => Carbon::now()->format("H:i:s"),
                 'transaction_type' => $data['transaction_type'],
                 'item_code' => $data['item_code'],
                 'status' => $data['status'],
