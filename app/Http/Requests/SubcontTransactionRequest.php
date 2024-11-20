@@ -29,8 +29,8 @@ class SubcontTransactionRequest extends FormRequest
             "transaction_type"=> "required|string|in:In,Out,Process",
             "item_code"=> "required|string|max:50",
             "status"=> "required|string|in:Fresh,Replating",
-            "qty_ok"=> "int",
-            "qty_ng"=> "int",
+            "qty_ok"=> "integer|min:0",
+            "qty_ng"=> "integer|min:0",
         ];
 
         ($this->transaction_type !== 'Process') ? $rules["delivery_note"] = "required|string|max:255" : $rules["delivery_note"] = "nullable|string|max:255";
@@ -62,10 +62,12 @@ class SubcontTransactionRequest extends FormRequest
             "status.in" => "The status must be either 'Fresh' or 'Replating'.",
 
             // Quantity OK
-            "qty_ok.int" => "The quantity OK must be an integer.",
+            "qty_ok.integer" => "The quantity OK must be an integer.",
+            "qty_ok.min" => "The quantity OK must be at least 0.",
 
             // Quantity NG
-            "qty_ng.int" => "The quantity NG must be an integer.",
+            "qty_ng.integer" => "The quantity NG must be an integer.",
+            "qty_ng.min" => "The quantity NG must be at least 0.",
         ];
     }
 

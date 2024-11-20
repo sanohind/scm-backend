@@ -214,7 +214,7 @@ Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
     // Route subcont
     Route::get('subcont/item/list', [SubcontController::class,'getListItem']);
     Route::get('subcont/item/index', [SubcontController::class,'indexItem']);
-    Route::get('subcont/trasaction/index', [SubcontController::class,'indexTrans']);
+    Route::get('subcont/transaction/index', [SubcontController::class,'indexTrans']);
     Route::post('subcont/item/store', [SubcontController::class,'createItem']);
     Route::post('subcont/transaction/store', [SubcontController::class,'createTransaction']);
 
