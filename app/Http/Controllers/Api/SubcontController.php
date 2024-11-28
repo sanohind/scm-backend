@@ -39,15 +39,14 @@ class SubcontController
      * To get item record user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function indexItem(
-        $param)
+    public function indexItem(Request $param)
     {
-        // dd($param);
         try {
-            $result = $this->subcontGetItem->getAllItemSubcont($param);
+            $result = $this->subcontGetItem->getAllItemSubcont($param ?? null);
         } catch (\Exception $ex) {
             return response()->json([
-                'error' => $ex->getMessage()." (On line ".$ex->getLine().")".$ex->getFile()
+                'status' => "Failed",
+                'error' => "{$ex->getMessage()} (On line {$ex->getLine()}) {$ex->getFile()}"
             ],500);
         }
 
@@ -61,7 +60,8 @@ class SubcontController
     public function indexTrans(FilterByDateRequest $request)
     {
         try {
-            $result = $this->subcontGetTransaction->getTransactionFilterByDateSubcont($request->validated());
+            // dd($request);
+            $result = $this->subcontGetTransaction->getAllTransactionSubcont($request->validated(), $request->bp_code ?? null);
         } catch (\Exception $ex) {
             return response()->json([
                 'error' => $ex->getMessage()
@@ -75,9 +75,9 @@ class SubcontController
      * Get list item user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getListItem($param = null) {
+    public function getListItem(Request $param) {
         try {
-            $result = $this->subcontGetListItem->getList($param);
+            $result = $this->subcontGetListItem->getList($param ?? null);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,

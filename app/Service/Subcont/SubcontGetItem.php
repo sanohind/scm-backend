@@ -41,7 +41,7 @@ class SubcontGetItem
         if ($data->isEmpty()) {
             // response when empty
             return response()->json([
-                'status' => false,
+                'status' => true,
                 'message' => 'Subcont Item Data Not Found',
                 'data' => [],
             ], 200);
