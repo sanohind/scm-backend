@@ -22,6 +22,7 @@ use App\Http\Requests\SubcontTransactionRequest;
 use App\Http\Resources\SubcontTransactionResource;
 use LDAP\Result;
 use Illuminate\Http\Request;
+use Str;
 
 class SubcontController
 {
@@ -38,10 +39,12 @@ class SubcontController
      * To get item record user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function indexItem()
+    public function indexItem(
+        $param)
     {
+        // dd($param);
         try {
-            $result = $this->subcontGetItem->getAllItemSubcont();
+            $result = $this->subcontGetItem->getAllItemSubcont($param);
         } catch (\Exception $ex) {
             return response()->json([
                 'error' => $ex->getMessage()." (On line ".$ex->getLine().")".$ex->getFile()
@@ -72,9 +75,9 @@ class SubcontController
      * Get list item user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getListItem() {
+    public function getListItem($param = null) {
         try {
-            $result = $this->subcontGetListItem->getList();
+            $result = $this->subcontGetListItem->getList($param);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,

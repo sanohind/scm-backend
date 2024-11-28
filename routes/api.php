@@ -171,7 +171,7 @@ Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
     Route::post('admin/logout', [AuthController::class, 'logout']);
 });
 
-// Route subcont
+// Route user subcont
 Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
     /**
      * New Route
@@ -212,9 +212,9 @@ Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
     Route::get('subcont/performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
 
     // Route subcont
-    Route::get('subcont/item/list', [SubcontController::class,'getListItem']);
-    Route::get('subcont/item/index', [SubcontController::class,'indexItem']);
+    Route::get('subcont/item/index/{param?}', [SubcontController::class,'indexItem']);
     Route::get('subcont/transaction/index', [SubcontController::class,'indexTrans']);
+    Route::get('subcont/item/list', [SubcontController::class,'getListItem']);
     Route::post('subcont/item/store', [SubcontController::class,'createItem']);
     Route::post('subcont/transaction/store', [SubcontController::class,'createTransaction']);
 
@@ -226,15 +226,14 @@ Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
     Route::post('subcont/logout', [AuthController::class, 'logout']);
 });
 
+// Route admin subcont
+Route::middleware(['auth:sanctum', 'userRole:6'])->prefix('admin-subcont')->group(function () {
+    // Route subcont
+    Route::get('partner/list', [PartnerController::class, 'index']);
+    Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
+    Route::get('subcont/transaction/index', [SubcontController::class,'indexTrans']);
+});
+
 // route testing
-// Route for show list of user
-// Route::get('/index',[UserController::class, "index"])->name('index');
 Route::get('/listingreporttest/file/{filename}', [ListingReportController::class, 'getFile']);
 Route::get('/forecasttest/file/{filename}', [ForecastController::class,"getFile"]);
-/* Route::middleware('api')->group(function () {
-    Route::get('/poheader', [PO_HeaderController::class, 'index']);
-    Route::post('/poheader', [PO_HeaderController::class, 'store']);
-    Route::get('/poheader/{po_no}', [PO_HeaderController::class, 'show']);
-    Route::put('/poheader/{po_no}', [PO_HeaderController::class, 'update']);
-    Route::patch('/poheader/edit/{po_no}', [PO_HeaderController::class, 'edit'])->name('po_header.edit');
-}); */

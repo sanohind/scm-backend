@@ -13,9 +13,15 @@ class SubcontGetItem
      * Get subcont item data based of user session
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getAllItemSubcont(){
+    public function getAllItemSubcont($param){
         // Show all subcont item data based on authorized user
-        $user = Auth::user()->bp_code;
+        $check =Auth::user()->role;
+
+        if ($check == 5) {
+            $user = Auth::user()->bp_code;
+        } elseif ($check == 6) {
+            $user = $param->query('bp_code');
+        }
 
         // Check if user exist
         if (!$user) {
