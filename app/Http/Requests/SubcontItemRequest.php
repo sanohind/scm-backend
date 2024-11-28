@@ -14,7 +14,7 @@ class SubcontItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 5;
+        return Auth::user()->role == 6;
     }
 
     /**
@@ -25,6 +25,7 @@ class SubcontItemRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "bp_code" => "required|string|max:50",
             "item_code"=> "required|string|max:50",
             "item_name"=> "required|string|max:255",
         ];
@@ -33,6 +34,11 @@ class SubcontItemRequest extends FormRequest
     public function messages(): array
     {
         return [
+            // bp_code
+            'bp_code.required' => 'The bp_code is required.',
+            'bp_code.string' => 'The bp_code must be a valid string.',
+            'bp_code.max' => 'The bp_code cannot be longer than 50 characters.',
+
             // item_code
             'item_code.required' => 'The item code is required.',
             'item_code.string' => 'The item code must be a valid string.',

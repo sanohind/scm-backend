@@ -15,7 +15,7 @@ class SubcontCreateItem
     public function createItemSubcont($data) {
         // Store logic
         SubcontItem::create([
-            "bp_code" => Auth::user()->bp_code,
+            "bp_code" => $data["bp_code"],
             "item_code" => $data["item_code"],
             "item_name" => $data["item_name"],
         ]);

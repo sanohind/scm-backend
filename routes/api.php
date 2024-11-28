@@ -215,7 +215,6 @@ Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
     Route::get('subcont/item/index/{param?}', [SubcontController::class,'indexItem']);
     Route::get('subcont/transaction/index', [SubcontController::class,'indexTrans']);
     Route::get('subcont/item/list', [SubcontController::class,'getListItem']);
-    Route::post('subcont/item/store', [SubcontController::class,'createItem']);
     Route::post('subcont/transaction/store', [SubcontController::class,'createTransaction']);
 
     // Route for forcast
@@ -233,6 +232,7 @@ Route::middleware(['auth:sanctum', 'userRole:6'])->prefix('admin-subcont')->grou
     Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
     Route::get('item/list/{param?}', [SubcontController::class,'getListItem']);
     Route::get('transaction/index/{param?}', [SubcontController::class,'indexTrans']);
+    Route::post('item/store', [SubcontController::class,'createItem']);
 });
 
 // route testing
