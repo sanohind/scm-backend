@@ -19,11 +19,6 @@ use App\Http\Controllers\Api\PO_HeaderController;
 use App\Http\Controllers\Api\ListingReportController;
 use App\Http\Controllers\SynchronizeManualController;
 
-// Route Default
-// Route::get("", function () {
-//     return view("index");
-// });
-
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -41,199 +36,289 @@ Route::get('/copyPoDetail', [SynchronizeController::class, 'copyPoDetail']);
 Route::get('/copyDnHeader', [SynchronizeController::class, 'copyDnHeader']);
 Route::get('/copyDnDetail', [SynchronizeController::class, 'copyDnDetail']);
 
-//Route Supplier
-Route::middleware(['auth:sanctum','userRole:1']) ->group(function () {
-    /**
-     * New Route
-     */
-    // Dashboard
-    Route::get('supplier/dashboard', [DashboardController::class, 'index']);
-
-    // route view history
-    Route::get('supplier/po/history/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
-    Route::get('supplier/dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
-
-    // Route for show list PO Header
-    Route::get('supplier/po/index/{sp_code}',[PO_HeaderController::class, "index"]);
-
-    // Route for show list PO Detail
-    Route::get('supplier/po/detail/{po_no}',[PO_DetailController::class, "index"]);
-    // Route for update list PO Header
-    Route::put('supplier/po/update/{po_no}',[PO_HeaderController::class, "update"]);
-
-
-    // Route for show list DN Header
-    Route::get('supplier/dn/index',[DN_HeaderController::class, "index"]);
-
-    // Route for show list DN Detail
-    Route::get('supplier/dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
-    // Route for edit list DN Detail
-    Route::get('supplier/dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
-    // Route for update list DN Detail
-    Route::put('supplier/dn/update',[DN_DetailController::class, "update"]);
-
-    // route view print
-    Route::get('supplier/po/print/{po_no}', [PrintController::class, 'poHeaderView']);
-    Route::get('supplier/dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
-    Route::get('supplier/label/print/{no_dn}', [PrintController::class, 'labelView']);
-
-    // Route for show list of Listing Report
-    Route::get('supplier/performance-report/index/{bp_code}',[ListingReportController::class, "index"]);
-    Route::get('supplier/performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
-
-    // Route for forcast
-    Route::get('supplier/forecast/index',[ForecastController::class,'indexSupplier']);
-    Route::get('supplier/forecast/file/{filename}', [ForecastController::class,"getFile"]);
-
-
-    //Logout route
-    Route::post('supplier/logout', [AuthController::class, 'logout']);
-});
-
-
-//Route Warehouse
-Route::middleware(['auth:sanctum','userRole:2']) ->group(function () {
-    /**
-     * New route
-     */
-    // Route sync data
-    Route::get('warehouse/sync', [SynchronizeManualController::class, 'syncManual']);
-
-    // Route get partner data
-    Route::get('warehouse/partner/index', [PartnerController::class, 'index']);
-
-    // Route for show list DN Header
-    // Specific Partner
-    Route::get('warehouse/dn/index/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
-
-    // Route for show list DN Detail
-    Route::get('warehouse/dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
-    Route::get('warehouse/dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
-
-    Route::get('warehouse/dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
-
-    //Logout route
-    Route::post('warehouse/logout', [AuthController::class, 'logout']);
-});
-
-//Route Purchasing
-Route::middleware(['auth:sanctum','userRole:3']) ->group(function () {
-    // Route sync data
-    Route::get('purchasing/sync', [SynchronizeManualController::class, 'syncManual']);
-
-    // Route get partner
-    Route::get('purchasing/partner/index', [PartnerController::class, 'index']);
-    // Route for show list PO Header
-    // Specific Partner
-    Route::get('purchasing/po/index/{sp_code}',[PO_HeaderController::class, "index"]);
-
-    // Route for show list PO Detail
-    Route::get('purchasing/po/detail/{po_no}',[PO_DetailController::class, "index"]);
-    Route::get('purchasing/po/history/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
-
-    // Route for show list of Listing Report
-    Route::get('purchasing/performance-report/index/{bp_code}',[ListingReportController::class, "index"])->name('index');
-    Route::get('purchasing/performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
-    // Route for store Listing Report
-    Route::post('/createlistingreport3',[ListingReportController::class, "store"]);
-
-    Route::get('/pohview3/{po_no}', [PrintController::class, 'poHeaderView']);
-
-    // Route for Forecast
-    Route::get('/purchasing/forecast/index/{bp_code}', [ForecastController::class,"indexPurchasing"]);
-    Route::post('/purchasing/forecast/store', [ForecastController::class,"store"]);
-    Route::delete('/purchasing/forecast/delete/{forecast}', [ForecastController::class,"destroy"]);
-    Route::get('purchasing/forecast/file/{filename}', [ForecastController::class,"getFile"]);
-
-    //Logout route
-    Route::post('purchasing/logout', [AuthController::class, 'logout']);
-});
-//Route Super Admin
-Route::middleware(['auth:sanctum','userRole:4']) ->group(function () {
-
-
-    Route::get('admin/partner/index', [PartnerController::class, 'index']);
+// Route Super Admin
+Route::middleware(['auth:sanctum','userRole:1'])->prefix('super-admin')->group(function () {
 
     // Route for show list of user
-    Route::get('admin/index', [UserController::class, 'index']);
+    Route::get('partner/list', [PartnerController::class, 'index']);
 
+    /**
+     * Route For User
+     */
+    // Route for get record data
+    Route::get('user/index', [UserController::class, 'index']);
     // Route for create user
-    Route::post('admin/create',[UserController::class, "store"]);
-
+    Route::post('user/store',[UserController::class, "store"]);
     // Route for edit user form
-    Route::get('admin/edit/{user}',[UserController::class, "edit"]);
-
-    // Route for update  user data
-    Route::put('admin/update/{user}',[UserController::class, "update"]);
-    Route::put('admin/update/status/{user}',[UserController::class, "updateStatus"]);
+    Route::get('user/edit/{user}',[UserController::class, "edit"]);
+    // Route for update user data
+    Route::put('user/update/{user}',[UserController::class, "update"]);
+    // Route for update status user
+    Route::put('user/update/status/{user}',[UserController::class, "updateStatus"]);
 
     //Logout route
-    Route::post('admin/logout', [AuthController::class, 'logout']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });
 
-// Route user subcont
-Route::middleware(['auth:sanctum','userRole:5']) ->group(function () {
-    /**
-     * New Route
-     */
-    // Dashboard
-    Route::get('subcont/dashboard', [DashboardController::class, 'index']);
+// Route Admin Purchasing
+Route::middleware(['auth:sanctum','userRole:2'])->prefix('admin-purchasing')->group(function () {
+    // Route sync data
+    Route::get('sync', [SynchronizeManualController::class, 'syncManual']);
 
-    // route view history
-    Route::get('subcont/po/history/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
-    Route::get('subcont/dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+    // Route get partner list
+    Route::get('partner/index', [PartnerController::class, 'index']);
+
+    /**
+     *  Route for Purchase Order
+     *  @param $sp_code / supplier_code is bp_code
+     */
+    // Routefor get record po with specific user
+    Route::get('po/index/{sp_code}',[PO_HeaderController::class, "index"]);
+    // Route for show PO Detail list
+    Route::get('po/detail/{po_no}',[PO_DetailController::class, "index"]);
+    // Route for print PO
+    Route::get('po/print/{po_no}', [PrintController::class, 'poHeaderView']);
+    // Route for show PO history list
+    Route::get('po/history/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
+
+    /**
+     * Route for Performance Report
+     */
+    // Route for show list of performance report
+    Route::get('performance-report/index/{bp_code}',[ListingReportController::class, "index"])->name('index');
+    // Route for download performance report
+    Route::get('performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
+    // Route for store Listing Report
+    Route::post('performance-report/store',[ListingReportController::class, "store"]);
+
+    /**
+     * Route for Forecast
+     */
+    // Route for get record forecast with spesific user
+    Route::get('forecast/index/{bp_code}', [ForecastController::class,"indexPurchasing"]);
+    // Route for store forecast file
+    Route::post('forecast/store', [ForecastController::class,"store"]);
+    // Route for download forecast file
+    Route::get('forecast/file/{filename}', [ForecastController::class,"getFile"]);
+    // Route for delete forecast file
+    Route::delete('forecast/delete/{forecast}', [ForecastController::class,"destroy"]);
+
+    //Logout route
+    Route::post('logout', [AuthController::class, 'logout']);
+});
+
+// Route Admin Warehouse
+Route::middleware(['auth:sanctum','userRole:3'])->prefix('admin-warehouse')->group(function () {
+    // Route sync data
+    Route::get('sync', [SynchronizeManualController::class, 'syncManual']);
+
+    // Route get partner data
+    Route::get('partner/index', [PartnerController::class, 'index']);
+
+    /**
+     * Route for Delivery Note
+     */
+    // Route for get record DN with specific user
+    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
+    // Route for show list DN Detail
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for print DN file
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // Route fo prin DN label / kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    // Route fo get DN history
+    Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+
+    //Logout route
+    Route::post('logout', [AuthController::class, 'logout']);
+});
+
+// Route Admin Subcont
+Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->group(function () {
+    // Route for get partner list
+    Route::get('partner/list', [PartnerController::class, 'index']);
+
+    /**
+     * Route for Subcontractor
+     */
+    // Route for get list item
+    Route::get('item/list/{param?}', [SubcontController::class,'getListItem']);
+    // Route for get index subcont item (include stock)
+    Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
+    // Route for store subcont item
+    Route::post('item/store', [SubcontController::class,'createItem']);
+    // Route for get index subcont transaction
+    Route::get('transaction/index/{param?}', [SubcontController::class,'indexTrans']);
+
+    //Logout route
+    Route::post('logout', [AuthController::class, 'logout']);
+});
+
+// Route Supplier Marketing
+Route::middleware(['auth:sanctum','userRole:5'])->prefix('supplier-marketing')->group(function () {
+    // Dashboard
+    Route::get('dashboard', [DashboardController::class, 'index']);
+
+    /**
+     *  Route for Purchase Order
+     */
+    // Route for show list PO Header
+    Route::get('po/index',[PO_HeaderController::class, "index"]);
+    // Route for show list PO Detail
+    Route::get('po/detail/{po_no}',[PO_DetailController::class, "index"]);
+    // Route for update list PO Header
+    Route::put('po/update/{po_no}',[PO_HeaderController::class, "update"]);
+    // route view PO history
+    Route::get('po/history', [HistoryController::class, 'poHeaderHistory']);
+    // route view print PO file
+    Route::get('po/print/{po_no}', [PrintController::class, 'poHeaderView']);
+
+    /**
+     *  Route for Delivery Note
+     */
+    // Route for show list DN Header
+    Route::get('dn/index',[DN_HeaderController::class, "index"]);
+    // Route for show list DN Detail
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for edit list DN Detail
+    Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
+    // Route for update list DN Detail
+    Route::put('dn/update',[DN_DetailController::class, "update"]);
+    // route view DN history
+    Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
+    // route view print DN file
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // route view print DN label/ kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+
+    /**
+     *  Route for Performance Repot
+     */
+    // Route for show list Perfromance Report
+    Route::get('performance-report/index',[ListingReportController::class, "index"]);
+    // Route for download Performance Report
+    Route::get('performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
+
+    /**
+     * Route for Forecast
+     */
+    // Route for show list Forecast
+    Route::get('forecast/index',[ForecastController::class,'indexSupplier']);
+    // Route for download Forecast
+    Route::get('forecast/file/{filename}', [ForecastController::class,"getFile"]);
+
+    //Logout route
+    Route::post('logout', [AuthController::class, 'logout']);
+});
+
+// Route Supplier Subcont Marketing
+Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marketing')->group(function () {
+    // Dashboard
+    Route::get('dashboard', [DashboardController::class, 'index']);
+
+    /**
+     *  Route for Purchase Order
+     */
 
     // Route for show list PO Header
-    Route::get('subcont/po/index/{sp_code}',[PO_HeaderController::class, "index"]);
-
+    Route::get('po/index',[PO_HeaderController::class, "index"]);
     // Route for show list PO Detail
-    Route::get('subcont/po/detail/{po_no}',[PO_DetailController::class, "index"]);
+    Route::get('po/detail/{po_no}',[PO_DetailController::class, "index"]);
     // Route for update list PO Header
-    Route::put('subcont/po/update/{po_no}',[PO_HeaderController::class, "update"]);
+    Route::put('po/update/{po_no}',[PO_HeaderController::class, "update"]);
+    // Route for PO history
+    Route::get('po/history', [HistoryController::class, 'poHeaderHistory']);
+    // Route for print PO
+    Route::get('po/print/{po_no}', [PrintController::class, 'poHeaderView']);
 
-
+    /**
+     *  Route for Delivery Note
+     */
     // Route for show list DN Header
-    Route::get('subcont/dn/index',[DN_HeaderController::class, "index"]);
-
+    Route::get('dn/index',[DN_HeaderController::class, "index"]);
     // Route for show list DN Detail
-    Route::get('subcont/dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    Route::get('dn/detail/[{no_dn}]',[DN_DetailController::class, "index"]);
     // Route for edit list DN Detail
-    Route::get('subcont/dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
+    Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
     // Route for update list DN Detail
-    Route::put('subcont/dn/update',[DN_DetailController::class, "update"]);
+    Route::put('dn/update',[DN_DetailController::class, "update"]);
+    // Route for print DN
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // Route for print DN label / kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    // route view DN history
+    Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
 
-    // route view print
-    Route::get('subcont/po/print/{po_no}', [PrintController::class, 'poHeaderView']);
-    Route::get('subcont/dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
-    Route::get('subcont/label/print/{no_dn}', [PrintController::class, 'labelView']);
+    /**
+     *  Route for Performance Report
+     */
+    // Route for show list of Performance Report
+    Route::get('performance-report/index',[ListingReportController::class, "index"]);
+    // Route for download Performance Report
+    Route::get('performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
 
-    // Route for show list of Listing Report
-    Route::get('subcont/performance-report/index/{bp_code}',[ListingReportController::class, "index"]);
-    Route::get('subcont/performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
+    /**
+     *  Route for Subcontractor
+     */
+    // Route for get list subcont item
+    Route::get('item/list', [SubcontController::class,'getListItem']);
+    // Route for get index subcont item (include stock)
+    Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
+    // Route for get index subcont transaction
+    Route::get('transaction/index', [SubcontController::class,'indexTrans']);
+    // Route for store subcont transaction
+    Route::post('transaction/store', [SubcontController::class,'createTransaction']);
 
-    // Route subcont
-    Route::get('subcont/item/index/{param?}', [SubcontController::class,'indexItem']);
-    Route::get('subcont/transaction/index', [SubcontController::class,'indexTrans']);
-    Route::get('subcont/item/list', [SubcontController::class,'getListItem']);
-    Route::post('subcont/transaction/store', [SubcontController::class,'createTransaction']);
-
-    // Route for forcast
-    Route::get('subcont/forecast/index',[ForecastController::class,'indexSupplier']);
-    Route::get('subcont/forecast/file/{filename}', [ForecastController::class,"getFile"]);
+    /**
+     *  Route for Forcast
+     */
+    // Route for get list Forecast
+    Route::get('forecast/index',[ForecastController::class,'indexSupplier']);
+    // Route for download Forecast
+    Route::get('forecast/file/{filename}', [ForecastController::class,"getFile"]);
 
     //Logout route
-    Route::post('subcont/logout', [AuthController::class, 'logout']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });
 
-// Route admin subcont
-Route::middleware(['auth:sanctum', 'userRole:6'])->prefix('admin-subcont')->group(function () {
-    // Route subcont
-    Route::get('partner/list', [PartnerController::class, 'index']);
-    Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
-    Route::get('item/list/{param?}', [SubcontController::class,'getListItem']);
-    Route::get('transaction/index/{param?}', [SubcontController::class,'indexTrans']);
-    Route::post('item/store', [SubcontController::class,'createItem']);
+// Route Supplier Warehouse
+Route::middleware(['auth:santum', 'userRole:7'])->prefix('supplier-warehouse')->group(function () {
+    /**
+     * Route for Delivery Note
+     */
+    // Route for get record DN with specific user
+    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
+    // Route for show list DN Detail
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for print DN file
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // Route fo prin DN label / kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    // Route fo get DN history
+    Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+
+    //Logout route
+    Route::post('logout', [AuthController::class, 'logout']);
 });
+
+// Route Supplier Subcont
+Route::middleware(['auth:sanctum', 'userRole:'])->prefix('supplier-subcont')->group(function () {
+    /**
+     *  Route for Subcontractor
+     */
+    // Route for get list subcont item
+    Route::get('item/list', [SubcontController::class,'getListItem']);
+    // Route for get index subcont item (include stock)
+    Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
+    // Route for get index subcont transaction
+    Route::get('transaction/index', [SubcontController::class,'indexTrans']);
+    // Route for store subcont transaction
+    Route::post('transaction/store', [SubcontController::class,'createTransaction']);
+
+    //Logout route
+    Route::post('logout', [AuthController::class, 'logout']);
+});
+
 
 // route testing
 Route::get('/listingreporttest/file/{filename}', [ListingReportController::class, 'getFile']);
