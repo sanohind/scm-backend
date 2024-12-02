@@ -296,7 +296,7 @@ Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marke
 });
 
 // Route Supplier Warehouse
-Route::middleware(['auth:santum', 'userRole:7'])->prefix('supplier-warehouse')->group(function () {
+Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')->group(function () {
     /**
      * Route for Delivery Note
      */
