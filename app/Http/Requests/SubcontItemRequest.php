@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\SubcontItem;
+
 use Illuminate\Support\Facades\Auth;
+use App\Models\Subcontractor\SubcontItem;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
@@ -14,7 +15,7 @@ class SubcontItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 6;
+        return Auth::user()->role == 4;
     }
 
     /**

@@ -43,7 +43,7 @@ class HistoryController
         $check =Auth::user()->role;
         if ($check == 5 || $check == 6 || $check == 7 || $check == 6 || $check == 8) {
             $user = Auth::user()->bp_code;
-        } elseif ($check == 2 || $check == 3) {
+        } elseif ($check == 2 || $check == 3 || $check == 4) {
             // dd($request);
             $user = $request->bp_code;
         }
