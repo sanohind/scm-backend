@@ -66,7 +66,7 @@ Route::middleware(['auth:sanctum','userRole:2'])->prefix('admin-purchasing')->gr
     Route::get('sync', [SynchronizeManualController::class, 'syncManual']);
 
     // Route get partner list
-    Route::get('partner/index', [PartnerController::class, 'index']);
+    Route::get('partner/list', [PartnerController::class, 'index']);
 
     /**
      *  Route for Purchase Order
@@ -113,7 +113,7 @@ Route::middleware(['auth:sanctum','userRole:3'])->prefix('admin-warehouse')->gro
     Route::get('sync', [SynchronizeManualController::class, 'syncManual']);
 
     // Route get partner data
-    Route::get('partner/index', [PartnerController::class, 'index']);
+    Route::get('partner/list', [PartnerController::class, 'index']);
 
     /**
      * Route for Delivery Note
