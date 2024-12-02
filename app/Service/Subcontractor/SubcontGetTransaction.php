@@ -18,7 +18,7 @@ class SubcontGetTransaction
         // Show all subcont transaction data based on authorized user
         $check = Auth::user()->role;
 
-        if ($check == 6) {
+        if ($check == 6 || $check == 8) {
             $user = Auth::user()->bp_code;
         } elseif ($check == 4) {
             $user = $bp_code;

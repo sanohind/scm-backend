@@ -251,7 +251,7 @@ Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marke
     // Route for show list DN Header
     Route::get('dn/index',[DN_HeaderController::class, "index"]);
     // Route for show list DN Detail
-    Route::get('dn/detail/[{no_dn}]',[DN_DetailController::class, "index"]);
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
     // Route for edit list DN Detail
     Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
     // Route for update list DN Detail
