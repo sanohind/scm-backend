@@ -3,23 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\DN_Header;
-use App\Models\PO_Header;
+use Illuminate\Support\Facades\Auth;
+use App\Models\PurchaseOrder\PO_Header;
 use App\Http\Resources\DN_HistoryViewResource;
-use App\Http\Resources\PO_HistoryViewResource;
-use GuzzleHttp\Psr7\Header;
+use App\Http\Resources\PurchaseOrder\PO_HistoryViewResource;
+use Illuminate\Http\Request;
 
 class HistoryController
 {
     // this controller is for get the data that needed for history
     // PO History
-    public function poHeaderHistory($bp_code)
+    public function poHeaderHistory(Request $request)
     {
-        // $user = Auth::user();
-        // $tes = (string) $bp_code;
-        // dd($tes);
+        $check =Auth::user()->role;
+        if ($check == 5) {
+            $user = Auth::user()->bp_code;
+        } elseif ($check == 2) {
+            // dd($request);
+            $user = $request->bp_code;
+        }
+
         //get data api to view
         $data_po = PO_Header::with('partner','poDetail')
-                            ->where('supplier_code', $bp_code)
+                            ->where('supplier_code', $user)
                             ->whereIn('po_status', ['Closed','closed','close','Cancelled','cancelled','cancel'])
                             ->get();
 

@@ -8,14 +8,14 @@ use Carbon\Carbon;
 use App\Models\DN_Label;
 use App\Models\DN_Detail;
 use App\Models\DN_Header;
-use App\Models\PO_Header;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\Label;
 use Illuminate\Support\Facades\Auth;
+use App\Models\PurchaseOrder\PO_Header;
 use App\Http\Resources\DN_LabelResource;
 use App\Http\Resources\DN_DetailViewResource;
 use App\Http\Resources\DN_HeaderViewResource;
-use App\Http\Resources\PO_HeaderViewResource;
+use App\Http\Resources\PurchaseOrder\PO_HeaderViewResource;
 
 
 class PrintController

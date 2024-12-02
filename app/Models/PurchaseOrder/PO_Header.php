@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\PurchaseOrder;
 
 use App\Models\User;
-use App\Models\PO_Detail;
 use App\Models\PartnerLocal;
+use App\Models\PurchaseOrder\PO_Detail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;

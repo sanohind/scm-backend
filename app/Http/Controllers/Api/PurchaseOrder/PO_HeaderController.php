@@ -1,24 +1,33 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\PurchaseOrder;
 
-use App\Mail\PoResponseInternal;
-use App\Models\User;
 use Carbon\Carbon;
-use App\Models\PO_Header;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Mail\PoResponseInternal;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Resources\PO_HeaderResource;
+use App\Models\PurchaseOrder\PO_Header;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\PurchaseOrder\PO_HeaderResource;
 
 class PO_HeaderController
 {
     // To get PO Header data based supplier_code
-    public function index($sp_code)
+    public function index(Request $request)
     {
+        $check =Auth::user()->role;
+
+        if ($check == 5) {
+            $user = Auth::user()->bp_code;
+        } elseif ($check == 2) {
+            $user = $request->bp_code;
+        }
+
         // Eager load the 'poDetail' relationship
-        $data_po = PO_Header::where('supplier_code', $sp_code)
+        $data_po = PO_Header::where('supplier_code', $user)
             ->orderBy('po_date', 'desc')
             ->whereNotIn('po_status', ['Closed', 'closed', 'close', 'Cancelled', 'cancelled', 'cancel'])
             ->with('poDetail')->get();
@@ -37,7 +46,7 @@ class PO_HeaderController
                 'status' => true,
                 'message' => 'PO Header data not found / empty / all PO data is Closed',
                 'data' => []
-            ], 404);
+            ], 200);
         }
 
         // If data isn't empty
@@ -140,7 +149,7 @@ class PO_HeaderController
         }
 
         // Variable for get email purchasing
-        $emailPurchasing = User::where('role', 3)->pluck('email');
+        $emailPurchasing = User::where('role', 2)->pluck('email');
 
         // Mail response to internal
         foreach ($emailPurchasing as $email) {

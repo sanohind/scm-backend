@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\PurchaseOrder;
 
-use App\Models\PO_Detail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\PurchaseOrder\PO_Detail;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\PO_DetailResource;
+use App\Http\Resources\PurchaseOrder\PO_DetailResource;
 
 class PO_DetailController extends Controller
 {

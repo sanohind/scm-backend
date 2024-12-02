@@ -4,20 +4,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\ForecastController;
 use App\Http\Controllers\TestMailController;
 use App\Http\Controllers\Api\PrintController;
 use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\SubcontController;
 use App\Http\Controllers\SynchronizeController;
+use App\Http\Controllers\Api\ForecastController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DN_DetailController;
 use App\Http\Controllers\Api\DN_HeaderController;
-use App\Http\Controllers\Api\PO_DetailController;
-use App\Http\Controllers\Api\PO_HeaderController;
 use App\Http\Controllers\Api\ListingReportController;
 use App\Http\Controllers\SynchronizeManualController;
+use App\Http\Controllers\Api\PurchaseOrder\PO_DetailController;
+use App\Http\Controllers\Api\PurchaseOrder\PO_HeaderController;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -73,7 +73,7 @@ Route::middleware(['auth:sanctum','userRole:2'])->prefix('admin-purchasing')->gr
      *  @param $sp_code / supplier_code is bp_code
      */
     // Routefor get record po with specific user
-    Route::get('po/index/{sp_code}',[PO_HeaderController::class, "index"]);
+    Route::get('po/index/{bp_code}',[PO_HeaderController::class, "index"]);
     // Route for show PO Detail list
     Route::get('po/detail/{po_no}',[PO_DetailController::class, "index"]);
     // Route for print PO

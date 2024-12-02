@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\PurchaseOrder;
 
-use App\Models\PO_Header;
+
+use App\Models\PurchaseOrder\PO_Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
