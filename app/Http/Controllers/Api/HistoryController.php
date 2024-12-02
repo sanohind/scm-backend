@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\DN_Header;
+use App\Models\DeliveryNote\DN_Header;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PurchaseOrder\PO_Header;
-use App\Http\Resources\DN_HistoryViewResource;
+use App\Http\Resources\DeliveryNote\DN_HistoryViewResource;
 use App\Http\Resources\PurchaseOrder\PO_HistoryViewResource;
-use Illuminate\Http\Request;
 
 class HistoryController
 {
@@ -16,7 +16,7 @@ class HistoryController
     public function poHeaderHistory(Request $request)
     {
         $check =Auth::user()->role;
-        if ($check == 5) {
+        if ($check == 5 || $check == 6) {
             $user = Auth::user()->bp_code;
         } elseif ($check == 2) {
             // dd($request);
@@ -38,12 +38,18 @@ class HistoryController
     }
 
     // DN History
-    public function dnHeaderHistory($bp_code)
+    public function dnHeaderHistory(Request $request)
     {
-        // $code = $bp_code;
+        $check =Auth::user()->role;
+        if ($check == 5 || $check == 6 || $check == 7 || $check == 6 || $check == 8) {
+            $user = Auth::user()->bp_code;
+        } elseif ($check == 2 || $check == 3) {
+            // dd($request);
+            $user = $request->bp_code;
+        }
         //get data api to view
         $data_dn = DN_Header::with('poHeader','dnDetail')
-        ->where('supplier_code', $bp_code)
+        ->where('supplier_code', $user)
         ->orderBy('plan_delivery_date', 'desc')
         ->whereIn('status_desc', ['Closed','closed','close','Confirmed','confirmed'])
         ->get();

@@ -150,6 +150,20 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
     // Route for get index subcont transaction
     Route::get('transaction/index/{param?}', [SubcontController::class,'indexTrans']);
 
+    /**
+     * Route for Delivery Note
+     */
+    // Route for get record DN with specific user
+    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
+    // Route for show list DN Detail
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for print DN file
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // Route fo prin DN label / kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    // Route fo get DN history
+    Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
 });
