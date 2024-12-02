@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Service\Subcont;
+namespace App\Service\Subcontractor;
 
-use App\Models\SubcontItem;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Subcontractor\SubcontItem;
 
 class SubcontCreateItem
 {

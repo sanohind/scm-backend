@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Subcontractor;
 
-use App\Models\SubcontStock;
-use App\Models\SubcontTransaction;
+
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Subcontractor\SubcontStock;
+use App\Models\Subcontractor\SubcontTransaction;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

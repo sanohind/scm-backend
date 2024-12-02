@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service\Subcont;
+namespace App\Service\Subcontractor;
 
-use App\Http\Resources\SubcontListItemResource;
-use App\Models\SubcontItem;
+
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\SubcontItemResource;
+use App\Models\Subcontractor\SubcontItem;
+use App\Http\Resources\Subcontractor\SubcontListItemResource;
 
 class SubcontGetListItem
 {
