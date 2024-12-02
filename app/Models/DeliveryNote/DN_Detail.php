@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\DeliveryNote;
 
-use App\Models\DN_Header;
+use App\Models\DeliveryNote\DN_Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

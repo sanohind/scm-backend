@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\DeliveryNote;
 
-use App\Models\DN_Detail;
-use App\Models\PO_Header;
+use App\Models\PartnerLocal;
+use App\Models\DeliveryNote\DN_Detail;
+use App\Models\PurchaseOrder\PO_Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;

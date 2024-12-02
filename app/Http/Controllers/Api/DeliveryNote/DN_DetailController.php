@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\DeliveryNote;
 
 
-use App\Models\DN_Detail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\DN_DetailResource;
-use App\Models\DN_Header;
-use Carbon\Carbon;
+use App\Models\DeliveryNote\DN_Detail;
+use App\Models\DeliveryNote\DN_Header;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\DeliveryNote\DN_DetailResource;
 
 class DN_DetailController extends Controller
 {
@@ -25,12 +25,12 @@ class DN_DetailController extends Controller
                 'success' => false,
                 'message' => 'DN details not found'
             ], 404);
-        }   
+        }
 
         $dateString = date('Y-m-d', strtotime($data_dndetail->first()->dnHeader->plan_delivery_date));
         $timeString = date('H:i', strtotime($data_dndetail->first()->dnHeader->plan_delivery_time));
         $concat = "$dateString $timeString";
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Display List DN Detail Successfully',

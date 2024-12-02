@@ -12,10 +12,10 @@ use App\Http\Controllers\Api\SubcontController;
 use App\Http\Controllers\SynchronizeController;
 use App\Http\Controllers\Api\ForecastController;
 use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\DN_DetailController;
-use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\ListingReportController;
 use App\Http\Controllers\SynchronizeManualController;
+use App\Http\Controllers\Api\DeliveryNote\DN_DetailController;
+use App\Http\Controllers\Api\DeliveryNote\DN_HeaderController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_DetailController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_HeaderController;
 
@@ -314,6 +314,24 @@ Route::middleware(['auth:sanctum', 'userRole:8'])->prefix('supplier-subcont')->g
     Route::get('transaction/index', [SubcontController::class,'indexTrans']);
     // Route for store subcont transaction
     Route::post('transaction/store', [SubcontController::class,'createTransaction']);
+
+    /**
+     *  Route for Delivery Note
+     */
+    // Route for show list DN Header
+    Route::get('dn/index',[DN_HeaderController::class, "index"]);
+    // Route for show list DN Detail
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for edit list DN Detail
+    Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
+    // Route for update list DN Detail
+    Route::put('dn/update',[DN_DetailController::class, "update"]);
+    // route view DN history
+    Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
+    // route view print DN file
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // route view print DN label/ kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\DeliveryNote;
 
-use App\Models\DN_Detail;
+use App\Models\DeliveryNote\DN_Detail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

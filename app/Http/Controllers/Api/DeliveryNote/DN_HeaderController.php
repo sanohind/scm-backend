@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\DeliveryNote;
 
-use App\Models\DN_Header;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\DN_HeaderResource;
+use App\Models\DeliveryNote\DN_Header;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\DeliveryNote\DN_HeaderResource;
 
 class DN_HeaderController extends Controller
 {
