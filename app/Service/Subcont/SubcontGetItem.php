@@ -17,9 +17,9 @@ class SubcontGetItem
         // Show all subcont item data based on authorized user
         $check =Auth::user()->role;
 
-        if ($check == 5) {
+        if ($check == 6) {
             $user = Auth::user()->bp_code;
-        } elseif ($check == 6) {
+        } elseif ($check == 4) {
             $user = $param->query('bp_code');
         }
 

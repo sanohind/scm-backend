@@ -302,7 +302,7 @@ Route::middleware(['auth:santum', 'userRole:7'])->prefix('supplier-warehouse')->
 });
 
 // Route Supplier Subcont
-Route::middleware(['auth:sanctum', 'userRole:'])->prefix('supplier-subcont')->group(function () {
+Route::middleware(['auth:sanctum', 'userRole:8'])->prefix('supplier-subcont')->group(function () {
     /**
      *  Route for Subcontractor
      */
