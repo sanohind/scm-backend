@@ -306,6 +306,8 @@ Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')-
     Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
     // Route for update list DN Detail
     Route::put('dn/update',[DN_DetailController::class, "update"]);
+    // Route for edit list DN Detail
+    Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
     // Route for print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     // Route fo prin DN label / kanban
