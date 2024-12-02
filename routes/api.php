@@ -301,9 +301,11 @@ Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')-
      * Route for Delivery Note
      */
     // Route for get record DN with specific user
-    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
+    Route::get('dn/index',[DN_HeaderController::class, "index"]);
     // Route for show list DN Detail
     Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for update list DN Detail
+    Route::put('dn/update',[DN_DetailController::class, "update"]);
     // Route for print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     // Route fo prin DN label / kanban
