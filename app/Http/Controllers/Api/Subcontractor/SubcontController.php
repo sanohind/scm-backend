@@ -1,28 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Subcontractor;
 
-use App\Http\Requests\FilterByDateRequest;
-use App\Service\Subcont\SubcontCreateItem;
-use App\Service\Subcont\SubcontCreateTransaction;
-use App\Service\Subcont\SubcontGetListItem;
-use App\Service\Subcont\SubcontGetTransaction;
+use Str;
+
+use LDAP\Result;
+
 use Carbon\Carbon;
-use App\Models\Subcont;
-use App\Models\SubcontItem;
-use App\Models\SubcontStock;
-use App\Models\SubcontTransaction;
+use Illuminate\Http\Request;
 use FontLib\TrueType\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Service\Subcont\SubcontGetItem;
 use App\Http\Requests\SubcontItemRequest;
-use App\Http\Resources\SubcontItemResource;
+use App\Http\Requests\FilterByDateRequest;
+use App\Service\Subcontractor\SubcontGetItem;
 use App\Http\Requests\SubcontTransactionRequest;
-use App\Http\Resources\SubcontTransactionResource;
-use LDAP\Result;
-use Illuminate\Http\Request;
-use Str;
+use App\Service\Subcontractor\SubcontCreateItem;
+use App\Service\Subcontractor\SubcontGetListItem;
+use App\Service\Subcontractor\SubcontGetTransaction;
+use App\Service\Subcontractor\SubcontCreateTransaction;
 
 class SubcontController
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Service\Subcont;
+namespace App\Service\Subcontractor;
 
 use Exception;
 use Carbon\Carbon;
-use App\Models\SubcontItem;
-use App\Models\SubcontStock;
-use App\Models\SubcontTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Subcontractor\SubcontItem;
+use App\Models\Subcontractor\SubcontStock;
+use App\Models\Subcontractor\SubcontTransaction;
 
 class SubcontCreateTransaction
 {
@@ -68,12 +68,12 @@ class SubcontCreateTransaction
     }
 
     /**
-     * Calculating the new request stock
+     * Summary of calculatingStock
      * @param string $status
      * @param string $type
      * @param int $qtyOk
      * @param int $qtyNg
-     * @param \App\Models\SubcontStock $stock
+     * @param \App\Models\Subcontractor\SubcontStock $stock
      * @throws \Exception
      * @return bool
      */

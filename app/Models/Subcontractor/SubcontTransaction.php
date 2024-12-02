@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Subcontractor;
 
-use App\Models\SubcontItem;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Subcontractor\SubcontItem;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

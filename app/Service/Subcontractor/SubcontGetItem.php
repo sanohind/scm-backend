@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service\Subcont;
+namespace App\Service\Subcontractor;
 
-use App\Models\SubcontItem;
 use FontLib\TrueType\Collection;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\SubcontItemResource;
+use App\Models\Subcontractor\SubcontItem;
+use App\Http\Resources\Subcontractor\SubcontItemResource;
 
 class SubcontGetItem
 {

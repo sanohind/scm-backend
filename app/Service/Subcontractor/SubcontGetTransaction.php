@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service\Subcont;
+namespace App\Service\Subcontractor;
 
-use App\Models\SubcontTransaction;
 use FontLib\TrueType\Collection;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\SubcontTransactionResource;
+use App\Models\Subcontractor\SubcontTransaction;
+use App\Http\Resources\Subcontractor\SubcontTransactionResource;
 
 class SubcontGetTransaction
 {
