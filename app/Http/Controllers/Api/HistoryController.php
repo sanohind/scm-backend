@@ -16,7 +16,7 @@ class HistoryController
     public function poHeaderHistory(Request $request)
     {
         $check =Auth::user()->role;
-        if ($check == 5) {
+        if ($check == 5 || $check == 6) {
             $user = Auth::user()->bp_code;
         } elseif ($check == 2) {
             // dd($request);
