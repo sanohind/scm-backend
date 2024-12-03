@@ -313,7 +313,7 @@ Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')-
     // Route fo prin DN label / kanban
     Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
     // Route fo get DN history
-    Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+    Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
