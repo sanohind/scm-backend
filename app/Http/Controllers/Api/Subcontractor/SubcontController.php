@@ -53,11 +53,11 @@ class SubcontController
      * to get transaction record user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function indexTrans(FilterByDateRequest $request)
+    public function indexTrans(Request $request)
     {
         try {
             // dd($request);
-            $result = $this->subcontGetTransaction->getAllTransactionSubcont($request->validated(), $request->bp_code ?? null);
+            $result = $this->subcontGetTransaction->getAllTransactionSubcont($request->start_date ?? null,$request->end_date ?? null, $request->bp_code ?? null);
         } catch (\Exception $ex) {
             return response()->json([
                 'error' => $ex->getMessage()

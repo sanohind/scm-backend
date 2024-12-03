@@ -13,7 +13,7 @@ class SubcontGetTransaction
      * Get all log user transaction
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getAllTransactionSubcont($filterByDate,$bp_code)
+    public function getAllTransactionSubcont($start_date,$end_date,$bp_code)
     {
         // Show all subcont transaction data based on authorized user
         $check = Auth::user()->role;
@@ -36,7 +36,7 @@ class SubcontGetTransaction
         $data = SubcontTransaction::whereHas('subItem', function ($q) use ($user) {
             $q->where('bp_code', $user);
         })
-        ->whereBetween('transaction_date', [$filterByDate['start_date'], $filterByDate['end_date']])
+        ->whereBetween('transaction_date', [$start_date, $end_date])
             ->orderBy('transaction_date', 'desc')
             ->get();
 
