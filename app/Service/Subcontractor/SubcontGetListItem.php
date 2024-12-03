@@ -20,7 +20,7 @@ class SubcontGetListItem
         if ($check == 6 || $check == 8) {
             $user = Auth::user()->bp_code;
         } elseif ($check == 4) {
-            $user = $param->query("bp_code");
+            $user = $param->bp_code;
         }
 
         // Check if user exist
