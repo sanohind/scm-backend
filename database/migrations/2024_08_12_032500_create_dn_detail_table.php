@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('mysql')->create('dn_detail', function (Blueprint $table) {
-            $table->id('dn_detail_no', 25);
+            $table->id('dn_detail_no');
             $table->string('no_dn', 25)->nullable(); //fixed no_dn
             $table->foreign('no_dn')->references('no_dn')->on('dn_header')->onDelete('cascade');
             $table->integer('dn_line')->nullable();
