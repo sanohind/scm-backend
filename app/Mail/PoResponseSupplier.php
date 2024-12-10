@@ -18,11 +18,13 @@ class PoResponseSupplier extends Mailable
      */
 
      protected $po_header;
+     protected $dn_header;
 
-    public function __construct($po_header)
+    public function __construct($po_header,$dn_header)
     {
         //
         $this->po_header = $po_header;
+        $this->dn_header = $dn_header;
     }
 
     /**
@@ -43,7 +45,8 @@ class PoResponseSupplier extends Mailable
         return new Content(
             markdown: 'email.supplier-content-email',
             with: [
-                'data' => $this->po_header,
+                'data1' => $this->po_header,
+                'data2' => $this->dn_header,
                 'url' => 'https://sms.sanohindonesia.co.id'
             ],
         );
