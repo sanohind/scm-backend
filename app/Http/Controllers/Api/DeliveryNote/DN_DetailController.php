@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api\DeliveryNote;
 
 
+use App\Http\Requests\UpdateDeliveryNoteRequest;
+use App\Service\DeliveryNote\DeliveryNoteUpdateTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\DeliveryNote\DN_Detail;
 use App\Models\DeliveryNote\DN_Header;
@@ -13,6 +16,10 @@ use App\Http\Resources\DeliveryNote\DN_DetailResource;
 
 class DN_DetailController extends Controller
 {
+    public function __construct(
+        protected DeliveryNoteUpdateTransaction $deliveryNoteUpdateTransaction,
+    ) {}
+
     // View list data DNDetail
     public function index($no_dn)
     {
@@ -72,7 +79,19 @@ class DN_DetailController extends Controller
     }
 
     // Update data to database
-    public function update(Request $request)
+    public function update(UpdateDeliveryNoteRequest $request) {
+        try {
+            $result = $this->deliveryNoteUpdateTransaction->updateQuantity($request->validated());
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'error' => $th->getMessage()." (On line ".$th->getLine().")"
+            ],500);
+        }
+
+        return $result;
+    }
+    public function update2(Request $request)
     {
         try {
             // Dump the request data to inspect the incoming data
@@ -101,19 +120,21 @@ class DN_DetailController extends Controller
                 return response()->json(['error' => 'Header not found for: ' . $data['no_dn']], 404);
             }
 
-            // Update DN_Detail records
-            foreach ($data['updates'] as $update) {
-                $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->first();
+            DB::transaction(function () use($data) {
+                // Update DN_Detail records
+                foreach ($data['updates'] as $update) {
+                    $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->first();
 
-                if ($record) {
-                    $record->update([
-                        'qty_confirm' => $update['qty_confirm'],
-                    ]);
-                } else {
-                    // Handle the case where the record is not found
-                    return response()->json(['error' => 'DN Detail Not Found For: ' . $update['dn_detail_no']], 404);
+                    if ($record) {
+                        $record->update([
+                            'qty_confirm' => $update['qty_confirm'],
+                        ]);
+                    } else {
+                        // Handle the case where the record is not found
+                        return response()->json(['error' => 'DN Detail Not Found For: ' . $update['dn_detail_no']], 404);
+                    }
                 }
-            }
+            });
 
             return response()->json(['message' => 'DN details updated successfully']);
 

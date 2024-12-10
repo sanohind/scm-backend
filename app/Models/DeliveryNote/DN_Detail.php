@@ -5,6 +5,7 @@ namespace App\Models\DeliveryNote;
 use App\Models\DeliveryNote\DN_Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -50,5 +51,10 @@ class DN_Detail extends Model
     public function dnHeader(): BelongsTo
     {
         return $this->belongsTo(DN_Header::class, 'no_dn', 'no_dn');
+    }
+
+    public function dnOutstanding(): HasMany
+    {
+        return $this->hasMany(DN_Detail_Outstanding::class, 'dn_detail_no', 'dn_detail_no');
     }
 }
