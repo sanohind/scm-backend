@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\ListingReport;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ListingReportResource;
-use Carbon\Carbon;
 
 class ListingReportController extends Controller
 {
     // View list data Listing Report
-    public function index($bp_code)
+    public function index(Request $bp_code)
     {
+        $check =Auth::user()->role;
+        if ($check == 5 || $check == 6 || $check == 7 || $check == 6 || $check == 8) {
+            $bp_code = Auth::user()->bp_code;
+        } elseif ($check == 2 || $check == 3 || $check == 4) {
+            // dd($request);
+            $bp_code = $bp_code->bp_code;
+        }
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation

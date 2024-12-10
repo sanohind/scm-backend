@@ -13,7 +13,7 @@ class StoreForecastRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 3;
+        return Auth::user()->role == 2;
     }
 
     /**

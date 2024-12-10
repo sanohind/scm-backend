@@ -8,14 +8,14 @@ use App\Http\Controllers\TestMailController;
 use App\Http\Controllers\Api\PrintController;
 use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\Api\PartnerController;
-use App\Http\Controllers\Api\SubcontController;
 use App\Http\Controllers\SynchronizeController;
 use App\Http\Controllers\Api\ForecastController;
 use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\DN_DetailController;
-use App\Http\Controllers\Api\DN_HeaderController;
 use App\Http\Controllers\Api\ListingReportController;
 use App\Http\Controllers\SynchronizeManualController;
+use App\Http\Controllers\Api\Subcontractor\SubcontController;
+use App\Http\Controllers\Api\DeliveryNote\DN_DetailController;
+use App\Http\Controllers\Api\DeliveryNote\DN_HeaderController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_DetailController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_HeaderController;
 
@@ -66,7 +66,7 @@ Route::middleware(['auth:sanctum','userRole:2'])->prefix('admin-purchasing')->gr
     Route::get('sync', [SynchronizeManualController::class, 'syncManual']);
 
     // Route get partner list
-    Route::get('partner/index', [PartnerController::class, 'index']);
+    Route::get('partner/list', [PartnerController::class, 'index']);
 
     /**
      *  Route for Purchase Order
@@ -113,7 +113,7 @@ Route::middleware(['auth:sanctum','userRole:3'])->prefix('admin-warehouse')->gro
     Route::get('sync', [SynchronizeManualController::class, 'syncManual']);
 
     // Route get partner data
-    Route::get('partner/index', [PartnerController::class, 'index']);
+    Route::get('partner/list', [PartnerController::class, 'index']);
 
     /**
      * Route for Delivery Note
@@ -142,13 +142,27 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
      * Route for Subcontractor
      */
     // Route for get list item
-    Route::get('item/list/{param?}', [SubcontController::class,'getListItem']);
+    Route::get('item/list/{bp_code}', [SubcontController::class,'getListItem']);
     // Route for get index subcont item (include stock)
-    Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
+    Route::get('item/index/{bp_code}', [SubcontController::class,'indexItem']);
     // Route for store subcont item
     Route::post('item/store', [SubcontController::class,'createItem']);
     // Route for get index subcont transaction
-    Route::get('transaction/index/{param?}', [SubcontController::class,'indexTrans']);
+    Route::get('transaction/index/{bp_code}/{start_date}/{end_date}', [SubcontController::class,'indexTrans']);
+
+    /**
+     * Route for Delivery Note
+     */
+    // Route for get record DN with specific user
+    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
+    // Route for show list DN Detail
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for print DN file
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // Route fo prin DN label / kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    // Route fo get DN history
+    Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
@@ -237,7 +251,7 @@ Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marke
     // Route for show list DN Header
     Route::get('dn/index',[DN_HeaderController::class, "index"]);
     // Route for show list DN Detail
-    Route::get('dn/detail/[{no_dn}]',[DN_DetailController::class, "index"]);
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
     // Route for edit list DN Detail
     Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
     // Route for update list DN Detail
@@ -282,20 +296,24 @@ Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marke
 });
 
 // Route Supplier Warehouse
-Route::middleware(['auth:santum', 'userRole:7'])->prefix('supplier-warehouse')->group(function () {
+Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')->group(function () {
     /**
      * Route for Delivery Note
      */
     // Route for get record DN with specific user
-    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
+    Route::get('dn/index',[DN_HeaderController::class, "index"]);
     // Route for show list DN Detail
     Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for update list DN Detail
+    Route::put('dn/update',[DN_DetailController::class, "update"]);
+    // Route for edit list DN Detail
+    Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
     // Route for print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     // Route fo prin DN label / kanban
     Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
     // Route fo get DN history
-    Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+    Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
@@ -314,6 +332,24 @@ Route::middleware(['auth:sanctum', 'userRole:8'])->prefix('supplier-subcont')->g
     Route::get('transaction/index', [SubcontController::class,'indexTrans']);
     // Route for store subcont transaction
     Route::post('transaction/store', [SubcontController::class,'createTransaction']);
+
+    /**
+     *  Route for Delivery Note
+     */
+    // Route for show list DN Header
+    Route::get('dn/index',[DN_HeaderController::class, "index"]);
+    // Route for show list DN Detail
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for edit list DN Detail
+    Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
+    // Route for update list DN Detail
+    Route::put('dn/update',[DN_DetailController::class, "update"]);
+    // route view DN history
+    Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
+    // route view print DN file
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // route view print DN label/ kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
