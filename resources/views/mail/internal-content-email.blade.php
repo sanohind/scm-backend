@@ -3,7 +3,7 @@
 {{-- header --}}
 <h2>Dear Respective In-Charge,</h2>
 
-A new notification status PO has been submit by Supplier. Please login to check the same.
+A new notification status Purchase Order has been submit by Supplier. Please login to check the same.
 
 {{-- Content --}}
 <x-mail::panel>
