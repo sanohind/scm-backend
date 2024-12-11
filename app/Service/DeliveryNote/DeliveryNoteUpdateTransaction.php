@@ -115,7 +115,7 @@ class DeliveryNoteUpdateTransaction
             $dnDetailRecord->increment("qty_confirm", $d['qty_confirm']);
 
             // Check if the total qty_confirm has reached dn_qty
-            if ($dnDetailRecord->qty_confirm >= $dnDetailRecord->dn_qty) {
+            if ($dnDetailRecord->qty_confirm >  $dnDetailRecord->dn_qty) {
                 throw new \Exception("All quantities have been confirmed. No more outstanding transactions allowed.", 422);
             }
         }

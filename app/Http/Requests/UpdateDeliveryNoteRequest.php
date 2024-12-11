@@ -78,7 +78,7 @@ class UpdateDeliveryNoteRequest extends FormRequest
                     ->first();
 
             // if $getData not null
-            if ($getData) {
+            if ($getData->dn_qty != $getData->qty_confirm) {
                 $currentReceipt = $getData->receipt_qty ?? 0;
                 $dnQty = $getData->dn_qty;
                 $dnSnp = $getData->dn_snp;
@@ -96,6 +96,13 @@ class UpdateDeliveryNoteRequest extends FormRequest
                     $validator->errors()->add(
                         "updates.{$i['dn_detail_no']}.qty_confirm}",
                         "Qty Confirm exceeds Qty Requested for DN: {$i['dn_detail_no']}"
+                    );
+                }
+            } elseif ($getData->dn_qty == $getData->qty_confirm) {
+                if ($i['qty_confirm'] != 0) {
+                    $validator->errors()->add(
+                        "updates.{$i['dn_detail_no']}.qty_confirm",
+                        "Qty Confirm must be 0 when DN Qty equals Qty Confirm for DN: {$i['dn_detail_no']}"
                     );
                 }
             } else {
