@@ -72,13 +72,17 @@ class DashboardController
         // Get the count of active users where status is 1
         $active_users_count = User::where('status', 1)->count();
 
+        // Get the count of deactive users where status is 0
+        $deactive_users_count = User::where('status', 0)->count();
+
         return response()->json([
             'success' => true,
             'message' => 'Dashboard Data Retrieved Successfully',
             'data' => [
-                'active_tokens' => $active_tokens_count,
-                'total_users' => $total_users_count,
-                'active_users' => $active_users_count,
+                'active_tokens'   => $active_tokens_count,
+                'total_users'     => $total_users_count,
+                'active_users'    => $active_users_count,
+                'deactive_users'  => $deactive_users_count,
             ]
         ]);
     }
