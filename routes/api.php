@@ -49,6 +49,9 @@ Route::middleware(['auth:sanctum','userRole:1'])->prefix('super-admin')->group(f
     // Route for detail active user
     Route::get('user/online', [DashboardController::class, 'detailActiveUser']);
 
+    // Route for logout current useer active token
+    Route::get('user/logout', [DashboardController::class, 'logoutActiveUser']);
+
     /**
      * Route For User
      */
