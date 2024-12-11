@@ -64,7 +64,7 @@ class DashboardController
 
         // Get the count of tokens created within the last hour
         $active_tokens_count = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
-            ->count();
+        ->count();
 
         // Get the total count of users
         $total_users_count = User::count();
