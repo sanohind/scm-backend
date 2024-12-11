@@ -63,17 +63,8 @@ class DashboardController
         $oneHourAgo = now()->subHour();
 
         // Get the count of tokens created within the last hour
-        $active_tokens = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
-            ->with('tokenable') // Ensure we load the related user
-            ->get();
-
-        // Count the active tokens
-        $active_tokens_count = $active_tokens->count();
-
-        // Get the usernames of users with active tokens
-        $active_usernames = $active_tokens->map(function ($token) {
-            return $token->tokenable->username; // Assuming the related user has a 'username' attribute
-        });
+        $active_tokens_count = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
+        ->count();
 
         // Get the total count of users
         $total_users_count = User::count();
@@ -89,7 +80,6 @@ class DashboardController
             'message' => 'Dashboard Data Retrieved Successfully',
             'data' => [
                 'active_tokens'   => $active_tokens_count,
-                'active_usernames' => $active_usernames,
                 'total_users'     => $total_users_count,
                 'active_users'    => $active_users_count,
                 'deactive_users'  => $deactive_users_count,
