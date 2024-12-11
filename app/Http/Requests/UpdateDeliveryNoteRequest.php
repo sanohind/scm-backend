@@ -14,7 +14,7 @@ class UpdateDeliveryNoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 5 || 6 || 7;
+        return Auth::user()->role == 5 || Auth::user()->role == 6 || Auth::user()->role == 7;
     }
 
     /**
@@ -53,7 +53,7 @@ class UpdateDeliveryNoteRequest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => 'Validation failed',
                 'errors'  => $validator->errors(),
             ], 422)
@@ -68,45 +68,58 @@ class UpdateDeliveryNoteRequest extends FormRequest
     }
 
     // Check qty_confirm
-    protected function checkQuantity($validator){
+    protected function checkQuantity($validator)
+    {
         $getRequestUpdate = $this->input('updates');
 
-        // dd($getRequestUpdate);
         foreach ($getRequestUpdate as $i) {
-            $getData = DN_Detail::select('dn_qty','receipt_qty','dn_snp')
-                    ->where('no_dn', $this->no_dn)
-                    ->first();
+            $getData = DN_Detail::select('dn_qty', 'receipt_qty', 'dn_snp', 'qty_confirm')
+                ->where('dn_detail_no', $i['dn_detail_no'])
+                ->first();
 
-            // if $getData not null
-            if ($getData->dn_qty != $getData->qty_confirm) {
-                $currentReceipt = $getData->receipt_qty ?? 0;
-                $dnQty = $getData->dn_qty;
-                $dnSnp = $getData->dn_snp;
+            if ($getData) {
+                $currentReceipt = (int)($getData->receipt_qty ?? 0);
+                $dnQty = (int)$getData->dn_qty;
+                $dnSnp = (int)$getData->dn_snp;
+
+                // Debugging
+                // \Log::info("Validating DN Detail No: {$i['dn_detail_no']}", [
+                //     'qty_confirm' => $i['qty_confirm'],
+                //     'currentReceipt' => $currentReceipt,
+                //     'dnQty' => $dnQty,
+                //     'dnSnp' => $dnSnp,
+                // ]);
 
                 // Check qty_confirm must be multiple of dn_snp
                 if (($i['qty_confirm'] % $dnSnp) != 0) {
                     $validator->errors()->add(
-                        "updates.*.qty_confirm",
+                        "updates.{$i['dn_detail_no']}.qty_confirm",
                         "Qty Confirm must be multiple of Qty Label"
                     );
                 }
 
                 // Check qty_confirm can't exceed qty_requested
-                if (($i['qty_confirm'] + $currentReceipt) >= $dnQty) {
+                if (($i['qty_confirm'] + $currentReceipt) > $dnQty) {
                     $validator->errors()->add(
-                        "updates.{$i['dn_detail_no']}.qty_confirm}",
+                        "updates.{$i['dn_detail_no']}.qty_confirm",
                         "Qty Confirm exceeds Qty Requested for DN: {$i['dn_detail_no']}"
                     );
                 }
-            } elseif ($getData->dn_qty == $getData->qty_confirm) {
-                if ($i['qty_confirm'] != 0) {
-                    $validator->errors()->add(
-                        "updates.{$i['dn_detail_no']}.qty_confirm",
-                        "Qty Confirm must be 0 when DN Qty equals Qty Confirm for DN: {$i['dn_detail_no']}"
-                    );
+
+                // Check if dn_qty equals qty_confirm
+                if ($getData->dn_qty == $getData->qty_confirm) {
+                    if ($i['qty_confirm'] != 0) {
+                        $validator->errors()->add(
+                            "updates.{$i['dn_detail_no']}.qty_confirm",
+                            "Qty Confirm must be 0 when DN Qty equals Qty Confirm for DN: {$i['dn_detail_no']}"
+                        );
+                    }
                 }
             } else {
-                throw new \Exception("Error when Checking qty_confirm Request", 500);
+                $validator->errors()->add(
+                    "updates.{$i['dn_detail_no']}.qty_confirm",
+                    "DN Detail not found for DN: {$i['dn_detail_no']}"
+                );
             }
         }
     }
