@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\DN_Header;
-use App\Models\PO_Header;
 use GuzzleHttp\Psr7\Header;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DeliveryNote\DN_Header;
+use App\Models\PurchaseOrder\PO_Header;
 use App\Http\Resources\DashboardViewResource;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class DashboardController
 {
@@ -48,6 +49,27 @@ class DashboardController
                 'po_in_progress' => $data_po_in_proccess,
                 'dn_active' => $data_dn_open,
                 'dn_confirmed'=> $data_dn_confirmed
+            ]
+        ]);
+    }
+
+    /**
+     * Get the count of active tokens for all roles.
+     */
+    public function onlineUser()
+    {
+        // Calculate the timestamp for one hour ago
+        $oneHourAgo = now()->subHour();
+
+        // Get the count of tokens created within the last hour
+        $active_tokens_count = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Active Tokens Retrieved Successfully',
+            'data' => [
+                'active_tokens' => $active_tokens_count
             ]
         ]);
     }
