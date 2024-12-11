@@ -86,4 +86,33 @@ class DashboardController
             ]
         ]);
     }
+
+    public function detailActiveUser()
+    {
+        // Calculate the timestamp for one hour ago
+        $oneHourAgo = now()->subHour();
+
+        // Get the active tokens created within the last hour
+        $active_tokens = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
+            ->with('tokenable') // Ensure we load the related user
+            ->get();
+
+        // Map the active tokens to the required details
+        $active_token_details = $active_tokens->map(function ($token) {
+            return [
+                'username'     => $token->tokenable->username,
+                'name'         => $token->tokenable->name,
+                'role'         => $token->tokenable->role,
+                'last_login'   => $token->created_at,
+                'last_update'  => $token->last_used_at,
+                'token'        => $token->token,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Active Token Details Retrieved Successfully',
+            'data' => $active_token_details
+        ]);
+    }
 }
