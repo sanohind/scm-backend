@@ -105,7 +105,7 @@ class DashboardController
                 'role'         => $token->tokenable->role,
                 'last_login'   => $token->created_at->format('d-m-Y - H:i:s'),
                 'last_update'  => $token->last_used_at ? $token->last_used_at->format('d-m-Y - H:i:s') : null,
-                'token'        => $token->currentAccessToken(),
+                'token'        => $token->token,
             ];
         });
 
