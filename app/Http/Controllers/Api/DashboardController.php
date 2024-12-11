@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\DeliveryNote\DN_Header;
 use App\Models\PurchaseOrder\PO_Header;
 use App\Http\Resources\DashboardViewResource;
+use App\Models\User;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -56,7 +57,7 @@ class DashboardController
     /**
      * Get the count of active tokens for all roles.
      */
-    public function onlineUser()
+    public function dashboard()
     {
         // Calculate the timestamp for one hour ago
         $oneHourAgo = now()->subHour();
@@ -65,11 +66,15 @@ class DashboardController
         $active_tokens_count = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
             ->count();
 
+        // Get the total count of users
+        $total_users_count = User::count();
+
         return response()->json([
             'success' => true,
-            'message' => 'Active Tokens Retrieved Successfully',
+            'message' => 'Dashboard Data Retrieved Successfully',
             'data' => [
-                'active_tokens' => $active_tokens_count
+                'active_tokens' => $active_tokens_count,
+                'total_users' => $total_users_count
             ]
         ]);
     }

@@ -44,7 +44,7 @@ Route::middleware(['auth:sanctum','userRole:1'])->prefix('super-admin')->group(f
     Route::get('partner/list', [PartnerController::class, 'index']);
 
     // Route for show online user
-    Route::get('user/online', [DashboardController::class, 'onlineUser']);
+    Route::get('user/online', [DashboardController::class, 'dashboard']);
 
     /**
      * Route For User
