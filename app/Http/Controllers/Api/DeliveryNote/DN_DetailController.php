@@ -25,6 +25,7 @@ class DN_DetailController extends Controller
     {
         $data_dndetail = DN_Detail::where('no_dn', $no_dn)
         ->orderBy('plan_delivery_date', 'asc')
+        ->orderBy('dn_line', 'asc')
         ->get();
 
         if ($data_dndetail->isEmpty()) {
