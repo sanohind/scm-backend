@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\DN_Header;
-use App\Models\PO_Header;
 use GuzzleHttp\Psr7\Header;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DeliveryNote\DN_Header;
+use App\Models\PurchaseOrder\PO_Header;
 use App\Http\Resources\DashboardViewResource;
+use App\Models\User;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class DashboardController
 {
@@ -48,6 +50,39 @@ class DashboardController
                 'po_in_progress' => $data_po_in_proccess,
                 'dn_active' => $data_dn_open,
                 'dn_confirmed'=> $data_dn_confirmed
+            ]
+        ]);
+    }
+
+    /**
+     * Get the count of active tokens for all roles.
+     */
+    public function dashboard()
+    {
+        // Calculate the timestamp for one hour ago
+        $oneHourAgo = now()->subHour();
+
+        // Get the count of tokens created within the last hour
+        $active_tokens_count = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
+            ->count();
+
+        // Get the total count of users
+        $total_users_count = User::count();
+
+        // Get the count of active users where status is 1
+        $active_users_count = User::where('status', 1)->count();
+
+        // Get the count of deactive users where status is 0
+        $deactive_users_count = User::where('status', 0)->count();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Dashboard Data Retrieved Successfully',
+            'data' => [
+                'active_tokens'   => $active_tokens_count,
+                'total_users'     => $total_users_count,
+                'active_users'    => $active_users_count,
+                'deactive_users'  => $deactive_users_count,
             ]
         ]);
     }

@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\DeliveryNote\DN_DetailController;
 use App\Http\Controllers\Api\DeliveryNote\DN_HeaderController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_DetailController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_HeaderController;
+use Laravel\Sanctum\PersonalAccessToken;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -41,6 +42,9 @@ Route::middleware(['auth:sanctum','userRole:1'])->prefix('super-admin')->group(f
 
     // Route for show list of user
     Route::get('partner/list', [PartnerController::class, 'index']);
+
+    // Route for show online user
+    Route::get('user/online', [DashboardController::class, 'dashboard']);
 
     /**
      * Route For User
