@@ -64,7 +64,8 @@ class AuthController
             'role' => $user->role,
             'bp_code' => $user->bp_code,
             'name' => $user->name,
-            'token_type' => 'Bearer'
+            'token_type' => 'Bearer',
+            'supplier_name' => $user->adr_line_2,
         ]);
     }
 
