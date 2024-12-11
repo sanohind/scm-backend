@@ -69,12 +69,16 @@ class DashboardController
         // Get the total count of users
         $total_users_count = User::count();
 
+        // Get the count of active users where status is 1
+        $active_users_count = User::where('status', 1)->count();
+
         return response()->json([
             'success' => true,
             'message' => 'Dashboard Data Retrieved Successfully',
             'data' => [
                 'active_tokens' => $active_tokens_count,
-                'total_users' => $total_users_count
+                'total_users' => $total_users_count,
+                'active_users' => $active_users_count,
             ]
         ]);
     }
