@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Subcontractor;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SubcontItemErp extends Model
+class SubcontItemConnectionErp extends Model
 {
     protected $connection = "sqlsrv";
 

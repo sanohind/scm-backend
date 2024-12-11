@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subcont_item_erps', function (Blueprint $table) {
+        Schema::create('subcont_item_erp', function (Blueprint $table) {
             $table->id('item_id');
             $table->string('item',255);
             $table->string('description',255);
