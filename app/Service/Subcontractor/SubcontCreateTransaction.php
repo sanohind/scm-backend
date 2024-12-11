@@ -25,11 +25,29 @@ class SubcontCreateTransaction
             ->where('bp_code', Auth::user()->bp_code)
             ->value('sub_item_id');
 
+            $todayLatestProcess = Carbon::now()->format("Ymd");
+                $today = Carbon::now()->format("dmy");
+                // dd($today);
+                $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 4);
+                $getLatestProcess = SubcontTransaction::where('sub_item_id',$subItemId)
+                ->where('transaction_type', 'Process')
+                ->where('transaction_date', $todayLatestProcess)
+                ->count();
+                $unique_dn_process = "$user-$today-".($getLatestProcess + 1);
+                dd($unique_dn_process);
+
 
             $result = DB::transaction(function () use ($data, $subItemId) {
             if ($data["delivery_note"] == null || $data["delivery_note"] == '') {
-                $today = Carbon::now()->format("dmY");
-                $unique_dn_process = uniqid("PC/$today/");
+                $todayLatestProcess = Carbon::now()->format("Ymd");
+                $today = Carbon::now()->format("dmy");
+                // dd($today);
+                $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 4);
+                $getLatestProcess = SubcontTransaction::where('sub_item_id',$subItemId)
+                ->where('transaction_type', 'Process')
+                ->where('transaction_date', $todayLatestProcess)
+                ->count();
+                $unique_dn_process = "$user-$today-".($getLatestProcess + 1);
             }
 
             SubcontTransaction::create([
@@ -83,7 +101,7 @@ class SubcontCreateTransaction
             // Fresh
             case 'Fresh':
                 switch ($type) {
-                    case 'In':
+                    case 'Ingoing':
                         // qty_ok
                         $stock->increment('incoming_fresh_stock', $qtyOk);
 
@@ -111,7 +129,7 @@ class SubcontCreateTransaction
                         }
                         break;
 
-                    case 'Out':
+                    case 'Outgoing':
                         // qty_ok
                         if ($stock->process_fresh_stock < $qtyOk) {
                             throw new Exception("Ready fresh stock cannot be below 0 / minus", 422);
@@ -135,7 +153,7 @@ class SubcontCreateTransaction
             // Replating
             case 'Replating':
                 switch ($type) {
-                    case 'In':
+                    case 'Ingoing':
                         // qty_ok
                         $stock->increment('incoming_replating_stock', $qtyOk);
 
@@ -163,7 +181,7 @@ class SubcontCreateTransaction
                         }
                         break;
 
-                    case 'Out':
+                    case 'Outgoing':
                         // qty_ok
                         if ($stock->process_replating_stock < $qtyOk) {
                             throw new Exception("Ready replating stock cannot be below 0 / minus", 422);
