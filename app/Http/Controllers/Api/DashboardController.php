@@ -80,7 +80,6 @@ class DashboardController
             'message' => 'Dashboard Data Retrieved Successfully',
             'data' => [
                 'active_tokens'   => $active_tokens_count,
-                'active_usernames' => $active_usernames,
                 'total_users'     => $total_users_count,
                 'active_users'    => $active_users_count,
                 'deactive_users'  => $deactive_users_count,
