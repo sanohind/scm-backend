@@ -103,9 +103,9 @@ class DashboardController
                 'username'     => $token->tokenable->username,
                 'name'         => $token->tokenable->name,
                 'role'         => $token->tokenable->role,
-                'last_login'   => $token->created_at,
-                'last_update'  => $token->last_used_at,
-                'token'        => $token->token,
+                'last_login'   => $token->created_at->format('d-m-Y - H:i:s'),
+                'last_update'  => $token->last_used_at ? $token->last_used_at->format('d-m-Y - H:i:s') : null,
+                'token'        => $token->currentAccessToken(),
             ];
         });
 
@@ -115,4 +115,34 @@ class DashboardController
             'data' => $active_token_details
         ]);
     }
+
+    public function logoutByUsername(Request $request)
+{
+    // Validate the request to ensure 'username' is provided
+    $request->validate([
+        'username' => 'required|string'
+    ]);
+
+    // Find the user by username
+    $user = User::where('username', $request->username)->first();
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'User not found'
+        ], 404);
+    }
+
+    // Calculate the timestamp for one hour ago
+    $oneHourAgo = now()->subHour();
+
+    // Revoke only the active tokens created within the last hour for the user
+    $user->tokens()->where('created_at', '>=', $oneHourAgo)->delete();
+
+    // Logout success response
+    return response()->json([
+        'success' => true,
+        'message' => 'User successfully logged out'
+    ], 200);
+}
 }
