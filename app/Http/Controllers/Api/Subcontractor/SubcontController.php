@@ -17,6 +17,7 @@ use App\Service\Subcontractor\SubcontGetItem;
 use App\Http\Requests\SubcontTransactionRequest;
 use App\Service\Subcontractor\SubcontCreateItem;
 use App\Service\Subcontractor\SubcontGetListItem;
+use App\Service\Subcontractor\SubcontGetListItemErp;
 use App\Service\Subcontractor\SubcontGetTransaction;
 use App\Service\Subcontractor\SubcontCreateTransaction;
 
@@ -28,7 +29,8 @@ class SubcontController
         protected SubcontGetTransaction $subcontGetTransaction,
         protected SubcontCreateItem $subcontCreateItem,
         protected SubcontCreateTransaction $subcontCreateTransaction,
-        protected SubcontGetListItem $subcontGetListItem
+        protected SubcontGetListItem $subcontGetListItem,
+        protected SubcontGetListItemErp $subcontGetListItemErp,
         ) {}
 
     /**
@@ -74,6 +76,23 @@ class SubcontController
     public function getListItem(Request $param) {
         try {
             $result = $this->subcontGetListItem->getList($param ?? null);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'error' => $th->getMessage()." (On line ".$th->getLine().")"
+            ],500);
+        }
+
+        return $result;
+    }
+    
+    /**
+     * Summary of getListItemErp
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function getListItemErp() {
+        try {
+            $result = $this->subcontGetListItemErp->getListErp();
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,

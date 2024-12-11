@@ -14,7 +14,7 @@ class SubcontItemErp extends Model
 
     protected $keyType = "integer";
 
-    protected $timestamps = true;
+    public $timestamps = true;
 
     protected $fillable = [
         "item",

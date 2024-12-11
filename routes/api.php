@@ -141,6 +141,8 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
     /**
      * Route for Subcontractor
      */
+    // Route for get list item Erp
+    Route::get('item/list/item', [SubcontController::class,'getListItemErp']);
     // Route for get list item
     Route::get('item/list/{bp_code}', [SubcontController::class,'getListItem']);
     // Route for get index subcont item (include stock)
