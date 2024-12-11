@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-// model sql server
+use App\Models\Subcontractor\SubcontItemConnectionErp;
+use App\Models\Subcontractor\SubcontItemErp;
 use Carbon\Carbon;
 use App\Models\Partner;
-use App\Models\DN_Detail;
-use App\Models\DN_Header;
-use App\Models\PO_Detail;
-
-// model mysql
-use App\Models\PO_Header;
 use App\Models\PartnerLocal;
-use App\Models\DN_Detail_ERP;
-use App\Models\DN_Header_ERP;
+use App\Models\DeliveryNote\DN_Detail;
+use App\Models\DeliveryNote\DN_Header;
+use App\Models\PurchaseOrder\PO_Detail;
+use App\Models\PurchaseOrder\PO_Header;
+use App\Models\DeliveryNote\DN_Detail_ERP;
+use App\Models\DeliveryNote\DN_Header_ERP;
+use App\Models\PurchaseOrder\PO_Detail_ERP;
+use App\Models\PurchaseOrder\PO_Header_ERP;
 
-use App\Models\PO_Detail_ERP;
-use App\Models\PO_Header_ERP;
+
 
 class SynchronizeController
 {
@@ -24,6 +24,30 @@ class SynchronizeController
     public function sync()
     {
         set_time_limit(0);
+        /**
+         *  get item subcont erp
+         */
+        $sqlsrvDataSubcontItem = SubcontItemConnectionErp::where('item_group', 'WBL1')->get();
+        foreach ($sqlsrvDataSubcontItem as $data) {
+            SubcontItemErp::updateOrCreate(
+                // find the item
+                ['item' => $data->item],
+
+                //update data
+                [
+                    'description' => $data->description,
+                    'item_group' => $data->item_group,
+                    'group_desc' => $data->group_desc,
+                    'material' => $data->material,
+                    'old_item' => $data->old_item,
+                    'unit' => $data->unit,
+                    'div_code' => $data->div_code,
+                    'divisi' => $data->divisi,
+                    'model' => $data->model,
+                    ]
+            );
+        }
+
         /*
 
 

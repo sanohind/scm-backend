@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Partner;
-use App\Models\DN_Detail;
-use App\Models\DN_Header;
-use App\Models\PO_Detail;
-use App\Models\PO_Header;
 use App\Models\PartnerLocal;
 use Illuminate\Http\Request;
-use App\Models\DN_Detail_ERP;
-use App\Models\DN_Header_ERP;
-use App\Models\PO_Detail_ERP;
-use App\Models\PO_Header_ERP;
 use App\Jobs\SyncManualDatabaseJob;
 use App\Http\Controllers\Controller;
+use App\Models\DeliveryNote\DN_Detail;
+use App\Models\DeliveryNote\DN_Header;
+use App\Models\PurchaseOrder\PO_Detail;
+use App\Models\PurchaseOrder\PO_Header;
+use App\Models\DeliveryNote\DN_Detail_ERP;
+use App\Models\DeliveryNote\DN_Header_ERP;
+use App\Models\PurchaseOrder\PO_Detail_ERP;
+use App\Models\PurchaseOrder\PO_Header_ERP;
 
 class SynchronizeManualController extends Controller
 {
