@@ -116,33 +116,30 @@ class DashboardController
         ]);
     }
 
-    public function logoutByUsername(Request $request)
-{
-    // Validate the request to ensure 'username' is provided
-    $request->validate([
-        'username' => 'required|string'
-    ]);
+    public function logoutByTokenId(Request $request)
+    {
+        // Validate the request to ensure 'token_id' is provided
+        $request->validate([
+            'token_id' => 'required|integer'
+        ]);
 
-    // Find the user by username
-    $user = User::where('username', $request->username)->first();
+        // Find the token by ID
+        $token = PersonalAccessToken::find($request->token_id);
 
-    if (!$user) {
+        if (!$token) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token not found'
+            ], 404);
+        }
+
+        // Revoke the specific token
+        $token->delete();
+
+        // Logout success response
         return response()->json([
-            'success' => false,
-            'message' => 'User not found'
-        ], 404);
+            'success' => true,
+            'message' => 'Token successfully revoked'
+        ], 200);
     }
-
-    // Calculate the timestamp for one hour ago
-    $oneHourAgo = now()->subHour();
-
-    // Revoke only the active tokens created within the last hour for the user
-    $user->tokens()->where('created_at', '>=', $oneHourAgo)->delete();
-
-    // Logout success response
-    return response()->json([
-        'success' => true,
-        'message' => 'User successfully logged out'
-    ], 200);
-}
 }
