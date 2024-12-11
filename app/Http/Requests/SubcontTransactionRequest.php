@@ -15,7 +15,7 @@ class SubcontTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 6 || 8;
+        return Auth::user()->role == 6 || 8 || 7;
     }
 
     /**
@@ -26,7 +26,7 @@ class SubcontTransactionRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "transaction_type"=> "required|string|in:In,Out,Process",
+            "transaction_type"=> "required|string|in:Ingoing,Outgoing,Process",
             "item_code"=> "required|string|max:50",
             "status"=> "required|string|in:Fresh,Replating",
             "qty_ok"=> "integer|min:0",
@@ -44,17 +44,17 @@ class SubcontTransactionRequest extends FormRequest
             // Delivery Note
             "delivery_note.required" => "The delivery note is required.",
             "delivery_note.string" => "The delivery note must be a valid string.",
-            "delivery_note.max" => "The delivery note length max 255.",
+            "delivery_note.max" => "The delivery note must not exceed 255 characters.",
 
             // Transaction Type
             "transaction_type.required" => "The transaction type is required.",
             "transaction_type.string" => "The transaction type must be a valid string.",
-            "transaction_type.in" => "The transaction type must be 'In', 'Out', or 'Process' .",
+            "transaction_type.in" => "The transaction type must be one of the following: 'Ingoing', 'Outgoing', or 'Process'.",
 
             // Item Code
-            "item_code.required" => "The item_code is required.",
-            "item_code.string" => "The item_code must be a valid string.",
-            "item_code.max" => "The item_code length max 50.",
+            "item_code.required" => "The item code is required.",
+            "item_code.string" => "The item code must be a valid string.",
+            "item_code.max" => "The item code must not exceed 50 characters.",
 
             // Status
             "status.required" => "The status is required.",
