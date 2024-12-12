@@ -11,6 +11,8 @@ use App\Http\Resources\DashboardViewResource;
 use App\Models\User;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use Laravel\Sanctum\PersonalAccessToken;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class DashboardController
 {
@@ -55,6 +57,96 @@ class DashboardController
     }
 
     /**
+     * Get the po and dn data from the last year.
+     */
+    public function getYearlyData()
+    {
+        // Calculate the start date as the first day of the current month one year ago
+        $startDate = now()->subYear()->startOfMonth();
+
+        // Calculate the end date as the last day of the current month
+        $endDate = now()->endOfMonth();
+
+        // Generate an array of months within the date range
+        $months = [];
+        $period = CarbonPeriod::create($startDate, '1 month', $endDate);
+        foreach ($period as $date) {
+            $months[] = $date->format('Y-m');
+        }
+
+        // Get the PO data that is Closed within the last year
+        $po_data_closed = PO_Header::where('po_status', 'Closed')
+            ->whereBetween('po_date', [$startDate, $endDate])
+            ->get();
+
+        // Get the PO data that is Cancelled within the last year
+        $po_data_canceled = PO_Header::where('po_status', 'Cancelled')
+            ->whereBetween('po_date', [$startDate, $endDate])
+            ->get();
+
+        // Get the DN data that is Confirmed within the last year
+        $dn_data_confirmed = DN_Header::where('status_desc', 'Confirmed')
+            ->whereBetween('dn_created_date', [$startDate, $endDate])
+            ->get();
+
+        // Get the DN data that is Cancelled within the last year
+        $dn_data_canceled = DN_Header::where('status_desc', 'Cancelled')
+            ->whereBetween('dn_created_date', [$startDate, $endDate])
+            ->get();
+
+        // Function to group data by month and count occurrences
+        $groupDataByMonth = function ($data, $dateField) {
+            return $data->groupBy(function ($item) use ($dateField) {
+                return Carbon::parse($item->$dateField)->format('Y-m');
+            })->map(function ($items) {
+                return $items->count();
+            });
+        };
+
+        // Group and count the data
+        $po_closed_counts = $groupDataByMonth($po_data_closed, 'po_date');
+        $po_cancelled_counts = $groupDataByMonth($po_data_canceled, 'po_date');
+        $dn_confirmed_counts = $groupDataByMonth($dn_data_confirmed, 'dn_created_date');
+        $dn_cancelled_counts = $groupDataByMonth($dn_data_canceled, 'dn_created_date');
+
+        // Prepare the final data arrays, ensuring each month is represented
+        $po_closed_final = [];
+        $po_cancelled_final = [];
+        $dn_confirmed_final = [];
+        $dn_cancelled_final = [];
+
+        foreach ($months as $month) {
+            $po_closed_final[] = [
+                'month' => $month,
+                'count' => $po_closed_counts->get($month, 0),
+            ];
+            $po_cancelled_final[] = [
+                'month' => $month,
+                'count' => $po_cancelled_counts->get($month, 0),
+            ];
+            $dn_confirmed_final[] = [
+                'month' => $month,
+                'count' => $dn_confirmed_counts->get($month, 0),
+            ];
+            $dn_cancelled_final[] = [
+                'month' => $month,
+                'count' => $dn_cancelled_counts->get($month, 0),
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Yearly Data Retrieved Successfully',
+            'data' => [
+                'po_closed' => $po_closed_final,
+                'po_cancelled' => $po_cancelled_final,
+                'dn_confirmed' => $dn_confirmed_final,
+                'dn_cancelled' => $dn_cancelled_final,
+            ],
+        ]);
+    }
+
+    /**
      * Get the count of active tokens for all roles.
      */
     public function dashboard()
@@ -87,6 +179,9 @@ class DashboardController
         ]);
     }
 
+    /**
+     * Get the detail of active tokens for all roles.
+     */
     public function detailActiveUser()
     {
         // Calculate the timestamp for one hour ago
