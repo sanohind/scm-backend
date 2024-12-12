@@ -13,13 +13,14 @@ class DnDetailAndOutstandingNotificationInternal extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $dn_detail;
     /**
      * Create a new message instance.
      */
 
-    public function __construct()
+    public function __construct($dn_detail)
     {
-
+        $this->dn_detail = $dn_detail;
     }
 
     /**
@@ -28,7 +29,7 @@ class DnDetailAndOutstandingNotificationInternal extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Dn Detail And Outstanding Notification Internal',
+            subject: 'A NEW NOTIFICATION from SMS',
         );
     }
 
@@ -39,6 +40,10 @@ class DnDetailAndOutstandingNotificationInternal extends Mailable
     {
         return new Content(
             markdown: 'mail.dn-detail-and-outstanding-notification-internal',
+            with:[
+                 'data' => $this->dn_detail,
+                'url' => 'https://sms.sanohindonesia.co.id',
+            ]
         );
     }
 

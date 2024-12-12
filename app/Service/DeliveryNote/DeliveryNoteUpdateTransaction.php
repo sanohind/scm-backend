@@ -2,11 +2,16 @@
 
 namespace App\Service\DeliveryNote;
 
-use App\Models\DeliveryNote\DN_Detail;
-use App\Models\DeliveryNote\DN_Detail_Outstanding;
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Models\DeliveryNote\DN_Detail;
 use App\Models\DeliveryNote\DN_Header;
+use Illuminate\Support\Facades\Validator;
+use App\Models\DeliveryNote\DN_Detail_Outstanding;
+use App\Mail\DnDetailAndOutstandingNotificationInternal;
 
 class DeliveryNoteUpdateTransaction
 {
@@ -14,9 +19,16 @@ class DeliveryNoteUpdateTransaction
 
 
         return DB::transaction(function () use($data) {
-            // initialization
+            // Variable initialization
             $updateQuantityConfirm = false;
             $updateQuantityOutstanding = false;
+            // Variable for get email purchasing & get data user
+            $emailPurchasing = User::where('role', 2)->pluck('email');
+            $emailData = collect([
+                "supplier_code" => Auth::user()->bp_code,
+                "supplier_name" => Auth::user()->partner->adr_line_1 ?? Auth::user()->partner->bp_name,
+                "no_dn" => $data['no_dn'],
+            ]);
 
             // Update confirmation to the latest date
             $updateConfirmationDate = $this->confirmUpdateAt($data['no_dn']);
@@ -30,12 +42,25 @@ class DeliveryNoteUpdateTransaction
                 throw new \Exception("Error processing confirm update at", 500);
             }
 
+            // Return response to user
             if ($updateQuantityConfirm == true) {
+                // Mail to internal
+                foreach ($emailPurchasing as $email) {
+                    Mail::to($email)->send(new DnDetailAndOutstandingNotificationInternal($emailData));
+                }
+
+                // Return response
                 return response()->json([
                     'status' => true,
                     'message' => 'Quantity confirm process successfully',
                 ],200);
             } elseif($updateQuantityOutstanding == true){
+                // Mail to internal
+                foreach ($emailPurchasing as $email) {
+                    Mail::to($email)->send(new DnDetailAndOutstandingNotificationInternal($emailData));
+                }
+
+                // Return response
                 return response()->json([
                     'status' => true,
                     'message' => 'Add Outstanding Successfully',
