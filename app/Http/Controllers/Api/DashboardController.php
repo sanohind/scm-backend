@@ -27,7 +27,7 @@ class DashboardController
         // get data po
         $data_po_active = PO_Header::where('supplier_code', $sp_code)
         ->whereIn('po_status', ['Open', 'open'])
-        ->where('response',  '=',null)
+        ->whereNull('response')
         ->count();
 
         $data_po_in_proccess = PO_Header::where('supplier_code', $sp_code)
