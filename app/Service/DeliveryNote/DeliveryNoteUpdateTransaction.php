@@ -23,7 +23,7 @@ class DeliveryNoteUpdateTransaction
 
             // Cheking the update confirmation date and then
             if ($updateConfirmationDate == false) {
-                $updateQuantityConfirm = $this->updateQuantityConfirm($data);
+                $updateQuantityConfirm = $this->updateQuantityFirstConfirm($data);
             } elseif ($updateConfirmationDate == true) {
                 $updateQuantityOutstanding = $this->updateOutstanding($data);
             } else {
@@ -61,7 +61,7 @@ class DeliveryNoteUpdateTransaction
         }
     }
 
-    private function updateQuantityConfirm($data): bool {
+    private function updateQuantityFirstConfirm($data): bool {
         // Update DN_Detail records
         foreach ($data['updates'] as $d) {
             $record = DN_Detail::where('dn_detail_no', $d['dn_detail_no'])->first();
