@@ -52,6 +52,9 @@ Route::middleware(['auth:sanctum','userRole:1'])->prefix('super-admin')->group(f
     // Route for logout current useer active token
     Route::post('user/logout', [DashboardController::class, 'logoutByTokenId']);
 
+    // Route for monthly login data
+    Route::get('user/monthly', [DashboardController::class, 'monthlyLoginData']);
+
     /**
      * Route For User
      */
