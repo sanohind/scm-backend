@@ -297,7 +297,7 @@ class DashboardController
         ]);
     }
 
-    public function calendarEvents()
+    public function calenderEvents()
 {
     // Get the supplier code from the authenticated user
     $sp_code = auth()->user()->bp_code;
