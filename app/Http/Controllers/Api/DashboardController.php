@@ -27,7 +27,7 @@ class DashboardController
         // get data po
         $data_po_active = PO_Header::where('supplier_code', $sp_code)
         ->whereIn('po_status', ['Open', 'open'])
-        ->where('response', [null])
+        ->where('response',  '=',null)
         ->count();
 
         $data_po_in_proccess = PO_Header::where('supplier_code', $sp_code)
@@ -38,6 +38,7 @@ class DashboardController
         // get data dn
         $data_dn_open = DN_Header::where('supplier_code', $sp_code)
         ->whereIn('status_desc', ['Open', 'open'])
+        ->where('confirm_update_at', '=', null)
         ->count();
 
         $data_dn_confirmed = DN_Header::where('supplier_code', $sp_code)
