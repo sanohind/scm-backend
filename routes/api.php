@@ -192,6 +192,9 @@ Route::middleware(['auth:sanctum','userRole:5'])->prefix('supplier-marketing')->
     // Graph PO And DN Yearly Data
     Route::get('yearData', [DashboardController::class, 'getYearlyData']);
 
+    // Route For Calender Events
+    Route::get('event', [DashboardController::class, 'calenderEvents']);
+
     /**
      *  Route for Purchase Order
      */
@@ -251,6 +254,9 @@ Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marke
 
     // Graph PO And DN Yearly Data
     Route::get('yearData', [DashboardController::class, 'getYearlyData']);
+
+    // Route For Calender Events
+    Route::get('event', [DashboardController::class, 'calenderEvents']);
 
     /**
      *  Route for Purchase Order

@@ -296,4 +296,44 @@ class DashboardController
             ],
         ]);
     }
+
+    public function calendarEvents()
+{
+    // Get the supplier code from the authenticated user
+    $sp_code = auth()->user()->bp_code;
+
+    // Get PO data with the required fields
+    $po_events = PO_Header::where('supplier_code', $sp_code)
+        ->get(['po_no', 'po_date', 'planned_receipt_date'])
+        ->map(function ($po) {
+            return [
+                'title' => $po->po_no,
+                'start' => $po->po_date,
+                'end'   => $po->planned_receipt_date,
+                'type'  => 'PO',
+            ];
+        });
+
+    // Get DN data with the required fields
+    $dn_events = DN_Header::where('supplier_code', $sp_code)
+        ->get(['no_dn', 'dn_created_date', 'plan_delivery_date'])
+        ->map(function ($dn) {
+            return [
+                'title' => $dn->no_dn,
+                'start' => $dn->dn_created_date,
+                'end'   => $dn->plan_delivery_date,
+                'type'  => 'DN',
+            ];
+        });
+
+    // Combine PO and DN events
+    $events = $po_events->merge($dn_events);
+
+    // Return the events as a JSON response
+    return response()->json([
+        'success' => true,
+        'message' => 'Calendar Events Retrieved Successfully',
+        'data'    => $events,
+    ]);
+}
 }
