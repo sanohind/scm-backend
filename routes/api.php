@@ -188,6 +188,9 @@ Route::middleware(['auth:sanctum','userRole:5'])->prefix('supplier-marketing')->
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'index']);
 
+    // Graph PO And DN Yearly Data
+    Route::get('yearData', [DashboardController::class, 'getYearlyData']);
+
     /**
      *  Route for Purchase Order
      */
@@ -244,6 +247,9 @@ Route::middleware(['auth:sanctum','userRole:5'])->prefix('supplier-marketing')->
 Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marketing')->group(function () {
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'index']);
+
+    // Graph PO And DN Yearly Data
+    Route::get('yearData', [DashboardController::class, 'getYearlyData']);
 
     /**
      *  Route for Purchase Order
