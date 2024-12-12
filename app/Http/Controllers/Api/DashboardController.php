@@ -142,4 +142,51 @@ class DashboardController
             'message' => 'Token successfully revoked'
         ], 200);
     }
+
+    public function monthlyLoginData()
+    {
+        // Calculate the start and end dates for the past month
+        $startDate = now()->subMonth()->startOfMonth();
+        $endDate = now()->startOfMonth();
+
+        // Get the tokens created within the past month
+        $monthly_tokens = PersonalAccessToken::whereBetween('created_at', [$startDate, $endDate])
+            ->with('tokenable') // Ensure we load the related user
+            ->get();
+
+        // Group the tokens by tokenable_id and count the logins for each user
+        $monthly_login_data = $monthly_tokens->groupBy('tokenable_id')->map(function ($tokens, $tokenable_id) {
+            $tokenable = $tokens->first()->tokenable;
+            return [
+                'username' => $tokenable ? $tokenable->username : 'Unknown',
+                'login_count' => $tokens->count(),
+            ];
+        });
+
+        // Calculate the start date for the last 24 hours
+        $last24Hours = now()->subDay();
+
+        // Get the tokens created within the last 24 hours
+        $daily_tokens = PersonalAccessToken::where('created_at', '>=', $last24Hours)
+            ->with('tokenable') // Ensure we load the related user
+            ->get();
+
+        // Group the tokens by tokenable_id and count the logins for each user
+        $daily_login_data = $daily_tokens->groupBy('tokenable_id')->map(function ($tokens, $tokenable_id) {
+            $tokenable = $tokens->first()->tokenable;
+            return [
+                'username' => $tokenable ? $tokenable->username : 'Unknown',
+                'login_count' => $tokens->count(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login Data Retrieved Successfully',
+            'data' => [
+                'monthly' => $monthly_login_data->values(),
+                'daily' => $daily_login_data->values()
+            ]
+        ]);
+    }
 }
