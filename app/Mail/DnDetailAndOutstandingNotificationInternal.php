@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PoResponseSupplier extends Mailable
+class DnDetailAndOutstandingNotificationInternal extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -17,14 +17,9 @@ class PoResponseSupplier extends Mailable
      * Create a new message instance.
      */
 
-     protected $po_header;
-     protected $dn_header;
-
-    public function __construct($po_header,$dn_header)
+    public function __construct()
     {
-        //
-        $this->po_header = $po_header;
-        $this->dn_header = $dn_header;
+
     }
 
     /**
@@ -33,7 +28,7 @@ class PoResponseSupplier extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'A NEW NOTIFICATION from SMS',
+            subject: 'Dn Detail And Outstanding Notification Internal',
         );
     }
 
@@ -43,12 +38,7 @@ class PoResponseSupplier extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.supplier-content-email',
-            with: [
-                'data1' => $this->po_header,
-                'data2' => $this->dn_header,
-                'url' => 'https://sms.sanohindonesia.co.id'
-            ],
+            markdown: 'mail.dn-detail-and-outstanding-notification-internal',
         );
     }
 

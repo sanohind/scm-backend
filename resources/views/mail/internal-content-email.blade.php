@@ -1,20 +1,17 @@
-<x-mail::header :url="$url" />
+{{-- <x-mail::header :url="$url" hidden/> --}}
 <x-mail::message>
 {{-- header --}}
 <h2>Dear Respective In-Charge,</h2>
 
-A new information has been sent to your SMS Portal. Please login to check the same.
+A new notification status Purchase Order has been submit by Supplier. Please login to check the same.
 
 {{-- Content --}}
 <x-mail::panel>
-{{-- @dd($data) --}}
-    @if (isset($data) && count($data) > 0)
-    <p>Purchase Order Open Today:</p>
-    @foreach ($data as $index => $po)
-        <p>{{ $index + 1 }}. {{ $po['po_no'] }}</p>
-    @endforeach
-    @else
-    <p>No Purchase Order Open</p>
+    <p>Supplier code = {{ $data['supplier_code'] }}</p>
+    <p>PO number = {{ $data['po_no'] }}</p>
+    <p>Status PO = {{ $data['response'] }}</p>
+    @if ( $data['response'] == 'Declined')
+        <p>Reason = {{ $data['reason'] }}</p> {{-- column for reason--}}
     @endif
 </x-mail::panel>
 

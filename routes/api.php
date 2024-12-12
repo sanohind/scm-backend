@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ListingReportController;
 use App\Http\Controllers\SynchronizeManualController;
 use App\Http\Controllers\Api\Subcontractor\SubcontController;
+use App\Http\Controllers\EmailNotificationSupplierController;
 use App\Http\Controllers\Api\DeliveryNote\DN_DetailController;
 use App\Http\Controllers\Api\DeliveryNote\DN_HeaderController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_DetailController;
@@ -29,7 +30,7 @@ Route::get('/lbview/{no_dn}', [PrintController::class, 'labelView']);
 Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
 
 // Route sync
-Route::get('/mail', [TestMailController::class,'mail']);
+Route::get('/mail-notification', [EmailNotificationSupplierController::class,'mail']);
 Route::get('/sync', [SynchronizeController::class, 'sync']);
 Route::get('/copyBusinessPartner', [SynchronizeController::class, 'copyBusinessPartner']);
 Route::get('/copyPoHeader', [SynchronizeController::class, 'copyPoHeader']);
