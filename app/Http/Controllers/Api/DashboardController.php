@@ -240,13 +240,14 @@ class DashboardController
 
     public function monthlyLoginData()
     {
-        // Calculate the start and end dates for the past month
-        $startDate = now()->subMonth()->startOfMonth();
-        $endDate = now()->startOfMonth();
+        // Calculate the start date as the current date and time one month ago
+        $startDate = now()->subMonth();
+        // End date is the current date and time
+        $endDate = now();
 
-        // Get the tokens created within the past month
+        // Get the tokens created within the past month from today
         $monthly_tokens = PersonalAccessToken::whereBetween('created_at', [$startDate, $endDate])
-            ->with('tokenable') // Ensure we load the related user
+            ->with('tokenable') // Load the related user
             ->get();
 
         // Group the tokens by tokenable_id and count the logins for each user
@@ -258,12 +259,12 @@ class DashboardController
             ];
         });
 
-        // Calculate the start date for the last 24 hours
+        // Calculate the date for the last 24 hours
         $last24Hours = now()->subDay();
 
         // Get the tokens created within the last 24 hours
         $daily_tokens = PersonalAccessToken::where('created_at', '>=', $last24Hours)
-            ->with('tokenable') // Ensure we load the related user
+            ->with('tokenable') // Load the related user
             ->get();
 
         // Group the tokens by tokenable_id and count the logins for each user
@@ -280,8 +281,8 @@ class DashboardController
             'message' => 'Login Data Retrieved Successfully',
             'data' => [
                 'monthly' => $monthly_login_data->values(),
-                'daily' => $daily_login_data->values()
-            ]
+                'daily' => $daily_login_data->values(),
+            ],
         ]);
     }
 }
