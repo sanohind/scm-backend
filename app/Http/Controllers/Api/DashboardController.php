@@ -65,6 +65,9 @@ class DashboardController
      */
     public function getYearlyData()
     {
+        // Get the supplier code from the authenticated user
+        $sp_code = auth()->user()->bp_code;
+
         // Calculate the start date as the first day of the current month one year ago
         $startDate = now()->subYear()->startOfMonth();
 
@@ -78,23 +81,27 @@ class DashboardController
             $months[] = $date->format('Y-m');
         }
 
-        // Get the PO data that is Closed within the last year
-        $po_data_closed = PO_Header::where('po_status', 'Closed')
+        // Get the PO data that is Closed within the last year for the specific supplier
+        $po_data_closed = PO_Header::where('supplier_code', $sp_code)
+            ->where('po_status', 'Closed')
             ->whereBetween('po_date', [$startDate, $endDate])
             ->get();
 
-        // Get the PO data that is Cancelled within the last year
-        $po_data_canceled = PO_Header::where('po_status', 'Cancelled')
+        // Get the PO data that is Cancelled within the last year for the specific supplier
+        $po_data_canceled = PO_Header::where('supplier_code', $sp_code)
+            ->where('po_status', 'Cancelled')
             ->whereBetween('po_date', [$startDate, $endDate])
             ->get();
 
-        // Get the DN data that is Confirmed within the last year
-        $dn_data_confirmed = DN_Header::where('status_desc', 'Confirmed')
+        // Get the DN data that is Confirmed within the last year for the specific supplier
+        $dn_data_confirmed = DN_Header::where('supplier_code', $sp_code)
+            ->where('status_desc', 'Confirmed')
             ->whereBetween('dn_created_date', [$startDate, $endDate])
             ->get();
 
-        // Get the DN data that is Cancelled within the last year
-        $dn_data_canceled = DN_Header::where('status_desc', 'Cancelled')
+        // Get the DN data that is Cancelled within the last year for the specific supplier
+        $dn_data_canceled = DN_Header::where('supplier_code', $sp_code)
+            ->where('status_desc', 'Cancelled')
             ->whereBetween('dn_created_date', [$startDate, $endDate])
             ->get();
 
