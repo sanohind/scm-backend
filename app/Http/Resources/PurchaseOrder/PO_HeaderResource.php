@@ -21,7 +21,7 @@ class PO_HeaderResource extends JsonResource
             'note' => $this->note(),
             'po_revision_no' => $this->po_revision_no,
             'po_revision_date' => $this->po_revision_date,
-            'po_status' => $this->po_status,
+            'po_status' => $this->statusPo(),
             'response' => $this->response,
             'reason' => $this->reason,
         ];
@@ -29,6 +29,27 @@ class PO_HeaderResource extends JsonResource
 
     private function note(){
         $value = ($this->reference_2 == null || $this->reference_2 == '') ? $this->reference_1 : $this->reference_2;
+
+        return $value;
+    }
+
+    private function statusPo() {
+        switch ($this->response) {
+            case 'Accepted':
+                $value = 'In Process';
+                break;
+
+            case 'Declined':
+                $value = 'Declined';
+                break;
+
+            case null:
+                $value = 'Open';
+                break;
+
+            default:
+                throw new \Exception("Only accept request 'Accepted','Declined',and 'null'", 500);
+        }
 
         return $value;
     }

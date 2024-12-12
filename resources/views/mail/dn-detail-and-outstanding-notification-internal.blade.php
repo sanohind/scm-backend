@@ -3,20 +3,16 @@
 {{-- header --}}
 <h2>Dear Respective In-Charge,</h2>
 
-A new notification status PO has been submit by Supplier. Please login to check the same.
+A new notification Delivery Note order has been confirmed by Supplier. Please login to check the same.
 
 {{-- Content --}}
 <x-mail::panel>
-    <p>Supplier code = {{ $data['supplier_code'] }}</p>
-    <p>PO number = {{ $data['po_no'] }}</p>
-    <p>Status PO = {{ $data['response'] }}</p>
-    @if ( $data['response'] == 'Declined')
-        <p>Reason = {{ $data['reason'] }}</p> {{-- column for reason--}}
-    @endif
+    <p>Supplier = {{ $data['supplier_code'] }} - {{ $data['supplier_name'] }}</p>
+    <p>DN number = {{ $data['no_dn'] }}</p>
 </x-mail::panel>
 
 <x-mail::button :url="$url">
-View Purchase Order
+View Delivery Note
 </x-mail::button>
 
 {{-- Footer --}}

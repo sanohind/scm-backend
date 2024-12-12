@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\DN_Header;
-use App\Models\PO_Header;
 use GuzzleHttp\Psr7\Header;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DeliveryNote\DN_Header;
+use App\Models\PurchaseOrder\PO_Header;
 use App\Http\Resources\DashboardViewResource;
+use App\Models\User;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class DashboardController
 {
@@ -48,6 +50,142 @@ class DashboardController
                 'po_in_progress' => $data_po_in_proccess,
                 'dn_active' => $data_dn_open,
                 'dn_confirmed'=> $data_dn_confirmed
+            ]
+        ]);
+    }
+
+    /**
+     * Get the count of active tokens for all roles.
+     */
+    public function dashboard()
+    {
+        // Calculate the timestamp for one hour ago
+        $oneHourAgo = now()->subHour();
+
+        // Get the count of tokens created within the last hour
+        $active_tokens_count = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
+        ->count();
+
+        // Get the total count of users
+        $total_users_count = User::count();
+
+        // Get the count of active users where status is 1
+        $active_users_count = User::where('status', 1)->count();
+
+        // Get the count of deactive users where status is 0
+        $deactive_users_count = User::where('status', 0)->count();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Dashboard Data Retrieved Successfully',
+            'data' => [
+                'active_tokens'   => $active_tokens_count,
+                'total_users'     => $total_users_count,
+                'active_users'    => $active_users_count,
+                'deactive_users'  => $deactive_users_count,
+            ]
+        ]);
+    }
+
+    public function detailActiveUser()
+    {
+        // Calculate the timestamp for one hour ago
+        $oneHourAgo = now()->subHour();
+
+        // Get the active tokens created within the last hour
+        $active_tokens = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
+            ->with('tokenable') // Ensure we load the related user
+            ->get();
+
+        // Map the active tokens to the required details
+        $active_token_details = $active_tokens->map(function ($token) {
+            return [
+                'username'     => $token->tokenable->username,
+                'name'         => $token->tokenable->name,
+                'role'         => $token->tokenable->role,
+                'last_login'   => $token->created_at->format('d/m/Y - H:i:s'),
+                'last_update'  => $token->last_used_at ? $token->last_used_at->format('d/m/Y - H:i:s') : null,
+                'id'           => $token->id,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Active Token Details Retrieved Successfully',
+            'data' => $active_token_details
+        ]);
+    }
+
+    public function logoutByTokenId(Request $request)
+    {
+        // Validate the request to ensure 'token_id' is provided
+        $request->validate([
+            'token_id' => 'required|integer'
+        ]);
+
+        // Find the token by ID
+        $token = PersonalAccessToken::find($request->token_id);
+
+        if (!$token) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token not found'
+            ], 404);
+        }
+
+        // Revoke the specific token
+        $token->delete();
+
+        // Logout success response
+        return response()->json([
+            'success' => true,
+            'message' => 'Token successfully revoked'
+        ], 200);
+    }
+
+    public function monthlyLoginData()
+    {
+        // Calculate the start and end dates for the past month
+        $startDate = now()->subMonth()->startOfMonth();
+        $endDate = now()->startOfMonth();
+
+        // Get the tokens created within the past month
+        $monthly_tokens = PersonalAccessToken::whereBetween('created_at', [$startDate, $endDate])
+            ->with('tokenable') // Ensure we load the related user
+            ->get();
+
+        // Group the tokens by tokenable_id and count the logins for each user
+        $monthly_login_data = $monthly_tokens->groupBy('tokenable_id')->map(function ($tokens, $tokenable_id) {
+            $tokenable = $tokens->first()->tokenable;
+            return [
+                'username' => $tokenable ? $tokenable->username : 'Unknown',
+                'login_count' => $tokens->count(),
+            ];
+        });
+
+        // Calculate the start date for the last 24 hours
+        $last24Hours = now()->subDay();
+
+        // Get the tokens created within the last 24 hours
+        $daily_tokens = PersonalAccessToken::where('created_at', '>=', $last24Hours)
+            ->with('tokenable') // Ensure we load the related user
+            ->get();
+
+        // Group the tokens by tokenable_id and count the logins for each user
+        $daily_login_data = $daily_tokens->groupBy('tokenable_id')->map(function ($tokens, $tokenable_id) {
+            $tokenable = $tokens->first()->tokenable;
+            return [
+                'username' => $tokenable ? $tokenable->username : 'Unknown',
+                'login_count' => $tokens->count(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login Data Retrieved Successfully',
+            'data' => [
+                'monthly' => $monthly_login_data->values(),
+                'daily' => $daily_login_data->values()
             ]
         ]);
     }

@@ -14,10 +14,12 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ListingReportController;
 use App\Http\Controllers\SynchronizeManualController;
 use App\Http\Controllers\Api\Subcontractor\SubcontController;
+use App\Http\Controllers\EmailNotificationSupplierController;
 use App\Http\Controllers\Api\DeliveryNote\DN_DetailController;
 use App\Http\Controllers\Api\DeliveryNote\DN_HeaderController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_DetailController;
 use App\Http\Controllers\Api\PurchaseOrder\PO_HeaderController;
+use Laravel\Sanctum\PersonalAccessToken;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -28,7 +30,7 @@ Route::get('/lbview/{no_dn}', [PrintController::class, 'labelView']);
 Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
 
 // Route sync
-Route::get('/mail', [TestMailController::class,'mail']);
+Route::get('/mail-notification', [EmailNotificationSupplierController::class,'mail']);
 Route::get('/sync', [SynchronizeController::class, 'sync']);
 Route::get('/copyBusinessPartner', [SynchronizeController::class, 'copyBusinessPartner']);
 Route::get('/copyPoHeader', [SynchronizeController::class, 'copyPoHeader']);
@@ -41,6 +43,18 @@ Route::middleware(['auth:sanctum','userRole:1'])->prefix('super-admin')->group(f
 
     // Route for show list of user
     Route::get('partner/list', [PartnerController::class, 'index']);
+
+    // Route for show online user
+    Route::get('dashboard', [DashboardController::class, 'dashboard']);
+
+    // Route for detail active user
+    Route::get('user/online', [DashboardController::class, 'detailActiveUser']);
+
+    // Route for logout current useer active token
+    Route::post('user/logout', [DashboardController::class, 'logoutByTokenId']);
+
+    // Route for monthly login data
+    Route::get('user/monthly', [DashboardController::class, 'monthlyLoginData']);
 
     /**
      * Route For User
@@ -141,6 +155,8 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
     /**
      * Route for Subcontractor
      */
+    // Route for get list item Erp
+    Route::get('item/list/item', [SubcontController::class,'getListItemErp']);
     // Route for get list item
     Route::get('item/list/{bp_code}', [SubcontController::class,'getListItem']);
     // Route for get index subcont item (include stock)

@@ -64,7 +64,8 @@ class AuthController
             'role' => $user->role,
             'bp_code' => $user->bp_code,
             'name' => $user->name,
-            'token_type' => 'Bearer'
+            'token_type' => 'Bearer',
+            'supplier_name' => ($user->role != 1||2||3||4) ? $user->partner->adr_line_1:"PT Sanoh Indonesia",
         ]);
     }
 
