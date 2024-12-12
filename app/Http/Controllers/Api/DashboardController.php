@@ -103,8 +103,8 @@ class DashboardController
                 'username'     => $token->tokenable->username,
                 'name'         => $token->tokenable->name,
                 'role'         => $token->tokenable->role,
-                'last_login'   => $token->created_at->format('d-m-Y - H:i:s'),
-                'last_update'  => $token->last_used_at ? $token->last_used_at->format('d-m-Y - H:i:s') : null,
+                'last_login'   => $token->created_at->format('d/m/Y - H:i:s'),
+                'last_update'  => $token->last_used_at ? $token->last_used_at->format('d/m/Y - H:i:s') : null,
                 'id'           => $token->id,
             ];
         });
