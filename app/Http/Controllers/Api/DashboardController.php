@@ -41,7 +41,8 @@ class DashboardController
         ->count();
 
         $data_dn_confirmed = DN_Header::where('supplier_code', $sp_code)
-        ->whereIn('status_desc', ['Confirmed', 'confirmed'])
+        ->whereIn('status_desc', ['Open', 'open'])
+        ->where('confirmed_update_at', '!=', null)
         ->count();
 
         // dd($data_po_in_proccess);
