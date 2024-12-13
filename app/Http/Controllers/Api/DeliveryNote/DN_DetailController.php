@@ -24,9 +24,9 @@ class DN_DetailController extends Controller
     public function index($no_dn)
     {
         $data_dndetail = DN_Detail::where('no_dn', $no_dn)
-        ->orderBy('plan_delivery_date', 'asc')
-        ->orderBy('dn_line', 'asc')
-        ->get();
+            ->orderBy('plan_delivery_date', 'asc')
+            ->orderBy('dn_line', 'asc')
+            ->get();
 
         if ($data_dndetail->isEmpty()) {
             return response()->json([
@@ -39,6 +39,11 @@ class DN_DetailController extends Controller
         $timeString = date('H:i', strtotime($data_dndetail->first()->dnHeader->plan_delivery_time));
         $concat = "$dateString $timeString";
 
+        // Reassign dn_line values sequentially starting from 1
+        $data_dndetail->each(function ($item, $key) {
+            $item->dn_line = $key + 1;
+        });
+
         return response()->json([
             'success' => true,
             'message' => 'Display List DN Detail Successfully',
@@ -47,7 +52,8 @@ class DN_DetailController extends Controller
                 'po_no' => $data_dndetail->first()->dnHeader->po_no,
                 'plan_delivery_date' => $concat,
                 'confirm_update_at' => $data_dndetail->first()->dnHeader->confirm_update_at,
-                'detail' => DN_DetailResource::collection($data_dndetail)]
+                'detail' => DN_DetailResource::collection($data_dndetail),
+            ],
         ], 200);
     }
 
