@@ -14,6 +14,17 @@ class DN_DetailResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Group dnOutstanding items by wave
+        $outstandingGrouped = $this->whenLoaded('dnOutstanding')->groupBy('wave')->map(function ($items, $wave) {
+            return $items->pluck('qty_outstanding');
+        });
+
+        // Format the grouped items with keys like "wave_1", "wave_2", etc.
+        $outstandingFormatted = [];
+        foreach ($outstandingGrouped as $wave => $items) {
+            $outstandingFormatted["wave_{$wave}"] = $items;
+        }
+
         return [
             'dn_detail_no' => $this->dn_detail_no,
             'dn_line' => $this->dn_line,
@@ -24,6 +35,7 @@ class DN_DetailResource extends JsonResource
             'dn_qty' => $this->dn_qty,
             'qty_confirm' => $this->qty_confirm,
             'receipt_qty' => $this->receipt_qty,
+            'outstanding' => $outstandingFormatted,
         ];
     }
 }

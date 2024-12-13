@@ -26,7 +26,7 @@ class SubcontTransactionRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "transaction_type"=> "required|string|in:Ingoing,Outgoing,Process",
+            "transaction_type"=> "required|string|in:Incoming,Outgoing,Process",
             "item_code"=> "required|string|max:50",
             "status"=> "required|string|in:Fresh,Replating",
             "qty_ok"=> "integer|min:0",
@@ -49,7 +49,7 @@ class SubcontTransactionRequest extends FormRequest
             // Transaction Type
             "transaction_type.required" => "The transaction type is required.",
             "transaction_type.string" => "The transaction type must be a valid string.",
-            "transaction_type.in" => "The transaction type must be one of the following: 'Ingoing', 'Outgoing', or 'Process'.",
+            "transaction_type.in" => "The transaction type must be one of the following: 'Incoming', 'Outgoing', or 'Process'.",
 
             // Item Code
             "item_code.required" => "The item code is required.",
