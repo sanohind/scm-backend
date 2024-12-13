@@ -25,7 +25,7 @@ class DN_Detail_Outstanding extends Model
         'qty_outstanding',
         'add_outstanding_date',
         'add_outstanding_time',
-        'outstanding',
+        'wave',
     ];
 
     // Relationship to dnDetail

@@ -7,8 +7,8 @@ A new notification Delivery Note order has been confirmed by Supplier. Please lo
 
 {{-- Content --}}
 <x-mail::panel>
-    <p>Supplier = {{ $data['supplier_code'] }} - {{ $data['supplier_name'] }}</p>
-    <p>DN number = {{ $data['no_dn'] }}</p>
+    <p>Supplier : {{ $data['supplier_code'] }} - {{ $data['supplier_name'] }}</p>
+    <p>Delivery Note Number : {{ $data['no_dn'] }}</p>
 </x-mail::panel>
 
 <x-mail::button :url="$url">
