@@ -9,80 +9,97 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontItem;
 use App\Models\Subcontractor\SubcontStock;
 use App\Models\Subcontractor\SubcontTransaction;
+use Log;
 
 class SubcontCreateTransaction
 {
     /**
-     * Create new transaction bussiness logic
-     * @param mixed $data
+     * Create new transaction business logic for multiple items
+     * @param array $data
      * @throws \Exception
      * @return bool
      */
-    public function createTransactionSubcont($data): bool
+    public function createTransactionSubcont($data)
     {
-        // Get sub_item_id
-        $subItemId = SubcontItem::where('item_code', $data["item_code"])
-            ->where('bp_code', Auth::user()->bp_code)
-            ->value('sub_item_id');
+        foreach ($data['data'] as $dataTransaction) {
+            $result = DB::transaction(function () use ($dataTransaction) {
+                    // Get sub_item_id for each item
+                    $subItemId = SubcontItem::where('item_code', $dataTransaction["item_code"])
+                        ->where('bp_code', Auth::user()->bp_code)
+                        ->value('sub_item_id');
 
-            $todayLatestProcess = Carbon::now()->format("Ymd");
-                $today = Carbon::now()->format("dmy");
-                // dd($today);
-                $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 4);
-                $getLatestProcess = SubcontTransaction::where('sub_item_id',$subItemId)
-                ->where('transaction_type', 'Process')
-                ->where('transaction_date', $todayLatestProcess)
-                ->count();
-                $unique_dn_process = "$user-$today-".($getLatestProcess + 1);
-                dd($unique_dn_process);
+                    // Generate unique delivery note if not provided
+                    if (empty($data["delivery_note"])) {
+                        $todayLatestProcess = Carbon::now()->format("Ymd");
+                        $today = Carbon::now()->format("dmy");
+                        $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 4);
+                        $getLatestProcess = SubcontTransaction::where('sub_item_id', $subItemId)
+                            ->where('transaction_type', 'Process')
+                            ->where('transaction_date', $todayLatestProcess)
+                            ->count();
+                        $unique_dn_process = "$user-$today-" . ($getLatestProcess + 1);
+                        $dataTransaction['delivery_note'] = $unique_dn_process;
+                    } else {
+                        throw new Exception("Error Generate Delivery Note Process", 500);
+                    }
 
+                    // Create the transaction
+                    SubcontTransaction::create([
+                        'delivery_note'     => $dataTransaction['delivery_note'],
+                        'sub_item_id'       => $subItemId,
+                        'transaction_type'  => $dataTransaction['transaction_type'],
+                        'actual_transaction_date'  => $dataTransaction['actual_transaction_date'],
+                        'actual_transaction_time'  => $dataTransaction['actual_transaction_time'],
+                        'transaction_date'  => Carbon::now()->format("Y-m-d"),
+                        'transaction_time'  => Carbon::now()->format("H:i:s"),
+                        'item_code'         => $dataTransaction['item_code'],
+                        'status'            => $dataTransaction['status'],
+                        'qty_ok'            => $dataTransaction['qty_ok'],
+                        'qty_ng'            => $dataTransaction['qty_ng'],
+                    ]);
 
-            $result = DB::transaction(function () use ($data, $subItemId) {
-            if ($data["delivery_note"] == null || $data["delivery_note"] == '') {
-                $todayLatestProcess = Carbon::now()->format("Ymd");
-                $today = Carbon::now()->format("dmy");
-                // dd($today);
-                $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 4);
-                $getLatestProcess = SubcontTransaction::where('sub_item_id',$subItemId)
-                ->where('transaction_type', 'Process')
-                ->where('transaction_date', $todayLatestProcess)
-                ->count();
-                $unique_dn_process = "$user-$today-".($getLatestProcess + 1);
-            }
+                    // Check stock record availability
+                    $checkStockRecordAvaibility = $this->checkStockRecordAvailability($dataTransaction["item_code"], $subItemId);
 
-            SubcontTransaction::create([
-                'delivery_note' => ($data['delivery_note'] == null) ? $unique_dn_process : $data['delivery_note'],
-                'sub_item_id' => $subItemId,
-                'transaction_date' => Carbon::now()->format("Y-m-d"),
-                'transaction_time' => Carbon::now()->format("H:i:s"),
-                'transaction_type' => $data['transaction_type'],
-                'item_code' => $data['item_code'],
-                'status' => $data['status'],
-                'qty_ok' => $data['qty_ok'],
-                'qty_ng' => $data['qty_ng'],
-            ]);
+                    // Get stock
+                    $stock = SubcontStock::where('sub_item_id', $subItemId)
+                        ->where('item_code', $dataTransaction["item_code"])
+                        ->first();
 
-            // Check stock record
-            $checkStockRecordAvaibility = $this->checkStockRecordAvaibility($data["item_code"], $subItemId);
+                    // Validate and calculate stock
+                    if ($checkStockRecordAvaibility && !empty($stock)) {
+                        // Calculate stock
+                        $calculate = $this->calculatingStock(
+                            $dataTransaction["status"],
+                            $dataTransaction["transaction_type"],
+                            $dataTransaction["qty_ok"],
+                            $dataTransaction["qty_ng"],
+                            $stock
+                        );
+                    } else {
+                        throw new Exception("Error processing check stock record availability", 500);
+                }
 
-            // get stock
-            $stock = SubcontStock::where('sub_item_id', $subItemId)
-                ->where('item_code', $data["item_code"])
-                ->first();
+                // Check the if the process calculate stock complete
+                if ($calculate == true) {
+                    return true;
+                } else  {
+                    return false;
+                }
+            });
+        }
 
-            // Validate then calculating
-            if ($checkStockRecordAvaibility == true && !empty($stock)) {
-                // calculating
-                $calculating = $this->calculatingStock($data["status"], $data["transaction_type"], $data["qty_ok"], $data["qty_ng"], $stock);
-            } else {
-                throw new Exception("Error Processing check stock record avaibility", 500);
-            }
-
-            return $calculating;
-
-        });
-
-        return $result;
+        if ($result === false) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Request data format error',
+            ], 422);
+        } elseif ($result === true) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Data Successfully Stored',
+            ], 200);
+        }
     }
 
     /**
@@ -101,7 +118,7 @@ class SubcontCreateTransaction
             // Fresh
             case 'Fresh':
                 switch ($type) {
-                    case 'Ingoing':
+                    case 'Incoming':
                         // qty_ok
                         $stock->increment('incoming_fresh_stock', $qtyOk);
 
@@ -112,7 +129,7 @@ class SubcontCreateTransaction
                         break;
 
                     case 'Process':
-                        // $qty_ok
+                        // qty_ok
                         if ($stock->incoming_fresh_stock < $qtyOk) {
                             throw new Exception("Incoming fresh stock cannot be below 0 / minus", 422);
                         } else {
@@ -120,7 +137,7 @@ class SubcontCreateTransaction
                             $stock->increment("process_fresh_stock", $qtyOk);
                         }
 
-                        // $qty_ng
+                        // qty_ng
                         if ($stock->incoming_fresh_stock < $qtyNg) {
                             throw new Exception("Incoming fresh stock cannot be below 0 / minus", 422);
                         } else {
@@ -146,14 +163,14 @@ class SubcontCreateTransaction
                         break;
 
                     default:
-                        throw new Exception("Bad request", 400);
+                        throw new Exception("Bad request calculating stock fresh", 400);
                 }
                 break;
 
             // Replating
             case 'Replating':
                 switch ($type) {
-                    case 'Ingoing':
+                    case 'Incoming':
                         // qty_ok
                         $stock->increment('incoming_replating_stock', $qtyOk);
 
@@ -164,7 +181,7 @@ class SubcontCreateTransaction
                         break;
 
                     case 'Process':
-                        // $qty_ok
+                        // qty_ok
                         if ($stock->incoming_replating_stock < $qtyOk) {
                             throw new Exception("Incoming replating stock cannot be below 0 / minus", 422);
                         } else {
@@ -172,7 +189,7 @@ class SubcontCreateTransaction
                             $stock->increment("process_replating_stock", $qtyOk);
                         }
 
-                        // $qty_ng
+                        // qty_ng
                         if ($stock->incoming_replating_stock < $qtyNg) {
                             throw new Exception("Incoming replating stock cannot be below 0 / minus", 422);
                         } else {
@@ -198,13 +215,14 @@ class SubcontCreateTransaction
                         break;
 
                     default:
-                        throw new Exception("Bad request", 400);
+                        throw new Exception("Bad request calculating stock replating", 400);
                 }
                 break;
 
             default:
                 throw new Exception("Bad request calculating stock", 400);
         }
+
         return true;
     }
 
@@ -214,30 +232,28 @@ class SubcontCreateTransaction
      * @param mixed $subItemId
      * @return bool
      */
-    private function checkStockRecordAvaibility($item_code, $subItemId): bool
+    private function checkStockRecordAvailability($item_code, $subItemId): bool
     {
-        // Check if data stock exist
-        $checkAvaiblelity = SubcontStock::where('sub_item_id', $subItemId)
+        // Check if data stock exists
+        $checkAvaibility = SubcontStock::where('sub_item_id', $subItemId)
             ->where('item_code', $item_code)
             ->exists();
 
-        if ($checkAvaiblelity == false) {
+        if (!$checkAvaibility) {
             SubcontStock::create([
-                'sub_item_id' => $subItemId,
-                'item_code' => $item_code,
-                'incoming_fresh_stock' => 0,
-                'incoming_replating_stock' => 0,
-                'process_fresh_stock' => 0,
-                'process_replating_stock' => 0,
-                'ng_fresh_stock' => 0,
-                'ng_replating_stock' => 0,
+                'sub_item_id'               => $subItemId,
+                'item_code'                 => $item_code,
+                'incoming_fresh_stock'      => 0,
+                'incoming_replating_stock'  => 0,
+                'process_fresh_stock'       => 0,
+                'process_replating_stock'   => 0,
+                'ng_fresh_stock'            => 0,
+                'ng_replating_stock'        => 0,
             ]);
 
-            $checkAvaiblelity = true;
+            $checkAvaibility = true;
         }
 
-        return $checkAvaiblelity;
+        return $checkAvaibility;
     }
-
-
 }
