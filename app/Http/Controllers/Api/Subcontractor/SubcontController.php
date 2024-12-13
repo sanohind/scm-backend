@@ -85,7 +85,7 @@ class SubcontController
 
         return $result;
     }
-    
+
     /**
      * Summary of getListItemErp
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -129,26 +129,15 @@ class SubcontController
     public function createTransaction(SubcontTransactionRequest $request)
     {
         try {
-            $result = $this->subcontCreateTransaction->createTransactionSubcont($request->validated());
+                $result = $this->subcontCreateTransaction->createTransactionSubcont($request->validated());
+
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
                 'error' => $th->getMessage()." (On line ".$th->getLine().")"
             ],500);
         }
-
-        if ($result === false) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Request data format error',
-            ], 422);
-        } elseif ($result === true) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Data Successfully Stored',
-            ], 200);
-        }
-
+        return $result;
     }
 }
 
