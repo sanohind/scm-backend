@@ -312,7 +312,7 @@ class DashboardController
             ->map(function ($po) {
                 return [
                     'title' => $po->po_no,
-                    'start' => $po->po_date,
+                    'start' => $po->po_date . ' 07:00',
                     'end'   => $po->planned_receipt_date,
                     'type'  => 'PO',
                 ];
@@ -320,7 +320,7 @@ class DashboardController
 
         // Get DN data with the required fields
         $dn_events = DN_Header::where('supplier_code', $sp_code)
-            ->get(['no_dn', 'dn_created_date', 'plan_delivery_date', 'confirm_update_at', 'status_desc'])
+            ->get(['no_dn', 'dn_created_date', 'plan_delivery_date', 'plan_delivery_time', 'confirm_update_at', 'status_desc'])
             ->map(function ($dn) {
                 // Determine the type based on the condition
                 if (is_null($dn->confirm_update_at) && $dn->status_desc === 'Open') {
@@ -331,7 +331,7 @@ class DashboardController
 
                 return [
                     'title' => $dn->no_dn,
-                    'start' => $dn->dn_created_date,
+                    'start' => $dn->dn_created_date . ' ' . $dn->plan_delivery_time,
                     'end'   => $dn->plan_delivery_date,
                     'type'  => $type,
                 ];
