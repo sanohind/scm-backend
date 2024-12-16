@@ -69,7 +69,7 @@ class DashboardController
         // Get the authenticated user
         $user = auth()->user();
         $sp_code = $user->bp_code;
-        $role_id = $user->role_id;
+        $role_id = $user->role;
 
         // Calculate the start and end dates
         $startDate = now()->subYear()->startOfMonth();
@@ -175,7 +175,7 @@ class DashboardController
     {
         // Get the authenticated user
         $user = auth()->user();
-        $role_id = $user->role_id;
+        $role_id = $user->role;
 
         // Initialize data array
         $data = [];
