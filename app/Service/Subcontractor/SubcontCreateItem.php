@@ -13,12 +13,15 @@ class SubcontCreateItem
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function createItemSubcont($data) {
-        // Store logic
-        SubcontItem::create([
-            "bp_code" => $data["bp_code"],
-            "item_code" => $data["item_code"],
-            "item_name" => $data["item_name"],
-        ]);
+        foreach ($data['data'] as $dataItem) {
+            // Store logic
+            SubcontItem::create([
+                "bp_code" => $dataItem["bp_code"],
+                "item_code" => $dataItem["item_code"],
+                "item_name" => $dataItem["item_name"],
+                "status" => "1",
+            ]);
+        }
 
         // Response
         return response()->json([

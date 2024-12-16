@@ -29,6 +29,7 @@ class SubcontItem extends Model
         "bp_code",
         "item_code",
         "item_name",
+        "status",
     ];
 
     // SubcontTransaction relation

@@ -149,6 +149,9 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
     Route::get('item/index/{bp_code}', [SubcontController::class,'indexItem']);
     // Route for store subcont item
     Route::post('item/store', [SubcontController::class,'createItem']);
+    // Route for update subcont item
+    Route::patch('item/update', [SubcontController::class,'updateItem']);
+    Route::delete('item/delete', [SubcontController::class,'deleteItem']);
     // Route for get index subcont transaction
     Route::get('transaction/index/{bp_code}/{start_date}/{end_date}', [SubcontController::class,'indexTrans']);
 

@@ -26,9 +26,9 @@ class SubcontItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "bp_code" => "required|string|max:50",
-            "item_code"=> "required|string|max:50",
-            "item_name"=> "required|string|max:255",
+            "data.*.bp_code" => "required|string|max:50",
+            "data.*.item_code"=> "required|string|max:50",
+            "data.*.item_name"=> "required|string|max:255",
         ];
     }
 
@@ -36,19 +36,19 @@ class SubcontItemRequest extends FormRequest
     {
         return [
             // bp_code
-            'bp_code.required' => 'The bp_code is required.',
-            'bp_code.string' => 'The bp_code must be a valid string.',
-            'bp_code.max' => 'The bp_code cannot be longer than 50 characters.',
+            'data.*.bp_code.required' => 'The bp_code is required.',
+            'data.*.bp_code.string' => 'The bp_code must be a valid string.',
+            'data.*.bp_code.max' => 'The bp_code cannot be longer than 50 characters.',
 
             // item_code
-            'item_code.required' => 'The item code is required.',
-            'item_code.string' => 'The item code must be a valid string.',
-            'item_code.max' => 'The item code cannot be longer than 50 characters.',
+            'data.*.item_code.required' => 'The item code is required.',
+            'data.*.item_code.string' => 'The item code must be a valid string.',
+            'data.*.item_code.max' => 'The item code cannot be longer than 50 characters.',
 
             // item_name
-            'item_name.required' => 'The item name is required.',
-            'item_name.string' => 'The item name must be a valid string.',
-            'item_name.max' => 'The item name cannot be longer than 255 characters.',
+            'data.*.item_name.required' => 'The item name is required.',
+            'data.*.item_name.string' => 'The item name must be a valid string.',
+            'data.*.item_name.max' => 'The item name cannot be longer than 255 characters.',
         ];
     }
 
@@ -72,15 +72,17 @@ class SubcontItemRequest extends FormRequest
 
     // Duplicate logic
     private function duplicateCheck($validator) {
-        $data = SubcontItem::where('bp_code', Auth::user()->bp_code)
-        ->where('item_code', $this->item_code)
-        ->exists();
+        foreach ($this->input('data') as $item) {
+            $data = SubcontItem::where('bp_code', $item['bp_code'])
+            ->where('item_code', $item['item_code'])
+            ->exists();
 
-        $validator->after(function ($validator) use($data) {
-            if ($data) {
-                $validator->errors()->add('item_code', 'This item code already exist.');
-            }
-        });
+            $validator->after(function ($validator) use($data) {
+                if ($data) {
+                    $validator->errors()->add('data.*.item_code', 'This item code already exist.');
+                }
+            });
+        }
     }
 }
 
