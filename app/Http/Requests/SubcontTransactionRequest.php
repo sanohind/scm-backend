@@ -35,7 +35,8 @@ class SubcontTransactionRequest extends FormRequest
             "data.*.qty_ng"=> "integer|min:0",
         ];
 
-        ($this->transaction_type !== 'Process') ? $rules["data.*.delivery_note"] = "required|string|max:255" : $rules["data.*.delivery_note"] = "nullable|string|max:255";
+        $transactionType = $this->input('data')[0]['transaction_type'] ?? null;
+        ($transactionType !== 'Process') ? $rules["data.*.delivery_note"] = "required|string|max:255" : $rules["data.*.delivery_note"] = "nullable|string|max:255";
 
         return $rules;
     }
