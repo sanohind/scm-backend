@@ -403,6 +403,52 @@ Route::middleware(['auth:sanctum', 'userRole:8'])->prefix('supplier-subcont')->g
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
+// Route Super User
+Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(function () {
+    // Route sync data
+    Route::get('sync', [SynchronizeManualController::class, 'syncManual']);
+
+    // Route get partner list
+    Route::get('partner/list', [PartnerController::class, 'index']);
+
+    /**
+     *  Route for Purchase Order
+     *  @param $sp_code / supplier_code is bp_code
+     */
+    // Routefor get record po with specific user
+    Route::get('po/index/{bp_code}',[PO_HeaderController::class, "index"]);
+    // Route for show PO Detail list
+    Route::get('po/detail/{po_no}',[PO_DetailController::class, "index"]);
+    // Route for print PO
+    Route::get('po/print/{po_no}', [PrintController::class, 'poHeaderView']);
+    // Route for show PO history list
+    Route::get('po/history/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
+
+    /**
+     * Route for Performance Report
+     */
+    // Route for show list of performance report
+    Route::get('performance-report/index/{bp_code}',[ListingReportController::class, "index"])->name('index');
+    // Route for download performance report
+    Route::get('performance-report/file/{filename}', [ListingReportController::class, 'getFile']);
+    // Route for store Listing Report
+    Route::post('performance-report/store',[ListingReportController::class, "store"]);
+
+    /**
+     * Route for Forecast
+     */
+    // Route for get record forecast with spesific user
+    Route::get('forecast/index/{bp_code}', [ForecastController::class,"indexPurchasing"]);
+    // Route for store forecast file
+    Route::post('forecast/store', [ForecastController::class,"store"]);
+    // Route for download forecast file
+    Route::get('forecast/file/{filename}', [ForecastController::class,"getFile"]);
+    // Route for delete forecast file
+    Route::delete('forecast/delete/{forecast}', [ForecastController::class,"destroy"]);
+
+    //Logout route
+    Route::post('logout', [AuthController::class, 'logout']);
+});
 
 // route testing
 Route::get('/listingreporttest/file/{filename}', [ListingReportController::class, 'getFile']);

@@ -336,7 +336,7 @@ class DashboardController
         // Get the authenticated user
         $user = auth()->user();
         $sp_code = $user->bp_code;
-        $role_id = $user->role_id;
+        $role_id = $user->role;
 
         // Initialize the events collection
         $events = collect();
