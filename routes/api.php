@@ -325,6 +325,16 @@ Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marke
 
 // Route Supplier Warehouse
 Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')->group(function () {
+
+    // Dashboard
+    Route::get('dashboard', [DashboardController::class, 'index']);
+
+    // Graph PO And DN Yearly Data
+    Route::get('yearData', [DashboardController::class, 'getYearlyData']);
+
+    // Route For Calender Events
+    Route::get('event', [DashboardController::class, 'calenderEvents']);
+
     /**
      * Route for Delivery Note
      */
@@ -349,6 +359,16 @@ Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')-
 
 // Route Supplier Subcont
 Route::middleware(['auth:sanctum', 'userRole:8'])->prefix('supplier-subcont')->group(function () {
+
+    // Dashboard
+    Route::get('dashboard', [DashboardController::class, 'index']);
+
+    // Graph PO And DN Yearly Data
+    Route::get('yearData', [DashboardController::class, 'getYearlyData']);
+
+    // Route For Calender Events
+    Route::get('event', [DashboardController::class, 'calenderEvents']);
+
     /**
      *  Route for Subcontractor
      */

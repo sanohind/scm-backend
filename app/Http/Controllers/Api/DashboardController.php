@@ -66,13 +66,13 @@ class DashboardController
      */
     public function getYearlyData()
     {
-        // Get the supplier code from the authenticated user
-        $sp_code = auth()->user()->bp_code;
+        // Get the authenticated user
+        $user = auth()->user();
+        $sp_code = $user->bp_code;
+        $role_id = $user->role_id;
 
-        // Calculate the start date as the first day of the current month one year ago
+        // Calculate the start and end dates
         $startDate = now()->subYear()->startOfMonth();
-
-        // Calculate the end date as the last day of the current month
         $endDate = now()->endOfMonth();
 
         // Generate an array of months within the date range
@@ -82,32 +82,39 @@ class DashboardController
             $months[] = $date->format('Y-m');
         }
 
-        // Get the PO data that is Closed within the last year for the specific supplier
-        $po_data_closed = PO_Header::where('supplier_code', $sp_code)
-            ->where('po_status', 'Closed')
-            ->whereBetween('po_date', [$startDate, $endDate])
-            ->get();
+        // Initialize data collections
+        $po_data_closed = collect();
+        $po_data_canceled = collect();
+        $dn_data_confirmed = collect();
+        $dn_data_overtime = collect();
 
-        // Get the PO data that is Cancelled within the last year for the specific supplier
-        $po_data_canceled = PO_Header::where('supplier_code', $sp_code)
-            ->where('po_status', 'Cancelled')
-            ->whereBetween('po_date', [$startDate, $endDate])
-            ->get();
+        // Include PO data for roles 5 and 6
+        if (in_array($role_id, [5, 6])) {
+            $po_data_closed = PO_Header::where('supplier_code', $sp_code)
+                ->where('po_status', 'Closed')
+                ->whereBetween('po_date', [$startDate, $endDate])
+                ->get();
 
-        // Get the DN data that is Confirmed within the last year for the specific supplier
-        $dn_data_confirmed = DN_Header::where('supplier_code', $sp_code)
-            ->where('status_desc', 'Confirmed')
-            ->whereBetween('dn_created_date', [$startDate, $endDate])
-            ->get();
+            $po_data_canceled = PO_Header::where('supplier_code', $sp_code)
+                ->where('po_status', 'Cancelled')
+                ->whereBetween('po_date', [$startDate, $endDate])
+                ->get();
+        }
 
-        // Get DN entries where actual_receipt_date is over time (later than plan_delivery_date)
-        // Join dn_header with dn_detail
-        $dn_data_overtime = DN_Header::where('supplier_code', $sp_code)
-            ->whereBetween('dn_created_date', [$startDate, $endDate])
-            ->whereHas('dnDetail', function ($query) {
-                $query->whereColumn('actual_receipt_date', '>', 'plan_delivery_date');
-            })
-            ->get();
+        // Include DN data for roles 5, 6, 7, and 8
+        if (in_array($role_id, [5, 6, 7, 8])) {
+            $dn_data_confirmed = DN_Header::where('supplier_code', $sp_code)
+                ->where('status_desc', 'Confirmed')
+                ->whereBetween('dn_created_date', [$startDate, $endDate])
+                ->get();
+
+            $dn_data_overtime = DN_Header::where('supplier_code', $sp_code)
+                ->whereBetween('dn_created_date', [$startDate, $endDate])
+                ->whereHas('dnDetail', function ($query) {
+                    $query->whereColumn('actual_receipt_date', '>', 'plan_delivery_date');
+                })
+                ->get();
+        }
 
         // Function to group data by month and count occurrences
         $groupDataByMonth = function ($data, $dateField) {
@@ -124,7 +131,7 @@ class DashboardController
         $dn_confirmed_counts = $groupDataByMonth($dn_data_confirmed, 'dn_created_date');
         $dn_overtime_counts = $groupDataByMonth($dn_data_overtime, 'dn_created_date');
 
-        // Prepare the final data arrays, ensuring each month is represented
+        // Prepare the final data arrays
         $po_closed_final = [];
         $po_cancelled_final = [];
         $dn_confirmed_final = [];
@@ -166,31 +173,54 @@ class DashboardController
      */
     public function dashboard()
     {
+        // Get the authenticated user
+        $user = auth()->user();
+        $role_id = $user->role_id;
+
+        // Initialize data array
+        $data = [];
+
         // Calculate the timestamp for one hour ago
         $oneHourAgo = now()->subHour();
 
         // Get the count of tokens created within the last hour
-        $active_tokens_count = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
-        ->count();
+        $data['active_tokens'] = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)->count();
 
         // Get the total count of users
-        $total_users_count = User::count();
+        $data['total_users'] = User::count();
 
         // Get the count of active users where status is 1
-        $active_users_count = User::where('status', 1)->count();
+        $data['active_users'] = User::where('status', 1)->count();
 
-        // Get the count of deactive users where status is 0
-        $deactive_users_count = User::where('status', 0)->count();
+        // Get the count of deactivated users where status is 0
+        $data['deactive_users'] = User::where('status', 0)->count();
+
+        // Include PO statistics for roles 5 and 6
+        if (in_array($role_id, [5, 6])) {
+            $data['po_total'] = PO_Header::where('supplier_code', $user->bp_code)->count();
+            $data['po_closed'] = PO_Header::where('supplier_code', $user->bp_code)
+                ->where('po_status', 'Closed')
+                ->count();
+            $data['po_cancelled'] = PO_Header::where('supplier_code', $user->bp_code)
+                ->where('po_status', 'Cancelled')
+                ->count();
+        }
+
+        // Include DN statistics for roles 5, 6, 7, and 8
+        if (in_array($role_id, [5, 6, 7, 8])) {
+            $data['dn_total'] = DN_Header::where('supplier_code', $user->bp_code)->count();
+            $data['dn_confirmed'] = DN_Header::where('supplier_code', $user->bp_code)
+                ->where('status_desc', 'Confirmed')
+                ->count();
+            $data['dn_open'] = DN_Header::where('supplier_code', $user->bp_code)
+                ->where('status_desc', 'Open')
+                ->count();
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Dashboard Data Retrieved Successfully',
-            'data' => [
-                'active_tokens'   => $active_tokens_count,
-                'total_users'     => $total_users_count,
-                'active_users'    => $active_users_count,
-                'deactive_users'  => $deactive_users_count,
-            ]
+            'data' => $data,
         ]);
     }
 
@@ -303,42 +333,52 @@ class DashboardController
 
     public function calenderEvents()
     {
-        // Get the supplier code from the authenticated user
-        $sp_code = auth()->user()->bp_code;
+        // Get the authenticated user
+        $user = auth()->user();
+        $sp_code = $user->bp_code;
+        $role_id = $user->role_id;
 
-        // Get PO data with the required fields
-        $po_events = PO_Header::where('supplier_code', $sp_code)
-            ->get(['po_no', 'po_date', 'planned_receipt_date'])
-            ->map(function ($po) {
-                return [
-                    'title' => $po->po_no,
-                    'start' => $po->po_date . ' 07:00',
-                    'end'   => $po->planned_receipt_date,
-                    'type'  => 'PO',
-                ];
-            });
+        // Initialize the events collection
+        $events = collect();
 
-        // Get DN data with the required fields
-        $dn_events = DN_Header::where('supplier_code', $sp_code)
-            ->get(['no_dn', 'dn_created_date', 'plan_delivery_date', 'plan_delivery_time', 'confirm_update_at', 'status_desc'])
-            ->map(function ($dn) {
-                // Determine the type based on the condition
-                if (is_null($dn->confirm_update_at) && $dn->status_desc === 'Open') {
-                    $type = 'DN';
-                } else {
-                    $type = 'DN History';
-                }
+        // For roles 5 and 6, include PO events
+        if (in_array($role_id, [5, 6])) {
+            // Get PO data with the required fields
+            $po_events = PO_Header::where('supplier_code', $sp_code)
+                ->get(['po_no', 'po_date', 'planned_receipt_date'])
+                ->map(function ($po) {
+                    return [
+                        'title' => $po->po_no,
+                        'start' => $po->po_date . ' 07:00',
+                        'end'   => $po->planned_receipt_date,
+                        'type'  => 'PO',
+                    ];
+                });
+            $events = $events->merge($po_events);
+        }
 
-                return [
-                    'title' => $dn->no_dn,
-                    'start' => $dn->dn_created_date . ' ' . $dn->plan_delivery_time,
-                    'end'   => $dn->plan_delivery_date,
-                    'type'  => $type,
-                ];
-            });
+        // For roles 5, 6, 7, and 8, include DN events
+        if (in_array($role_id, [5, 6, 7, 8])) {
+            // Get DN data with the required fields
+            $dn_events = DN_Header::where('supplier_code', $sp_code)
+                ->get(['no_dn', 'dn_created_date', 'plan_delivery_date', 'plan_delivery_time', 'confirm_update_at', 'status_desc'])
+                ->map(function ($dn) {
+                    // Determine the type based on the condition
+                    if (is_null($dn->confirm_update_at) && $dn->status_desc === 'Open') {
+                        $type = 'DN';
+                    } else {
+                        $type = 'DN History';
+                    }
 
-        // Combine PO and DN events
-        $events = $po_events->merge($dn_events);
+                    return [
+                        'title' => $dn->no_dn,
+                        'start' => $dn->dn_created_date . ' ' . $dn->plan_delivery_time,
+                        'end'   => $dn->plan_delivery_date,
+                        'type'  => $type,
+                    ];
+                });
+            $events = $events->merge($dn_events);
+        }
 
         // Return the events as a JSON response
         return response()->json([
