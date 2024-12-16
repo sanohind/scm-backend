@@ -425,6 +425,24 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     Route::get('po/history/{bp_code}', [HistoryController::class, 'poHeaderHistory']);
 
     /**
+     *  Route for Delivery Note
+     */
+    // Route for show list DN Header
+    Route::get('dn/index',[DN_HeaderController::class, "index"]);
+    // Route for show list DN Detail
+    Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
+    // Route for edit list DN Detail
+    Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
+    // Route for update list DN Detail
+    Route::put('dn/update',[DN_DetailController::class, "update"]);
+    // route view DN history
+    Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
+    // route view print DN file
+    Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    // route view print DN label/ kanban
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+
+    /**
      * Route for Performance Report
      */
     // Route for show list of performance report
@@ -445,6 +463,18 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     Route::get('forecast/file/{filename}', [ForecastController::class,"getFile"]);
     // Route for delete forecast file
     Route::delete('forecast/delete/{forecast}', [ForecastController::class,"destroy"]);
+
+    /**
+     *  Route for Subcontractor
+     */
+    // Route for get list subcont item
+    Route::get('item/list', [SubcontController::class,'getListItem']);
+    // Route for get index subcont item (include stock)
+    Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
+    // Route for get index subcont transaction
+    Route::get('transaction/index', [SubcontController::class,'indexTrans']);
+    // Route for store subcont transaction
+    Route::post('transaction/store', [SubcontController::class,'createTransaction']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
