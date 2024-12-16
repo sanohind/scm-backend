@@ -20,7 +20,7 @@ class PO_HeaderController
     {
         $check =Auth::user()->role;
 
-        if ($check == 5 || $check == 6) {
+        if ($check == 5 || $check == 6 || $check == 9) {
             $user = Auth::user()->bp_code;
         } elseif ($check == 2) {
             $user = $request->bp_code;
