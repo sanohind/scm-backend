@@ -138,6 +138,7 @@ class DeliveryNoteUpdateTransaction
             // Calculate the wave number
             $lastOutstanding = DN_Detail_Outstanding::select('wave')
                 ->where('dn_detail_no', $d['dn_detail_no'])
+                ->orderBy('wave','desc')
                 ->first();
 
             $wave = ($lastOutstanding ? $lastOutstanding->wave : 0) + 1;
