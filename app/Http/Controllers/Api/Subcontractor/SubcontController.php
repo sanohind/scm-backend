@@ -58,7 +58,6 @@ class SubcontController
     public function indexTrans(Request $request)
     {
         try {
-            // dd($request);
             $result = $this->subcontGetTransaction->getAllTransactionSubcont($request->start_date ?? null,$request->end_date ?? null, $request->bp_code ?? null);
         } catch (\Exception $ex) {
             return response()->json([
