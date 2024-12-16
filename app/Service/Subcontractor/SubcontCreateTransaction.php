@@ -22,62 +22,61 @@ class SubcontCreateTransaction
     public function createTransactionSubcont($data)
     {
         foreach ($data['data'] as $dataTransaction) {
-            $result = DB::transaction(function () use ($dataTransaction) {
-                    // Get sub_item_id for each item
-                    $subItemId = SubcontItem::where('item_code', $dataTransaction["item_code"])
-                        ->where('bp_code', Auth::user()->bp_code)
-                        ->value('sub_item_id');
+            // Get sub_item_id for each item
+            $subItemId = SubcontItem::where('item_code', $dataTransaction["item_code"])
+            ->where('bp_code', Auth::user()->bp_code)
+            ->value('sub_item_id');
 
-                    // Generate unique delivery note if not provided
-                    if (empty($data["delivery_note"])) {
-                        $todayLatestProcess = Carbon::now()->format("Ymd");
-                        $today = Carbon::now()->format("dmy");
-                        $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 4);
-                        $getLatestProcess = SubcontTransaction::where('sub_item_id', $subItemId)
-                            ->where('transaction_type', 'Process')
-                            ->where('transaction_date', $todayLatestProcess)
-                            ->count();
-                        $unique_dn_process = "$user-$today-" . ($getLatestProcess + 1);
-                        $dataTransaction['delivery_note'] = $unique_dn_process;
-                    } else {
-                        throw new Exception("Error Generate Delivery Note Process", 500);
-                    }
+            // Generate unique delivery note if not provided
+            if (empty($dataTransaction["delivery_note"])) {
+                $todayLatestProcess = Carbon::now()->format("Ymd");
+                $today = Carbon::now()->format("dmy");
+                $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 4);
+                $getLatestProcess = SubcontTransaction::where('sub_item_id', $subItemId)
+                    ->where('transaction_type', 'Process')
+                    ->where('transaction_date', $todayLatestProcess)
+                    ->count();
+                $unique_dn_process = "$user-$today-" . ($getLatestProcess + 1);
+                $dataTransaction['delivery_note'] = $unique_dn_process;
+            }
 
-                    // Create the transaction
-                    SubcontTransaction::create([
-                        'delivery_note'     => $dataTransaction['delivery_note'],
-                        'sub_item_id'       => $subItemId,
-                        'transaction_type'  => $dataTransaction['transaction_type'],
-                        'actual_transaction_date'  => $dataTransaction['actual_transaction_date'],
-                        'actual_transaction_time'  => $dataTransaction['actual_transaction_time'],
-                        'transaction_date'  => Carbon::now()->format("Y-m-d"),
-                        'transaction_time'  => Carbon::now()->format("H:i:s"),
-                        'item_code'         => $dataTransaction['item_code'],
-                        'status'            => $dataTransaction['status'],
-                        'qty_ok'            => $dataTransaction['qty_ok'],
-                        'qty_ng'            => $dataTransaction['qty_ng'],
-                    ]);
+            $result = DB::transaction(function () use ($dataTransaction,$subItemId) {
 
-                    // Check stock record availability
-                    $checkStockRecordAvaibility = $this->checkStockRecordAvailability($dataTransaction["item_code"], $subItemId);
+                // Create the transaction
+                SubcontTransaction::create([
+                    'delivery_note'     => $dataTransaction['delivery_note'],
+                    'sub_item_id'       => $subItemId,
+                    'transaction_type'  => $dataTransaction['transaction_type'],
+                    'actual_transaction_date'  => $dataTransaction['actual_transaction_date'],
+                    'actual_transaction_time'  => $dataTransaction['actual_transaction_time'],
+                    'transaction_date'  => Carbon::now()->format("Y-m-d"),
+                    'transaction_time'  => Carbon::now()->format("H:i:s"),
+                    'item_code'         => $dataTransaction['item_code'],
+                    'status'            => $dataTransaction['status'],
+                    'qty_ok'            => $dataTransaction['qty_ok'],
+                    'qty_ng'            => $dataTransaction['qty_ng'],
+                ]);
 
-                    // Get stock
-                    $stock = SubcontStock::where('sub_item_id', $subItemId)
-                        ->where('item_code', $dataTransaction["item_code"])
-                        ->first();
+                // Check stock record availability
+                $checkStockRecordAvaibility = $this->checkStockRecordAvailability($dataTransaction["item_code"], $subItemId);
 
-                    // Validate and calculate stock
-                    if ($checkStockRecordAvaibility && !empty($stock)) {
-                        // Calculate stock
-                        $calculate = $this->calculatingStock(
-                            $dataTransaction["status"],
-                            $dataTransaction["transaction_type"],
-                            $dataTransaction["qty_ok"],
-                            $dataTransaction["qty_ng"],
-                            $stock
-                        );
-                    } else {
-                        throw new Exception("Error processing check stock record availability", 500);
+                // Get stock
+                $stock = SubcontStock::where('sub_item_id', $subItemId)
+                    ->where('item_code', $dataTransaction["item_code"])
+                    ->first();
+
+                // Validate and calculate stock
+                if ($checkStockRecordAvaibility && !empty($stock)) {
+                    // Calculate stock
+                    $calculate = $this->calculatingStock(
+                        $dataTransaction["status"],
+                        $dataTransaction["transaction_type"],
+                        $dataTransaction["qty_ok"],
+                        $dataTransaction["qty_ng"],
+                        $stock
+                    );
+                } else {
+                    throw new Exception("Error processing check stock record availability", 500);
                 }
 
                 // Check the if the process calculate stock complete
