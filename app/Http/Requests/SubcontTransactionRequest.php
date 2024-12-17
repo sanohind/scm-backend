@@ -26,14 +26,18 @@ class SubcontTransactionRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "transaction_type"=> "required|string|in:Ingoing,Outgoing,Process",
-            "item_code"=> "required|string|max:50",
-            "status"=> "required|string|in:Fresh,Replating",
-            "qty_ok"=> "integer|min:0",
-            "qty_ng"=> "integer|min:0",
+            "data.*.actual_transaction_date"=> "required|date",
+            "data.*.actual_transaction_time"=> "date_format:H:i:s",
+            "data.*.transaction_type"=> "required|string|in:Incoming,Outgoing,Process",
+            "data.*.item_code"=> "required|string|max:50",
+            "data.*.status"=> "required|string|in:Fresh,Replating",
+            "data.*.qty_ok"=> "integer|min:0",
+            "data.*.qty_ng"=> "integer|min:0",
         ];
 
-        ($this->transaction_type !== 'Process') ? $rules["delivery_note"] = "required|string|max:255" : $rules["delivery_note"] = "nullable|string|max:255";
+        foreach ($this->input('data') as $type) {
+            ($type['transaction_type'] !== 'Process') ? $rules["data.*.delivery_note"] = "required|string|max:255" : $rules["data.*.delivery_note"] = "nullable|string|max:255";
+        }
 
         return $rules;
     }
@@ -42,32 +46,32 @@ class SubcontTransactionRequest extends FormRequest
     {
         return [
             // Delivery Note
-            "delivery_note.required" => "The delivery note is required.",
-            "delivery_note.string" => "The delivery note must be a valid string.",
-            "delivery_note.max" => "The delivery note must not exceed 255 characters.",
+            "data.*.delivery_note.required" => "The delivery note is required.",
+            "data.*.delivery_note.string" => "The delivery note must be a valid string.",
+            "data.*.delivery_note.max" => "The delivery note must not exceed 255 characters.",
 
             // Transaction Type
-            "transaction_type.required" => "The transaction type is required.",
-            "transaction_type.string" => "The transaction type must be a valid string.",
-            "transaction_type.in" => "The transaction type must be one of the following: 'Ingoing', 'Outgoing', or 'Process'.",
+            "data.*.transaction_type.required" => "The transaction type is required.",
+            "data.*.transaction_type.string" => "The transaction type must be a valid string.",
+            "data.*.transaction_type.in" => "The transaction type must be one of the following: 'Incoming', 'Outgoing', or 'Process'.",
 
             // Item Code
-            "item_code.required" => "The item code is required.",
-            "item_code.string" => "The item code must be a valid string.",
-            "item_code.max" => "The item code must not exceed 50 characters.",
+            "data.*.item_code.required" => "The item code is required.",
+            "data.*.item_code.string" => "The item code must be a valid string.",
+            "data.*.item_code.max" => "The item code must not exceed 50 characters.",
 
             // Status
-            "status.required" => "The status is required.",
-            "status.string" => "The status must be a valid string.",
-            "status.in" => "The status must be either 'Fresh' or 'Replating'.",
+            "data.*.status.required" => "The status is required.",
+            "data.*.status.string" => "The status must be a valid string.",
+            "data.*.status.in" => "The status must be either 'Fresh' or 'Replating'.",
 
             // Quantity OK
-            "qty_ok.integer" => "The quantity OK must be an integer.",
-            "qty_ok.min" => "The quantity OK must be at least 0.",
+            "data.*.qty_ok.integer" => "The quantity OK must be an integer.",
+            "data.*.qty_ok.min" => "The quantity OK must be at least 0.",
 
             // Quantity NG
-            "qty_ng.integer" => "The quantity NG must be an integer.",
-            "qty_ng.min" => "The quantity NG must be at least 0.",
+            "data.*.qty_ng.integer" => "The quantity NG must be an integer.",
+            "data.*.qty_ng.min" => "The quantity NG must be at least 0.",
         ];
     }
 
@@ -88,16 +92,20 @@ class SubcontTransactionRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             if (!$this->ownership()) {
-                $validator->errors()->add('item_code', 'You do not have ownership of this item.');
+                $validator->errors()->add('data.*.item_code', 'You do not have ownership of this item.');
             }
         });
     }
 
     private function ownership()
     {
-       return SubcontItem::where("item_code", $this->item_code)
-       ->where("bp_code", Auth::user()->bp_code)
-       ->exists();
+        foreach ($this->input('data') as $transaction) {
+            SubcontItem::where("item_code", $transaction['item_code'])
+                ->where("bp_code", Auth::user()->bp_code)
+                ->exists();
+        }
+
+        return true;
 
     // Alternative if want to use this for message
     //    dd($check);

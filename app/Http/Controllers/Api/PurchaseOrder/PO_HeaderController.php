@@ -18,11 +18,12 @@ class PO_HeaderController
     // To get PO Header data based supplier_code
     public function index(Request $request)
     {
+        // Validation check user role
         $check =Auth::user()->role;
 
-        if ($check == 5 || $check == 6) {
+        if ($check == 5 || $check == 6) { // user
             $user = Auth::user()->bp_code;
-        } elseif ($check == 2) {
+        } elseif ($check == 2) {    // admin
             $user = $request->bp_code;
         }
 
