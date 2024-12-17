@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api\Subcontractor;
 
+use App\Http\Requests\SubcontItemUpdateRequest;
+use App\Service\Subcontractor\SubcontDeleteItem;
+use App\Service\Subcontractor\SubcontUpdateItem;
 use Str;
 
 use LDAP\Result;
@@ -31,6 +34,8 @@ class SubcontController
         protected SubcontCreateTransaction $subcontCreateTransaction,
         protected SubcontGetListItem $subcontGetListItem,
         protected SubcontGetListItemErp $subcontGetListItemErp,
+        protected SubcontUpdateItem $subcontUpdateItem,
+        protected SubcontDeleteItem $subcontDeleteItem,
         ) {}
 
     /**
@@ -107,12 +112,39 @@ class SubcontController
      * @param \App\Http\Requests\SubcontItemRequest $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function CreateItem(SubcontItemRequest $request)
+    public function createItem(SubcontItemRequest $request)
     {
         try {
             // Validate request data and process
             $result = $this->subcontCreateItem->createItemSubcont($request->validated());
         } catch (\Exception $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()
+            ],500);
+        }
+        return $result;
+    }
+
+    /**
+     * Summary of updateItem
+     * @param \App\Http\Requests\SubcontItemUpdateRequest $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function updateItem(SubcontItemUpdateRequest $request) {
+        try {
+            $result = $this->subcontUpdateItem->updateItem($request->validated());
+        } catch (\Throwable $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()
+            ],500);
+        }
+        return $result;
+    }
+
+    public function deleteItem(SubcontItemUpdateRequest $request){
+        try {
+            $result = $this->subcontDeleteItem->deleteItem($request->validated());
+        } catch (\Throwable $ex) {
             return response()->json([
                 'error' => $ex->getMessage()
             ],500);
