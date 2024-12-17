@@ -419,6 +419,8 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     Route::get('po/index/{bp_code}',[PO_HeaderController::class, "index"]);
     // Route for show PO Detail list
     Route::get('po/detail/{po_no}',[PO_DetailController::class, "index"]);
+    // Route for update list PO Header
+    Route::put('po/update/{po_no}',[PO_HeaderController::class, "update"]);
     // Route for print PO
     Route::get('po/print/{po_no}', [PrintController::class, 'poHeaderView']);
     // Route for show PO history list
@@ -428,7 +430,7 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
      *  Route for Delivery Note
      */
     // Route for show list DN Header
-    Route::get('dn/index',[DN_HeaderController::class, "index"]);
+    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "index"]);
     // Route for show list DN Detail
     Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
     // Route for edit list DN Detail
@@ -436,7 +438,7 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     // Route for update list DN Detail
     Route::put('dn/update',[DN_DetailController::class, "update"]);
     // route view DN history
-    Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
+    Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
     // route view print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     // route view print DN label/ kanban
