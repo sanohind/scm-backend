@@ -433,7 +433,7 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
      *  Route for Delivery Note
      */
     // Route for show list DN Header
-    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "index"]);
+    Route::get('dn/index/{sp_code}',[DN_HeaderController::class, "indexWarehouse"]);
     // Route for show list DN Detail
     Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
     // Route for edit list DN Detail

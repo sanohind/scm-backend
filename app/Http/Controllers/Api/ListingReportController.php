@@ -17,9 +17,9 @@ class ListingReportController extends Controller
     public function index(Request $bp_code)
     {
         $check =Auth::user()->role;
-        if ($check == 5 || $check == 6 || $check == 7 || $check == 6 || $check == 8 || $check == 9) {
+        if ($check == 5 || $check == 6 || $check == 7 || $check == 6 || $check == 8) {
             $bp_code = Auth::user()->bp_code;
-        } elseif ($check == 2 || $check == 3 || $check == 4) {
+        } elseif ($check == 2 || $check == 3 || $check == 4  || $check == 9) {
             // dd($request);
             $bp_code = $bp_code->bp_code;
         }
