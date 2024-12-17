@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Subcontractor;
 
 use App\Http\Requests\SubcontItemUpdateRequest;
+use App\Models\User;
 use App\Service\Subcontractor\SubcontDeleteItem;
 use App\Service\Subcontractor\SubcontUpdateItem;
 use Str;
@@ -90,6 +91,20 @@ class SubcontController
         return $result;
     }
 
+
+    public function adminGetAllItem(Request $bp_code) {
+        try {
+            $result = $this->subcontGetListItem->adminGetAllItemUser($bp_code->bp_code ?? null);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'error' => $th->getMessage()." (On line ".$th->getLine().")"
+            ],500);
+        }
+
+        return $result;
+    }
+
     /**
      * Summary of getListItemErp
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -135,7 +150,7 @@ class SubcontController
             $result = $this->subcontUpdateItem->updateItem($request->validated());
         } catch (\Throwable $ex) {
             return response()->json([
-                'error' => $ex->getMessage()
+                'error' => $ex->getMessage(),
             ],500);
         }
         return $result;
