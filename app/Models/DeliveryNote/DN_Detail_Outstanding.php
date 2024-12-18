@@ -33,4 +33,10 @@ class DN_Detail_Outstanding extends Model
     {
         return $this->belongsTo(DN_Detail::class, 'dn_detail_no', 'dn_detail_no');
     }
+
+    // Relationship to dnHeader
+    public function dnHeader(): BelongsTo
+    {
+        return $this->belongsTo(DN_Header::class, 'no_dn', 'no_dn');
+    }
 }

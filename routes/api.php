@@ -25,9 +25,17 @@ use Laravel\Sanctum\PersonalAccessToken;
 Route::post('/login', [AuthController::class, 'login']);
 
 // route view print
-Route::get('/dnhview/{no_dn}', [PrintController::class, 'dnHeaderView']);
-Route::get('/lbview/{no_dn}', [PrintController::class, 'labelView']);
 Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
+
+// print dn
+Route::get('/dnhview/{no_dn}', [PrintController::class, 'dnHeaderView']);
+Route::get('/dnhviewconf/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
+Route::get('/dnhviewout/{no_dn}/{outstanding}', [PrintController::class, 'dnHeaderViewOutstanding']);
+
+// print label
+Route::get('/lbview/{no_dn}', [PrintController::class, 'labelAllView']);
+Route::get('/dnout/{no_dn}/{outstanding}', [PrintController::class, 'labelOutstanding']);
+Route::get('/dnqty/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
 
 // Route sync
 Route::get('/mail-notification', [EmailNotificationSupplierController::class,'mail']);
@@ -138,8 +146,12 @@ Route::middleware(['auth:sanctum','userRole:3'])->prefix('admin-warehouse')->gro
     Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
     // Route for print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
+    Route::get('dn/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'dnHeaderViewOutstanding']);
     // Route fo prin DN label / kanban
-    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
+    Route::get('dn-label/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'labelOutstanding']);
+    Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
     // Route fo get DN history
     Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
 
@@ -181,8 +193,12 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
     Route::get('dn/detail/{no_dn}',[DN_DetailController::class, "index"]);
     // Route for print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
+    Route::get('dn/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'dnHeaderViewOutstanding']);
     // Route fo prin DN label / kanban
-    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
+    Route::get('dn-label/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'labelOutstanding']);
+    Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
     // Route fo get DN history
     Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
 
@@ -230,8 +246,12 @@ Route::middleware(['auth:sanctum','userRole:5'])->prefix('supplier-marketing')->
     Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
     // route view print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
+    Route::get('dn/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'dnHeaderViewOutstanding']);
     // route view print DN label/ kanban
-    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
+    Route::get('dn-label/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'labelOutstanding']);
+    Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
 
     /**
      *  Route for Performance Repot
@@ -292,8 +312,12 @@ Route::middleware(['auth:sanctum','userRole:6'])->prefix('supplier-subcont-marke
     Route::put('dn/update',[DN_DetailController::class, "update"]);
     // Route for print DN
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
+    Route::get('dn/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'dnHeaderViewOutstanding']);
     // Route for print DN label / kanban
-    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
+    Route::get('dn-label/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'labelOutstanding']);
+    Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
     // route view DN history
     Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
 
@@ -354,8 +378,12 @@ Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')-
     Route::get('dn/edit/{dn_detail_no}',[DN_DetailController::class, "edit"]);
     // Route for print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
+    Route::get('dn/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'dnHeaderViewOutstanding']);
     // Route fo prin DN label / kanban
-    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
+    Route::get('dn-label/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'labelOutstanding']);
+    Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
     // Route fo get DN history
     Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
 
@@ -402,8 +430,12 @@ Route::middleware(['auth:sanctum', 'userRole:8'])->prefix('supplier-subcont')->g
     Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
     // route view print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
+    Route::get('dn/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'dnHeaderViewOutstanding']);
     // route view print DN label/ kanban
-    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
+    Route::get('dn-label/print/outstanding/{no_dn}/{outstanding}', [PrintController::class, 'labelOutstanding']);
+    Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
