@@ -91,12 +91,12 @@ class UpdateDeliveryNoteRequest extends FormRequest
                 // ]);
 
                 // Check qty_confirm must be multiple of dn_snp
-                if (($i['qty_confirm'] % $dnSnp) != 0) {
-                    $validator->errors()->add(
-                        "updates.{$i['dn_detail_no']}.qty_confirm",
-                        "Qty Confirm must be multiple of Qty Label"
-                    );
-                }
+                // if (($i['qty_confirm'] % $dnSnp) != 0) {
+                //     $validator->errors()->add(
+                //         "updates.{$i['dn_detail_no']}.qty_confirm",
+                //         "Qty Confirm must be multiple of Qty Label"
+                //     );
+                // }
 
                 // Check qty_confirm can't exceed qty_requested
                 if (($i['qty_confirm'] + $currentReceipt) > $dnQty) {
