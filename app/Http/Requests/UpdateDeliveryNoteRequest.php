@@ -99,12 +99,12 @@ class UpdateDeliveryNoteRequest extends FormRequest
                 // }
 
                 // Check qty_confirm can't exceed qty_requested
-                if (($i['qty_confirm'] + $currentReceipt) > $dnQty) {
-                    $validator->errors()->add(
-                        "updates.{$i['dn_detail_no']}.qty_confirm",
-                        "Qty Confirm exceeds Qty Requested for DN: {$i['dn_detail_no']}"
-                    );
-                }
+                // if (($i['qty_confirm'] + $currentReceipt) > $dnQty) {
+                //     $validator->errors()->add(
+                //         "updates.{$i['dn_detail_no']}.qty_confirm",
+                //         "Qty Confirm exceeds Qty Requested for DN: {$i['dn_detail_no']}"
+                //     );
+                // }
 
                 // Check if dn_qty equals qty_confirm
                 if ($getData->dn_qty == $getData->qty_confirm) {
