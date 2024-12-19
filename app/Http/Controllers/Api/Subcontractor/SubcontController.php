@@ -195,7 +195,7 @@ class SubcontController
         // Proceed with transactions
         foreach ($request->input('data') as $transactionData) {
             // Process each transaction using $bp_code
-            $transaction = new SubcontTransaction([
+            $transaction = new SubcontTransactionRequest([
                 'bp_code'                    => $bp_code,
                 'item_code'                  => $transactionData['item_code'],
                 'transaction_type'           => $transactionData['transaction_type'],
