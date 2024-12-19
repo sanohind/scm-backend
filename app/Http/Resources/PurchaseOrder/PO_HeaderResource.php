@@ -52,8 +52,8 @@ class PO_HeaderResource extends JsonResource
                     $value = 'No Data';
                     break;
             }
+            return $value;
         }
-        return $value;
     }
 
     private function statusPo() {
