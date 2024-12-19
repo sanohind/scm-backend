@@ -505,16 +505,24 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     Route::delete('forecast/delete/{forecast}', [ForecastController::class,"destroy"]);
 
     /**
-     *  Route for Subcontractor
+     * Route for Subcontractor
      */
-    // Route for get list subcont item
-    Route::get('item/list', [SubcontController::class,'getListItem']);
+    // Route for get list item Erp
+    Route::get('item/list/item', [SubcontController::class,'getListItemErp']);
+    // Route for get list item user
+    Route::get('item/list/{bp_code}', [SubcontController::class,'getListItem']);
+    // Route for admin get all list item user based on bp_code
+    Route::get('item/all-list/{bp_code}',[SubcontController::class,'adminGetAllItem']);
     // Route for get index subcont item (include stock)
-    Route::get('item/index/{param?}', [SubcontController::class,'indexItem']);
+    Route::get('item/index/{bp_code}', [SubcontController::class,'indexItem']);
+    // Route for store subcont item
+    Route::post('item/store', [SubcontController::class,'createItem']);
+    // Route for update subcont item
+    Route::patch('item/update', [SubcontController::class,'updateItem']);
+    // Route for delete subcont item
+    Route::delete('item/delete', [SubcontController::class,'deleteItem']);
     // Route for get index subcont transaction
-    Route::get('transaction/index', [SubcontController::class,'indexTrans']);
-    // Route for store subcont transaction
-    Route::post('transaction/store', [SubcontController::class,'createTransaction']);
+    Route::get('transaction/index/{bp_code}/{start_date}/{end_date}', [SubcontController::class,'indexTrans']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
