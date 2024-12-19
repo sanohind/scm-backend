@@ -60,28 +60,41 @@ class ForecastController
     {
         $request->validated();
 
-         // Change file name and file path to storage
-         $file = $request->file('file');
-         $fileName = time().'_'.$file->getClientOriginalName();
-         $filePath = $file->storeAs('public/forecast',$fileName);
+        // Get the authenticated user and their role
+        $user = auth()->user();
+        $role_id = $user->role;
 
-         //upload_at value declaration
-         $time = Carbon::now();
+        // Determine the bp_code to use
+        if ($role_id == 9) {
+            // Superuser can specify any bp_code from the request
+            $bp_code = $request->bp_code;
+        } else {
+            // Other users must use their own bp_code
+            $bp_code = $user->bp_code;
+        }
 
-         // Create data
-         $data_create = Forecast::create([
-            'bp_code' => $request->bp_code,
+        // Change file name and file path to storage
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = $file->storeAs('public/forecast', $fileName);
+
+        // Upload time value declaration
+        $time = Carbon::now();
+
+        // Create data
+        $data_create = Forecast::create([
+            'bp_code'     => $bp_code,
             'description' => $request->description,
-            'file' => Storage::url($filePath),
-            'upload_at' => $time,
-         ]);
+            'file'        => Storage::url($filePath),
+            'upload_at'   => $time,
+        ]);
 
-         // Return value
-         return response()->json([
-             'status' => true,
-             'message' => "Add Performance Report Successfully $data_create->file" ,
-             'data' => new ForecastResource($data_create)
-         ],201);
+        // Return value
+        return response()->json([
+            'status'  => true,
+            'message' => "Add Performance Report Successfully",
+            'data'    => new ForecastResource($data_create),
+        ], 201);
     }
 
     /**
