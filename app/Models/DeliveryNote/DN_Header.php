@@ -55,4 +55,10 @@ class DN_Header extends Model
     {
         return $this->hasMany(DN_Detail::class, 'no_dn', 'no_dn');
     }
+
+    // Relationship dnOutstanding
+    public function dnOutstanding(): HasMany
+    {
+        return $this->hasMany(DN_Detail_Outstanding::class, 'no_dn', 'no_dn');
+    }
 }
