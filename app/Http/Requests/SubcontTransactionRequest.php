@@ -15,28 +15,45 @@ class SubcontTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 6 || 8 || 7 || 9;
+        // Allow users with roles 6, 7, 8, or 9 to make this request
+        return in_array(Auth::user()->role, [6, 7, 8, 9]);
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
     public function rules(): array
     {
+        $userRole = Auth::user()->role;
+
         $rules = [
-            "data.*.actual_transaction_date"=> "required|date",
-            "data.*.actual_transaction_time"=> "date_format:H:i:s",
-            "data.*.transaction_type"=> "required|string|in:Incoming,Outgoing,Process",
-            "data.*.item_code"=> "required|string|max:50",
-            "data.*.status"=> "required|string|in:Fresh,Replating",
-            "data.*.qty_ok"=> "integer|min:0",
-            "data.*.qty_ng"=> "integer|min:0",
+            'data.*.actual_transaction_date' => 'required|date',
+            'data.*.actual_transaction_time' => 'nullable|date_format:H:i:s',
+            'data.*.transaction_type'        => 'required|string|in:Incoming,Outgoing,Process',
+            'data.*.item_code'               => 'required|string|max:50',
+            'data.*.status'                  => 'required|string|in:Fresh,Replating',
+            'data.*.qty_ok'                  => 'integer|min:0',
+            'data.*.qty_ng'                  => 'integer|min:0',
         ];
 
-        foreach ($this->input('data') as $type) {
-            ($type['transaction_type'] !== 'Process') ? $rules["data.*.delivery_note"] = "required|string|max:255" : $rules["data.*.delivery_note"] = "nullable|string|max:255";
+        // Conditional validation for bp_code based on user role
+        if ($userRole == 9) {
+            // Superuser must provide bp_code
+            $rules['bp_code'] = 'required|string|exists:subcont_items,bp_code';
+        } else {
+            // For other users, bp_code is not required and set to user's own bp_code
+            $this->merge(['bp_code' => Auth::user()->bp_code]);
+        }
+
+        // Conditional validation for delivery_note based on transaction_type
+        foreach ($this->input('data') as $index => $type) {
+            if ($type['transaction_type'] !== 'Process') {
+                $rules["data.$index.delivery_note"] = 'required|string|max:255';
+            } else {
+                $rules["data.$index.delivery_note"] = 'nullable|string|max:255';
+            }
         }
 
         return $rules;
@@ -45,33 +62,38 @@ class SubcontTransactionRequest extends FormRequest
     public function messages(): array
     {
         return [
+            // BP Code
+            'bp_code.required' => 'The bp_code is required for superusers.',
+            'bp_code.string'   => 'The bp_code must be a valid string.',
+            'bp_code.exists'   => 'The bp_code does not exist in subcont items.',
+
             // Delivery Note
-            "data.*.delivery_note.required" => "The delivery note is required.",
-            "data.*.delivery_note.string" => "The delivery note must be a valid string.",
-            "data.*.delivery_note.max" => "The delivery note must not exceed 255 characters.",
+            'data.*.delivery_note.required' => 'The delivery note is required.',
+            'data.*.delivery_note.string'   => 'The delivery note must be a valid string.',
+            'data.*.delivery_note.max'      => 'The delivery note must not exceed 255 characters.',
 
             // Transaction Type
-            "data.*.transaction_type.required" => "The transaction type is required.",
-            "data.*.transaction_type.string" => "The transaction type must be a valid string.",
-            "data.*.transaction_type.in" => "The transaction type must be one of the following: 'Incoming', 'Outgoing', or 'Process'.",
+            'data.*.transaction_type.required' => 'The transaction type is required.',
+            'data.*.transaction_type.string'   => 'The transaction type must be a valid string.',
+            'data.*.transaction_type.in'       => "The transaction type must be one of the following: 'Incoming', 'Outgoing', or 'Process'.",
 
             // Item Code
-            "data.*.item_code.required" => "The item code is required.",
-            "data.*.item_code.string" => "The item code must be a valid string.",
-            "data.*.item_code.max" => "The item code must not exceed 50 characters.",
+            'data.*.item_code.required' => 'The item code is required.',
+            'data.*.item_code.string'   => 'The item code must be a valid string.',
+            'data.*.item_code.max'      => 'The item code must not exceed 50 characters.',
 
             // Status
-            "data.*.status.required" => "The status is required.",
-            "data.*.status.string" => "The status must be a valid string.",
-            "data.*.status.in" => "The status must be either 'Fresh' or 'Replating'.",
+            'data.*.status.required' => 'The status is required.',
+            'data.*.status.string'   => 'The status must be a valid string.',
+            'data.*.status.in'       => "The status must be either 'Fresh' or 'Replating'.",
 
             // Quantity OK
-            "data.*.qty_ok.integer" => "The quantity OK must be an integer.",
-            "data.*.qty_ok.min" => "The quantity OK must be at least 0.",
+            'data.*.qty_ok.integer' => 'The quantity OK must be an integer.',
+            'data.*.qty_ok.min'     => 'The quantity OK must be at least 0.',
 
             // Quantity NG
-            "data.*.qty_ng.integer" => "The quantity NG must be an integer.",
-            "data.*.qty_ng.min" => "The quantity NG must be at least 0.",
+            'data.*.qty_ng.integer' => 'The quantity NG must be an integer.',
+            'data.*.qty_ng.min'     => 'The quantity NG must be at least 0.',
         ];
     }
 
@@ -99,13 +121,21 @@ class SubcontTransactionRequest extends FormRequest
 
     private function ownership()
     {
+        $userRole = Auth::user()->role;
+        $bp_code  = $userRole == 9 ? $this->input('bp_code') : Auth::user()->bp_code;
+
         foreach ($this->input('data') as $transaction) {
-            SubcontItem::where("item_code", $transaction['item_code'])
-                ->where("bp_code", Auth::user()->bp_code)
+            $ownsItem = SubcontItem::where('item_code', $transaction['item_code'])
+                ->where('bp_code', $bp_code)
                 ->exists();
+
+            if (!$ownsItem) {
+                return false;
+            }
         }
 
         return true;
+        
 
     // Alternative if want to use this for message
     //    dd($check);
