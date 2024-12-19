@@ -20,7 +20,7 @@ class SubcontGetTransaction
 
         if ($check == 6 || $check == 8) {
             $user = Auth::user()->bp_code;
-        } elseif ($check == 4) {
+        } elseif ($check == 4 || $check == 9) {
             $user = $bp_code;
         }
 
