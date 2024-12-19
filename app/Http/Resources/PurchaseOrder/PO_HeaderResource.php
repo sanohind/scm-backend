@@ -53,6 +53,8 @@ class PO_HeaderResource extends JsonResource
                     break;
             }
             return $value;
+        } else {
+            return $this->response;
         }
     }
 
