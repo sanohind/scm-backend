@@ -16,9 +16,9 @@ class HistoryController
     public function poHeaderHistory(Request $request)
     {
         $check =Auth::user()->role;
-        if ($check == 5 || $check == 6 || $check == 9) {
+        if ($check == 5 || $check == 6) {
             $user = Auth::user()->bp_code;
-        } elseif ($check == 2) {
+        } elseif ($check == 2 || $check == 9) {
             // dd($request);
             $user = $request->bp_code;
         }
@@ -41,9 +41,9 @@ class HistoryController
     public function dnHeaderHistory(Request $request)
     {
         $check =Auth::user()->role;
-        if ($check == 5 || $check == 6 || $check == 7 || $check == 8 || $check == 9) {
+        if ($check == 5 || $check == 6 || $check == 7 || $check == 8) {
             $user = Auth::user()->bp_code;
-        } elseif ($check == 2 || $check == 3 || $check == 4) {
+        } elseif ($check == 2 || $check == 3 || $check == 4  || $check == 9) {
             // dd($request);
             $user = $request->bp_code;
         }
