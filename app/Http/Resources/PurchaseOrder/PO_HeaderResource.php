@@ -35,7 +35,7 @@ class PO_HeaderResource extends JsonResource
 
     private function statusResponse(){
         if ($this->response == null || '' && $this->status != null || '') {
-            switch ($this->status) {
+            switch ($this->po_status) {
                 case 'In Process':
                     $value = 'Accepted';
                     break;
@@ -68,7 +68,7 @@ class PO_HeaderResource extends JsonResource
                 break;
 
             case null:
-                $value = $this->status;
+                $value = $this->po_status;
                 break;
 
             default:
