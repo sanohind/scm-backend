@@ -15,13 +15,13 @@ class DN_HistoryViewResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'dn_number' => $this->no_dn ?? 'No data',
-            'po_number' => $this->po_no ?? 'No data',
-            'dn_status' => $this->status_desc ?? 'No data',
-            'po_status' => $this->poHeader->po_status ?? 'No data',
-            'send_date' => $this->planConcat() ?? 'No data',
-            'receive_date' => $this->receiptConcat() ?? 'No data',
-            'packing_slip' => $this->packing_slip ?? 'No data',
+            'dn_number' => $this->no_dn,
+            'po_number' => $this->po_no,
+            'dn_status' => $this->status_desc,
+            'po_status' => $this->poHeader->po_status,
+            'send_date' => $this->planConcat(),
+            'receive_date' => $this->receiptConcat(),
+            'packing_slip' => $this->packing_slip,
         ];
     }
 
@@ -43,11 +43,18 @@ class DN_HistoryViewResource extends JsonResource
         // Convert and format date and time to strings
         $dnDetail = $this->dnDetail->first();
 
-        $dateString = date('Y-m-d', strtotime($dnDetail->actual_receipt_date));
-        $timeString = date('H:i', strtotime($dnDetail->actual_receipt_time));
+        $date = $dnDetail->actual_receipt_date;
+        $time = $dnDetail->actual_receipt_time;
 
-        $concat = "$dateString $timeString";
+        if ($date == null && $time == null || $date == null && $time != null || $date != null && $time == null)  {
+            $concat = null;
+        }else {
+            $dateString = date('Y-m-d', strtotime($dnDetail->actual_receipt_date));
+            $timeString = date('H:i', strtotime($dnDetail->actual_receipt_time));
+
+            $concat = "$dateString $timeString";
+        }
 
         return $concat;//dd($concat);
-        }
+    }
 }
