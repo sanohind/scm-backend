@@ -22,7 +22,7 @@ class PO_HeaderResource extends JsonResource
             'po_revision_no' => $this->po_revision_no,
             'po_revision_date' => $this->po_revision_date,
             'po_status' => $this->statusPo(),
-            'response' => $this->statusResponse(),
+            'response' => $this->response,
             'reason' => $this->reason,
         ];
     }
@@ -33,30 +33,30 @@ class PO_HeaderResource extends JsonResource
         return $value;
     }
 
-    private function statusResponse(){
-        if ($this->response == null || '' && $this->status != null || '') {
-            switch ($this->po_status) {
-                case 'In Process':
-                    $value = 'Accepted';
-                    break;
+    // private function statusResponse(){
+    //     if ($this->response == null || '' && $this->status != null || '') {
+    //         switch ($this->po_status) {
+    //             case 'In Process':
+    //                 $value = 'Accepted';
+    //                 break;
 
-                case 'Declined':
-                    $value = 'Declined';
-                    break;
+    //             case 'Declined':
+    //                 $value = 'Declined';
+    //                 break;
 
-                case 'Cancelled':
-                    $value = 'Declined';
-                    break;
+    //             case 'Cancelled':
+    //                 $value = 'Declined';
+    //                 break;
 
-                default:
-                    $value = 'No Data';
-                    break;
-            }
-            return $value;
-        } else {
-            return $this->response;
-        }
-    }
+    //             default:
+    //                 $value = 'No Data';
+    //                 break;
+    //         }
+    //         return $value;
+    //     } else {
+    //         return $this->response;
+    //     }
+    // }
 
     private function statusPo() {
 
