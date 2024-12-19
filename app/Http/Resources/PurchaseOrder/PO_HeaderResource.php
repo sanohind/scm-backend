@@ -22,7 +22,7 @@ class PO_HeaderResource extends JsonResource
             'po_revision_no' => $this->po_revision_no,
             'po_revision_date' => $this->po_revision_date,
             'po_status' => $this->statusPo(),
-            'response' => $this->response,
+            'response' => $this->statusResponse(),
             'reason' => $this->reason,
         ];
     }
