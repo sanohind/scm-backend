@@ -15,7 +15,7 @@ class SubcontItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 4;
+        return Auth::user()->role == 4 || 9;
     }
 
     /**
