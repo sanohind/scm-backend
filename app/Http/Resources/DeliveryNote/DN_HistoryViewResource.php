@@ -43,8 +43,8 @@ class DN_HistoryViewResource extends JsonResource
         // Convert and format date and time to strings
         $dnDetail = $this->dnDetail->first();
 
-        $date = $dnDetail->actual_receipt_date;
-        $time = $dnDetail->actual_receipt_time;
+        $date = $dnDetail->actual_receipt_date ?? null;
+        $time = $dnDetail->actual_receipt_time ?? null;
 
         if ($date == null && $time == null || $date == null && $time != null || $date != null && $time == null)  {
             $concat = null;
