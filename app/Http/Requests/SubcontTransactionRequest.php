@@ -10,25 +10,16 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SubcontTransactionRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        // Allow users with roles 6, 7, 8, or 9 to make this request
         return in_array(Auth::user()->role, [6, 7, 8, 9]);
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         $userRole = Auth::user()->role;
-
         $rules = [
+            'data'                         => 'required|array',
             'data.*.actual_transaction_date' => 'required|date',
             'data.*.actual_transaction_time' => 'nullable|date_format:H:i:s',
             'data.*.transaction_type'        => 'required|string|in:Incoming,Outgoing,Process',
@@ -38,16 +29,7 @@ class SubcontTransactionRequest extends FormRequest
             'data.*.qty_ng'                  => 'integer|min:0',
         ];
 
-        // Conditional validation for bp_code based on user role
-        if ($userRole == 9) {
-            // Superuser must provide bp_code
-            $rules['bp_code'] = 'required|string|exists:subcont_items,bp_code';
-        } else {
-            // For other users, bp_code is not required and set to user's own bp_code
-            $this->merge(['bp_code' => Auth::user()->bp_code]);
-        }
-
-        // Conditional validation for delivery_note based on transaction_type
+        // Conditional validation for delivery_note
         foreach ($this->input('data') as $index => $type) {
             if ($type['transaction_type'] !== 'Process') {
                 $rules["data.$index.delivery_note"] = 'required|string|max:255';
@@ -122,7 +104,11 @@ class SubcontTransactionRequest extends FormRequest
     private function ownership()
     {
         $userRole = Auth::user()->role;
-        $bp_code  = $userRole == 9 ? $this->input('bp_code') : Auth::user()->bp_code;
+        $bp_code  = $userRole == 9 ? $this->route('bp_code') ?? $this->input('bp_code') : Auth::user()->bp_code;
+
+        if (!$bp_code) {
+            return false;
+        }
 
         foreach ($this->input('data') as $transaction) {
             $ownsItem = SubcontItem::where('item_code', $transaction['item_code'])
@@ -135,7 +121,7 @@ class SubcontTransactionRequest extends FormRequest
         }
 
         return true;
-        
+
 
     // Alternative if want to use this for message
     //    dd($check);
