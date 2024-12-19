@@ -15,7 +15,7 @@ class SubcontTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 6 || 8 || 7;
+        return Auth::user()->role == 6 || 8 || 7 || 9;
     }
 
     /**
