@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Subcontractor;
 
 use App\Http\Requests\SubcontItemUpdateRequest;
 use App\Models\User;
-use App\Models\SubcontTransaction;
 use App\Service\Subcontractor\SubcontDeleteItem;
 use App\Service\Subcontractor\SubcontUpdateItem;
 use Str;
@@ -173,46 +172,17 @@ class SubcontController
      * @param \App\Http\Requests\SubcontTransactionRequest $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function createTransaction(SubcontTransactionRequest $request, $bp_code = null)
+    public function createTransaction(SubcontTransactionRequest $request)
     {
-        $userRole = Auth::user()->role;
+        try {
+                $result = $this->subcontCreateTransaction->createTransactionSubcont($request->validated());
 
-        // Determine bp_code based on user role
-        if ($userRole == 9) {
-            // For superuser, use bp_code from route or request body
-            $bp_code = $bp_code ?? $request->input('bp_code');
-            if (!$bp_code) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'bp_code is required for superusers.',
-                ], 422);
-            }
-        } else {
-            // For other users, use authenticated user's bp_code
-            $bp_code = Auth::user()->bp_code;
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'error' => $th->getMessage()." (On line ".$th->getLine().")"
+            ],500);
         }
-
-        // Proceed with transactions
-        foreach ($request->input('data') as $transactionData) {
-            // Process each transaction using $bp_code
-            $transaction = new SubcontTransactionRequest([
-                'bp_code'                    => $bp_code,
-                'item_code'                  => $transactionData['item_code'],
-                'transaction_type'           => $transactionData['transaction_type'],
-                'status'                     => $transactionData['status'],
-                'qty_ok'                     => $transactionData['qty_ok'] ?? 0,
-                'qty_ng'                     => $transactionData['qty_ng'] ?? 0,
-                'delivery_note'              => $transactionData['delivery_note'] ?? null,
-                'actual_transaction_date'    => $transactionData['actual_transaction_date'],
-                'actual_transaction_time'    => $transactionData['actual_transaction_time'] ?? null,
-            ]);
-            $transaction->save();
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Transactions added successfully.',
-        ]);
+        return $result;
     }
 }
-
