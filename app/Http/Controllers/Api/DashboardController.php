@@ -361,43 +361,86 @@ class DashboardController
         // Initialize the events collection
         $events = collect();
 
-        // For roles 5 and 6, include PO events
-        if (in_array($role_id, [5, 6])) {
-            // Get PO data with the required fields
-            $po_events = PO_Header::where('supplier_code', $sp_code)
-                ->get(['po_no', 'po_date', 'planned_receipt_date'])
+        // Check if the user is a superuser (Role 9)
+        if ($role_id == 9) {
+            // Superuser: Include all PO events with bp_code
+            $po_events = PO_Header::get(['po_no', 'po_date', 'planned_receipt_date', 'supplier_code'])
                 ->map(function ($po) {
                     return [
-                        'title' => $po->po_no,
-                        'start' => $po->po_date . ' 07:00',
-                        'end'   => $po->planned_receipt_date,
-                        'type'  => 'PO',
+                        'title'   => $po->po_no,
+                        'start'   => $po->po_date . ' 07:00',
+                        'end'     => $po->planned_receipt_date,
+                        'type'    => 'PO',
+                        'bp_code' => $po->supplier_code, // Include bp_code
                     ];
                 });
             $events = $events->merge($po_events);
-        }
 
-        // For roles 5, 6, 7, and 8, include DN events
-        if (in_array($role_id, [5, 6, 7, 8])) {
-            // Get DN data with the required fields
-            $dn_events = DN_Header::where('supplier_code', $sp_code)
-                ->get(['no_dn', 'dn_created_date', 'plan_delivery_date', 'plan_delivery_time', 'confirm_update_at', 'status_desc'])
+            // Superuser: Include all DN events with bp_code
+            $dn_events = DN_Header::get([
+                    'no_dn',
+                    'dn_created_date',
+                    'plan_delivery_date',
+                    'plan_delivery_time',
+                    'confirm_update_at',
+                    'status_desc',
+                    'supplier_code',
+                ])
                 ->map(function ($dn) {
                     // Determine the type based on the condition
-                    if (is_null($dn->confirm_update_at) && $dn->status_desc === 'Open') {
-                        $type = 'DN';
-                    } else {
-                        $type = 'DN History';
-                    }
+                    $type = (is_null($dn->confirm_update_at) && $dn->status_desc === 'Open') ? 'DN' : 'DN History';
 
                     return [
-                        'title' => $dn->no_dn,
-                        'start' => $dn->dn_created_date . ' ' . $dn->plan_delivery_time,
-                        'end'   => $dn->plan_delivery_date,
-                        'type'  => $type,
+                        'title'   => $dn->no_dn,
+                        'start'   => $dn->dn_created_date . ' ' . $dn->plan_delivery_time,
+                        'end'     => $dn->plan_delivery_date,
+                        'type'    => $type,
+                        'bp_code' => $dn->supplier_code, // Include bp_code
                     ];
                 });
             $events = $events->merge($dn_events);
+        } else {
+            // For roles 5 and 6, include PO events
+            if (in_array($role_id, [5, 6])) {
+                // Get PO data filtered by user's bp_code
+                $po_events = PO_Header::where('supplier_code', $sp_code)
+                    ->get(['po_no', 'po_date', 'planned_receipt_date'])
+                    ->map(function ($po) {
+                        return [
+                            'title' => $po->po_no,
+                            'start' => $po->po_date . ' 07:00',
+                            'end'   => $po->planned_receipt_date,
+                            'type'  => 'PO',
+                        ];
+                    });
+                $events = $events->merge($po_events);
+            }
+
+            // For roles 5, 6, 7, and 8, include DN events
+            if (in_array($role_id, [5, 6, 7, 8])) {
+                // Get DN data filtered by user's bp_code
+                $dn_events = DN_Header::where('supplier_code', $sp_code)
+                    ->get([
+                        'no_dn',
+                        'dn_created_date',
+                        'plan_delivery_date',
+                        'plan_delivery_time',
+                        'confirm_update_at',
+                        'status_desc',
+                    ])
+                    ->map(function ($dn) {
+                        // Determine the type based on the condition
+                        $type = (is_null($dn->confirm_update_at) && $dn->status_desc === 'Open') ? 'DN' : 'DN History';
+
+                        return [
+                            'title' => $dn->no_dn,
+                            'start' => $dn->dn_created_date . ' ' . $dn->plan_delivery_time,
+                            'end'   => $dn->plan_delivery_date,
+                            'type'  => $type,
+                        ];
+                    });
+                $events = $events->merge($dn_events);
+            }
         }
 
         // Return the events as a JSON response

@@ -449,6 +449,10 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     // Route get partner list
     Route::get('partner/list', [PartnerController::class, 'index']);
 
+    // Route For Calender Events
+    Route::get('event', [DashboardController::class, 'calenderEvents']);
+
+
     /**
      *  Route for Purchase Order
      *  @param $sp_code / supplier_code is bp_code
