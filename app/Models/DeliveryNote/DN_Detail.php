@@ -3,11 +3,14 @@
 namespace App\Models\DeliveryNote;
 
 use App\Models\DeliveryNote\DN_Header;
+use App\Models\PurchaseOrder\PO_Detail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use App\Models\DeliveryNote\DN_Detail_Outstanding;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 
 class DN_Detail extends Model
@@ -57,4 +60,5 @@ class DN_Detail extends Model
     {
         return $this->hasMany(DN_Detail_Outstanding::class, 'dn_detail_no', 'dn_detail_no');
     }
+
 }
