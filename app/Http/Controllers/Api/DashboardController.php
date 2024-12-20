@@ -87,6 +87,7 @@ class DashboardController
         $po_data_canceled = collect();
         $dn_data_confirmed = collect();
         $dn_data_overtime = collect();
+        $dn_data_advance = collect(); // Added for advance data
 
         // Include PO data for roles 5 and 6
         if (in_array($role_id, [5, 6])) {
@@ -103,15 +104,27 @@ class DashboardController
 
         // Include DN data for roles 5, 6, 7, and 8
         if (in_array($role_id, [5, 6, 7, 8])) {
+            // DNs with actual_receipt_date equal to plan_delivery_date (On-Time)
             $dn_data_confirmed = DN_Header::where('supplier_code', $sp_code)
-                ->where('status_desc', 'Confirmed')
                 ->whereBetween('dn_created_date', [$startDate, $endDate])
+                ->whereHas('dnDetail', function ($query) {
+                    $query->whereColumn('actual_receipt_date', '=', 'plan_delivery_date');
+                })
                 ->get();
 
+            // DNs with actual_receipt_date greater than plan_delivery_date (Overtime)
             $dn_data_overtime = DN_Header::where('supplier_code', $sp_code)
                 ->whereBetween('dn_created_date', [$startDate, $endDate])
                 ->whereHas('dnDetail', function ($query) {
                     $query->whereColumn('actual_receipt_date', '>', 'plan_delivery_date');
+                })
+                ->get();
+
+            // DNs with actual_receipt_date less than plan_delivery_date (Advance)
+            $dn_data_advance = DN_Header::where('supplier_code', $sp_code)
+                ->whereBetween('dn_created_date', [$startDate, $endDate])
+                ->whereHas('dnDetail', function ($query) {
+                    $query->whereColumn('actual_receipt_date', '<', 'plan_delivery_date');
                 })
                 ->get();
         }
@@ -130,12 +143,14 @@ class DashboardController
         $po_cancelled_counts = $groupDataByMonth($po_data_canceled, 'po_date');
         $dn_confirmed_counts = $groupDataByMonth($dn_data_confirmed, 'dn_created_date');
         $dn_overtime_counts = $groupDataByMonth($dn_data_overtime, 'dn_created_date');
+        $dn_advance_counts = $groupDataByMonth($dn_data_advance, 'dn_created_date'); // Added for advance data
 
         // Prepare the final data arrays
         $po_closed_final = [];
         $po_cancelled_final = [];
         $dn_confirmed_final = [];
         $dn_overtime_final = [];
+        $dn_advance_final = []; // Added for advance data
 
         foreach ($months as $month) {
             $po_closed_final[] = [
@@ -154,6 +169,10 @@ class DashboardController
                 'month' => $month,
                 'count' => $dn_overtime_counts->get($month, 0),
             ];
+            $dn_advance_final[] = [
+                'month' => $month,
+                'count' => $dn_advance_counts->get($month, 0),
+            ];
         }
 
         return response()->json([
@@ -164,6 +183,7 @@ class DashboardController
                 'po_cancelled'  => $po_cancelled_final,
                 'dn_confirmed'  => $dn_confirmed_final,
                 'dn_overtime'   => $dn_overtime_final,
+                'dn_advance'    => $dn_advance_final, // Included in response
             ],
         ]);
     }
