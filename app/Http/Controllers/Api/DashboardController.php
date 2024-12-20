@@ -361,17 +361,14 @@ class DashboardController
         // Initialize the events collection
         $events = collect();
 
-        // Calculate date range: 30 days before and after today
+        // Calculate date range: 30 days before today
         $startDate = now()->subDays(30)->startOfDay();
-        $endDate   = now()->addDays(30)->endOfDay();
+        $endDate   = now()->endOfDay(); // Today
 
         // Check if the user is a superuser (Role 9)
         if ($role_id == 9) {
-            // Superuser: Include PO events within date range with bp_code
-            $po_events = PO_Header::where(function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('po_date', [$startDate, $endDate])
-                          ->orWhereBetween('planned_receipt_date', [$startDate, $endDate]);
-                })
+            // Superuser: Include PO events where po_date is within 30 days before today
+            $po_events = PO_Header::whereBetween('po_date', [$startDate, $endDate])
                 ->get(['po_no', 'po_date', 'planned_receipt_date', 'supplier_code'])
                 ->map(function ($po) {
                     return [
@@ -384,11 +381,8 @@ class DashboardController
                 });
             $events = $events->merge($po_events);
 
-            // Superuser: Include DN events within date range with bp_code
-            $dn_events = DN_Header::where(function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('dn_created_date', [$startDate, $endDate])
-                          ->orWhereBetween('plan_delivery_date', [$startDate, $endDate]);
-                })
+            // Superuser: Include DN events where dn_created_date is within 30 days before today
+            $dn_events = DN_Header::whereBetween('dn_created_date', [$startDate, $endDate])
                 ->get([
                     'no_dn',
                     'dn_created_date',
