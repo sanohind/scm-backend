@@ -354,17 +354,25 @@ class DashboardController
     public function calenderEvents()
     {
         // Get the authenticated user
-        $user = auth()->user();
-        $sp_code = $user->bp_code;
-        $role_id = $user->role;
+        $user     = auth()->user();
+        $sp_code  = $user->bp_code;
+        $role_id  = $user->role;
 
         // Initialize the events collection
         $events = collect();
 
+        // Calculate date range: 30 days before and after today
+        $startDate = now()->subDays(30)->startOfDay();
+        $endDate   = now()->addDays(30)->endOfDay();
+
         // Check if the user is a superuser (Role 9)
         if ($role_id == 9) {
-            // Superuser: Include all PO events with bp_code
-            $po_events = PO_Header::get(['po_no', 'po_date', 'planned_receipt_date', 'supplier_code'])
+            // Superuser: Include PO events within date range with bp_code
+            $po_events = PO_Header::where(function ($query) use ($startDate, $endDate) {
+                    $query->whereBetween('po_date', [$startDate, $endDate])
+                          ->orWhereBetween('planned_receipt_date', [$startDate, $endDate]);
+                })
+                ->get(['po_no', 'po_date', 'planned_receipt_date', 'supplier_code'])
                 ->map(function ($po) {
                     return [
                         'title'   => $po->po_no,
@@ -376,8 +384,12 @@ class DashboardController
                 });
             $events = $events->merge($po_events);
 
-            // Superuser: Include all DN events with bp_code
-            $dn_events = DN_Header::get([
+            // Superuser: Include DN events within date range with bp_code
+            $dn_events = DN_Header::where(function ($query) use ($startDate, $endDate) {
+                    $query->whereBetween('dn_created_date', [$startDate, $endDate])
+                          ->orWhereBetween('plan_delivery_date', [$startDate, $endDate]);
+                })
+                ->get([
                     'no_dn',
                     'dn_created_date',
                     'plan_delivery_date',
