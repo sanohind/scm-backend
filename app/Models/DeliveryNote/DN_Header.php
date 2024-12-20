@@ -7,6 +7,7 @@ use App\Models\DeliveryNote\DN_Detail;
 use App\Models\PurchaseOrder\PO_Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use App\Models\DeliveryNote\DN_Detail_Outstanding;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
