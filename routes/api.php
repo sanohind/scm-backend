@@ -523,8 +523,6 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     Route::delete('item/delete', [SubcontController::class,'deleteItem']);
     // Route for get index subcont transaction
     Route::get('transaction/index/{bp_code}/{start_date}/{end_date}', [SubcontController::class,'indexTrans']);
-    // Route for store subcont transaction
-    Route::post('transaction/store/{bp_code?}', [SubcontController::class,'createTransaction']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);

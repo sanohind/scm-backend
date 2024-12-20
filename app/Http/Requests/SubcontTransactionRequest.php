@@ -12,7 +12,7 @@ class SubcontTransactionRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return in_array(Auth::user()->role, [6, 7, 8, 9]);
+        return Auth::user()->role == 6 || 8 || 7;
     }
 
     public function rules(): array
