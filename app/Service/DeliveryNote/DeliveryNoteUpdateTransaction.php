@@ -154,10 +154,18 @@ class DeliveryNoteUpdateTransaction
             ]);
 
             // increment qty_confirm data from table dn_detail
-            $dnDetailRecord->increment("qty_confirm", $d['qty_confirm']);
+            // $dnDetailRecord->increment("qty_confirm", $d['qty_confirm']);
+
+            // Sum Qty confirm and outstanding
+            $getAllQtyOutstanding = DN_Detail_Outstanding::where('no_dn', $data['no_dn'])
+            ->where('dn_detail_no', $d['dn_detail_no'])
+            ->sum('qty_outstanding'); // get all the outstanding based on no_dn and dn_detail_no then sum all
+            $qtyConfirm = $dnDetailRecord->qty_confirm; // get data qty_confirm from dn_detail
+
+            $totalSum = $getAllQtyOutstanding + $qtyConfirm;
 
             // Check if the total qty_confirm has reached dn_qty
-            if ($dnDetailRecord->qty_confirm >  $dnDetailRecord->dn_qty) {
+            if ($totalSum >  $dnDetailRecord->dn_qty) {
                 throw new \Exception("All quantities have been confirmed. No more outstanding transactions allowed.", 422);
             }
         }

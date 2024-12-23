@@ -26,6 +26,7 @@ class DN_DetailResource extends JsonResource
             'dn_qty' => $this->dn_qty,
             'qty_confirm' => $this->qty_confirm,
             'receipt_qty' => $this->receipt_qty,
+            'qty_delivery' => $this->qtyDelivery(),
             'outstanding' => $this->dnOutstandingWave(),
         ];
     }
@@ -39,11 +40,17 @@ class DN_DetailResource extends JsonResource
         return $getPoQty;
     }
 
-    // private function outstandingTimestamp(){
+    private function qtyDelivery() {
+        $getQtyOutstanding = $this->whenLoaded('dnOutstanding')->groupBy('wave')->map(function ($items) {
+            return $items->pluck('qty_outstanding');
+        });
 
+        // dd($getQtyOutstanding);
 
-    //     return ;
-    // }
+        $sumQty = $this->qty_confirm + $getQtyOutstanding->flatten()->sum();
+
+        return $sumQty;
+    }
 
     private function dnOutstandingWave() {
         // Group dnOutstanding items by wave
