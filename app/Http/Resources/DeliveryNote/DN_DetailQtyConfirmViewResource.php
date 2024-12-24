@@ -53,7 +53,7 @@ class DN_DetailQtyConfirmViewResource extends JsonResource
             return 0;
         }
 
-       $total = $qty_confirm / $snp;
+       $total = ceil($qty_confirm / $snp);
 
        return $total;
     }

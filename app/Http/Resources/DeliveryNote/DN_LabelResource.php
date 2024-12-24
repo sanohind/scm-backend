@@ -9,6 +9,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DN_LabelResource extends JsonResource
 {
+    private $currentQuantity;
+
+    public function __construct($resource, $currentQuantity = null)
+    {
+        parent::__construct($resource);
+        $this->currentQuantity = $currentQuantity ?? $resource->dn_snp;
+    }
     public function toArray(Request $request): array
     {
         return [
@@ -22,10 +29,23 @@ class DN_LabelResource extends JsonResource
             'supplier_name' => $this->dnHeader->supplier_name, // Updated supplier_name
             'part_number' => $this->part_no,
             'part_name' => $this->item_desc_a,
-            'quantity' => $this->dn_snp,
+            'quantity' => $this->currentQuantity,
             'delivery_date' => $this->deliveryDate(),
             'printed_date' => $this->printedDate(), // Updated to current date
         ];
+    }
+
+    private function checkQuantity(){
+        $qtyConfirm = $this->qty_confirm;
+        $dnSnp = $this->dn_snp;
+
+        $total = $qtyConfirm % $dnSnp;
+
+        if ($total != 0) {
+            return $qtyConfirm;
+        } else {
+            return $dnSnp; 
+        }
     }
 
     // concat qrNumber
