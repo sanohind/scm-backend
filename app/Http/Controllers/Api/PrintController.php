@@ -154,13 +154,28 @@ class PrintController
         $label = [];
 
         // initialize looping each dn_detail with relationship from dn_header
-        foreach ($dn_header->dnDetail as $dn_detail) {
-            // Calculate no_of_kanban = dn_qty/dn_snp
-            $no_of_kanban = ceil($dn_detail->qty_confirm / $dn_detail->dn_snp);
+        // foreach ($dn_header->dnDetail as $dn_detail) {
+        //     // Calculate no_of_kanban = dn_qty/dn_snp
+        //     $no_of_kanban = ceil($dn_detail->qty_confirm / $dn_detail->dn_snp);
 
-            // Generate label based of no_of_kanbana
-            for ($i = 0; $i < $no_of_kanban; $i++) {
-                $label[] = new DN_LabelResource($dn_detail);
+        //     // Generate label based of no_of_kanbana
+        //     for ($i = 0; $i < $no_of_kanban; $i++) {
+        //         $label[] = new DN_LabelResource($dn_detail);
+        //     }
+
+        //     // if
+        // }
+
+        // Iterate over each dn_detail
+        foreach ($dn_header->dnDetail as $dn_detail) {
+            $qty_confirm = $dn_detail->qty_confirm;
+            $dn_snp = $dn_detail->dn_snp;
+
+            // Generate labels
+            while ($qty_confirm > 0) {
+                $currentQuantity = $qty_confirm >= $dn_snp ? $dn_snp : $qty_confirm;
+                $label[] = new DN_LabelResource($dn_detail, $currentQuantity);
+                $qty_confirm -= $currentQuantity;
             }
         }
 
@@ -172,33 +187,36 @@ class PrintController
     }
 
     // Label / kanban outstanding
-    public function labelOutstanding($no_dn,$outstanding){
+    public function labelOutstanding($no_dn, $outstanding)
+    {
+        // Ambil data DN_Detail_Outstanding dengan hubungan ke dnDetail
         $dn_detail_outstanding = DN_Detail_Outstanding::with('dnDetail')
-        ->where('wave', $outstanding)
-        ->whereHas('dnDetail', function($query) use($no_dn){
-            $query->where('no_dn', $no_dn);
-        })
-        ->get();
+            ->where('wave', $outstanding)
+            ->whereHas('dnDetail', function ($query) use ($no_dn) {
+                $query->where('no_dn', $no_dn);
+            })
+            ->get();
 
-        // variable for store array for looping dn_detail_outstanding
+        // Variabel untuk menyimpan label
         $label = [];
 
-        // initialize looping each dn_detail_outstanding with relationship from dn_detail
+        // Iterasi setiap data dn_detail_outstanding
         foreach ($dn_detail_outstanding as $data) {
             $dnDetail = $data->dnDetail;
             $qty_outstanding = $data->qty_outstanding;
+            $dn_snp = $dnDetail->dn_snp;
 
-            $no_of_kanban = ceil($qty_outstanding/$dnDetail->dn_snp);
-            for ($i = 0; $i < $no_of_kanban; $i++) {
-                $label[] = new DN_LabelResource($dnDetail);
+            // Loop untuk membuat label berdasarkan qty_outstanding
+            while ($qty_outstanding > 0) {
+                $currentQuantity = $qty_outstanding >= $dn_snp ? $dn_snp : $qty_outstanding;
+                $label[] = new DN_LabelResource($dnDetail, $currentQuantity);
+                $qty_outstanding -= $currentQuantity;
             }
         }
 
-        // dd($label[0]);
         return response()->json([
             'success' => true,
-            'message' => "Labels $no_dn (outstanding: $outstanding)  generated successfully",
-            // 'data' => DN_LabelResource::collection($label),
+            'message' => "Labels $no_dn (outstanding: $outstanding) generated successfully",
             'data' => $label,
         ]);
     }
