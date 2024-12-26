@@ -1,5 +1,6 @@
 <?php
 
+use App\Service\User\UserCreateUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\Api\PurchaseOrder\PO_HeaderController;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
+
+
 
 // route view print
 Route::get('/dnhview/{no_dn}', [PrintController::class, 'dnHeaderView']);
@@ -48,6 +51,8 @@ Route::middleware(['auth:sanctum','userRole:1'])->prefix('super-admin')->group(f
      */
     // Route for get record data
     Route::get('user/index', [UserController::class, 'index']);
+    // Route for get email user
+    Route::get('user/email/{bp_code}', [UserController::class,'userEmail']);
     // Route for create user
     Route::post('user/store',[UserController::class, "store"]);
     // Route for edit user form
