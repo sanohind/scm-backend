@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\DN_Header;
-use App\Models\PO_Header;
+use App\Models\Email;
+use App\Models\DeliveryNote\DN_Header;
+use App\Models\PurchaseOrder\PO_Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class PartnerLocal extends Model
 {
@@ -45,5 +47,15 @@ class PartnerLocal extends Model
     public function dnHeaders(): HasMany
     {
         return $this->hasMany(DN_Header::class, 'supplier_code', 'bp_code');
+    }
+
+    /**
+     * The email that belong to the PartnerLocal
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function email(): BelongsToMany
+    {
+        return $this->belongsToMany(Email::class, 'business_partner_email', 'partner_id', 'email_id')->withTimestamps();
     }
 }
