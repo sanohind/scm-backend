@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('qty_outstanding')->nullable();
             $table->date('add_outstanding_date')->nullable();
             $table->time('add_outstanding_time')->nullable();
-            $table->integer('outstanding')->default(1);
+            $table->integer('wave')->default(1);
         });
     }
 

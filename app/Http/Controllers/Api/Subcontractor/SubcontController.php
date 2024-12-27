@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Api\Subcontractor;
 
+use App\Http\Requests\SubcontItemUpdateRequest;
+use App\Models\User;
+use App\Service\Subcontractor\SubcontDeleteItem;
+use App\Service\Subcontractor\SubcontUpdateItem;
 use Str;
 
 use LDAP\Result;
@@ -17,6 +21,7 @@ use App\Service\Subcontractor\SubcontGetItem;
 use App\Http\Requests\SubcontTransactionRequest;
 use App\Service\Subcontractor\SubcontCreateItem;
 use App\Service\Subcontractor\SubcontGetListItem;
+use App\Service\Subcontractor\SubcontGetListItemErp;
 use App\Service\Subcontractor\SubcontGetTransaction;
 use App\Service\Subcontractor\SubcontCreateTransaction;
 
@@ -28,7 +33,10 @@ class SubcontController
         protected SubcontGetTransaction $subcontGetTransaction,
         protected SubcontCreateItem $subcontCreateItem,
         protected SubcontCreateTransaction $subcontCreateTransaction,
-        protected SubcontGetListItem $subcontGetListItem
+        protected SubcontGetListItem $subcontGetListItem,
+        protected SubcontGetListItemErp $subcontGetListItemErp,
+        protected SubcontUpdateItem $subcontUpdateItem,
+        protected SubcontDeleteItem $subcontDeleteItem,
         ) {}
 
     /**
@@ -56,7 +64,6 @@ class SubcontController
     public function indexTrans(Request $request)
     {
         try {
-            // dd($request);
             $result = $this->subcontGetTransaction->getAllTransactionSubcont($request->start_date ?? null,$request->end_date ?? null, $request->bp_code ?? null);
         } catch (\Exception $ex) {
             return response()->json([
@@ -84,17 +91,75 @@ class SubcontController
         return $result;
     }
 
+
+    public function adminGetAllItem(Request $bp_code) {
+        try {
+            $result = $this->subcontGetListItem->adminGetAllItemUser($bp_code->bp_code ?? null);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'error' => $th->getMessage()." (On line ".$th->getLine().")"
+            ],500);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Summary of getListItemErp
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function getListItemErp() {
+        try {
+            $result = $this->subcontGetListItemErp->getListErp();
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'error' => $th->getMessage()." (On line ".$th->getLine().")"
+            ],500);
+        }
+
+        return $result;
+    }
+
     /**
      * Create new item
      * @param \App\Http\Requests\SubcontItemRequest $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function CreateItem(SubcontItemRequest $request)
+    public function createItem(SubcontItemRequest $request)
     {
         try {
             // Validate request data and process
             $result = $this->subcontCreateItem->createItemSubcont($request->validated());
         } catch (\Exception $ex) {
+            return response()->json([
+                'error' => $ex->getMessage()
+            ],500);
+        }
+        return $result;
+    }
+
+    /**
+     * Summary of updateItem
+     * @param \App\Http\Requests\SubcontItemUpdateRequest $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function updateItem(SubcontItemUpdateRequest $request) {
+        try {
+            $result = $this->subcontUpdateItem->updateItem($request->validated());
+        } catch (\Throwable $ex) {
+            return response()->json([
+                'error' => $ex->getMessage(),
+            ],500);
+        }
+        return $result;
+    }
+
+    public function deleteItem(SubcontItemUpdateRequest $request){
+        try {
+            $result = $this->subcontDeleteItem->deleteItem($request->validated());
+        } catch (\Throwable $ex) {
             return response()->json([
                 'error' => $ex->getMessage()
             ],500);
@@ -110,26 +175,15 @@ class SubcontController
     public function createTransaction(SubcontTransactionRequest $request)
     {
         try {
-            $result = $this->subcontCreateTransaction->createTransactionSubcont($request->validated());
+                $result = $this->subcontCreateTransaction->createTransactionSubcont($request->validated());
+
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
                 'error' => $th->getMessage()." (On line ".$th->getLine().")"
             ],500);
         }
-
-        if ($result === false) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Request data format error',
-            ], 422);
-        } elseif ($result === true) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Data Successfully Stored',
-            ], 200);
-        }
-
+        return $result;
     }
 }
 

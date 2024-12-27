@@ -27,6 +27,8 @@ class SubcontTransaction extends Model
         "sub_item_id",
         "item_code",
         "transaction_type",
+        "actual_transaction_date",
+        "actual_transaction_time",
         "transaction_date",
         "transaction_time",
         "qty_ok",

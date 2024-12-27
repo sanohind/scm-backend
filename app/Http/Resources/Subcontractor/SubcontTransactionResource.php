@@ -16,8 +16,8 @@ class SubcontTransactionResource extends JsonResource
     {
         return [
             'sub_transaction_id' => $this->sub_transaction_id,
-            'transaction_date' => $this->transaction_date,
-            'transaction_time' => $this->transaction_time,
+            'transaction_date' => $this->actual_transaction_date,
+            'transaction_time' => $this->actual_transaction_time,
             'transaction_type'=> $this->transaction_type,
             'delivery_note' => $this->delivery_note,
             'part_number' => $this->item_code,

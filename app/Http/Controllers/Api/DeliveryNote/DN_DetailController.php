@@ -22,33 +22,77 @@ class DN_DetailController extends Controller
 
     // View list data DNDetail
     public function index($no_dn)
-    {
-        $data_dndetail = DN_Detail::where('no_dn', $no_dn)
+{
+    $data_dndetail = DN_Detail::with('dnOutstanding')
+        ->where('no_dn', $no_dn)
         ->orderBy('plan_delivery_date', 'asc')
+        ->orderBy('dn_line', 'asc')
         ->get();
 
-        if ($data_dndetail->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'DN details not found'
-            ], 404);
-        }
-
-        $dateString = date('Y-m-d', strtotime($data_dndetail->first()->dnHeader->plan_delivery_date));
-        $timeString = date('H:i', strtotime($data_dndetail->first()->dnHeader->plan_delivery_time));
-        $concat = "$dateString $timeString";
-
+    if ($data_dndetail->isEmpty()) {
         return response()->json([
-            'success' => true,
-            'message' => 'Display List DN Detail Successfully',
-            'data' => [
-                'no_dn' => $no_dn,
-                'po_no' => $data_dndetail->first()->dnHeader->po_no,
-                'plan_delivery_date' => $concat,
-                'confirm_update_at' => $data_dndetail->first()->dnHeader->confirm_update_at,
-                'detail' => DN_DetailResource::collection($data_dndetail)]
-        ], 200);
+            'success' => false,
+            'message' => 'DN details not found'
+        ], 404);
     }
+
+    $dnHeader = $data_dndetail->first()->dnHeader;
+
+    if (!$dnHeader) {
+        return response()->json([
+            'success' => false,
+            'message' => 'DN Header not found'
+        ], 404);
+    }
+
+    $dateString = date('Y-m-d', strtotime($dnHeader->plan_delivery_date));
+    $timeString = date('H:i', strtotime($dnHeader->plan_delivery_time));
+    $concat = "$dateString $timeString";
+
+    // Reassign dn_line values sequentially starting from 1
+    $data_dndetail->each(function ($item, $key) {
+        $item->dn_line = $key + 1;
+    });
+
+    // Query get unique outstanding timestamps grouped by wave
+    $confirmations = [];
+    $uniqueTimestamps = [];
+
+    foreach ($data_dndetail as $dnDetail) {
+        if ($dnDetail->dnOutstanding) {
+            // Group by wave
+            $groupedWave = $dnDetail->dnOutstanding->groupBy('wave');
+
+            foreach ($groupedWave as $wave => $group) {
+                // Use date and time for the first item in the group
+                $firstItem = $group->first();
+                $timestamp = $firstItem->add_outstanding_date . ' ' . $firstItem->add_outstanding_time;
+
+                // Add to confirm_at only if it's not a duplicate
+                if (!in_array($timestamp, $uniqueTimestamps)) {
+                    $uniqueTimestamps[] = $timestamp;
+                    $confirmations["confirm_" . ($wave + 1) . "_at"] =  $timestamp;
+                }
+            }
+        }
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Display List DN Detail Successfully',
+        'data' => [
+            'no_dn' => $no_dn,
+            'po_no' => $dnHeader->po_no,
+            'plan_delivery_date' => $concat,
+            'confirm_update_at' => $dnHeader->confirm_update_at,
+            'confirm_at' => $confirmations,
+            'detail' => DN_DetailResource::collection($data_dndetail),
+        ],
+    ], 200);
+}
+
+
+
 
     //test
     public function indexAll()

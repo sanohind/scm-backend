@@ -3,9 +3,13 @@
 namespace App\Service\Subcontractor;
 
 
+use App\Models\User;
+use App\Models\Partner;
+use App\Models\PartnerLocal;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontItem;
 use App\Http\Resources\Subcontractor\SubcontListItemResource;
+use App\Http\Resources\Subcontractor\SubcontAllListItemResource;
 
 class SubcontGetListItem
 {
@@ -34,6 +38,7 @@ class SubcontGetListItem
         // Get record of subcont item data
         $data = SubcontItem::select('item_code','item_name')
             ->where('bp_code', $user)
+            ->where('status', '1')
             ->orderBy('item_name', 'asc')
             ->get();
 
@@ -51,6 +56,42 @@ class SubcontGetListItem
                 'status' => true,
                 'message' => 'Display List Subcont Item Successfully',
                 'data' => SubcontListItemResource::collection($data)
+            ], 200);
+        }
+    }
+
+
+    public function adminGetAllItemUser($bp_code) {
+        // Check if user exist
+        $user = PartnerLocal::findOrFail($bp_code,'bp_code');
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User Not Found'
+            ], 404);
+        }
+
+        // Get all record of user subcont item data
+        $data = SubcontItem::select('sub_item_id','item_code','item_name','status')
+            ->where('bp_code', $bp_code)
+            ->orderBy('item_name', 'asc')
+            ->get();
+
+        // Check if data exist
+        if ($data->isEmpty()) {
+            // response when empty
+            return response()->json([
+                'status' => true,
+                'message' => 'Subcont Item Data Not Found',
+                'data' => [],
+            ], 200);
+        } else {
+            // response when success
+            return response()->json([
+                'status' => true,
+                'message' => 'Display List Subcont Item Successfully',
+                'data' => SubcontAllListItemResource::collection($data)
             ], 200);
         }
     }

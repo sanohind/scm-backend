@@ -25,12 +25,18 @@ class DN_Detail_Outstanding extends Model
         'qty_outstanding',
         'add_outstanding_date',
         'add_outstanding_time',
-        'outstanding',
+        'wave',
     ];
 
     // Relationship to dnDetail
     public function dnDetail(): BelongsTo
     {
         return $this->belongsTo(DN_Detail::class, 'dn_detail_no', 'dn_detail_no');
+    }
+
+    // Relationship to dnHeader
+    public function dnHeader(): BelongsTo
+    {
+        return $this->belongsTo(DN_Header::class, 'no_dn', 'no_dn');
     }
 }

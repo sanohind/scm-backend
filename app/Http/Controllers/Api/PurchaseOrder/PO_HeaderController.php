@@ -18,18 +18,19 @@ class PO_HeaderController
     // To get PO Header data based supplier_code
     public function index(Request $request)
     {
+        // Validation check user role
         $check =Auth::user()->role;
 
-        if ($check == 5 || $check == 6) {
+        if ($check == 5 || $check == 6) { // user
             $user = Auth::user()->bp_code;
-        } elseif ($check == 2) {
+        } elseif ($check == 2  || $check == 9) {
             $user = $request->bp_code;
         }
 
         // Eager load the 'poDetail' relationship
         $data_po = PO_Header::where('supplier_code', $user)
             ->orderBy('po_date', 'desc')
-            ->whereNotIn('po_status', ['Closed', 'closed', 'close', 'Cancelled', 'cancelled', 'cancel'])
+            ->whereNotIn('po_status', ['Closed', 'closed', 'close', 'Cancelled', 'cancelled', 'cancel','Sent','sent'])
             ->with('poDetail')->get();
 
         // Check if user available
