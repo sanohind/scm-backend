@@ -187,7 +187,7 @@ class PrintController
     }
 
     // Label / kanban outstanding
-    public function labelOutstanding($no_dn, $outstanding)
+    public function labelOutstanding($outstanding, $no_dn)
     {
         // Ambil data DN_Detail_Outstanding dengan hubungan ke dnDetail
         $dn_detail_outstanding = DN_Detail_Outstanding::with('dnDetail')
