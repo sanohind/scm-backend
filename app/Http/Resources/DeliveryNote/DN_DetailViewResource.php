@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\DeliveryNote;
 
+use App\Models\DeliveryNote\DN_Detail_Outstanding;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,7 +26,7 @@ class DN_DetailViewResource extends JsonResource
             'no_of_kamban' => $this->noOfKanban(),
             'total_quantity' => $this->dn_qty,
             'box_quantity' => $this->noOfKanban(),
-            'qty_confirm' => $this->qty_confirm
+            'qty_confirm' => $this->sumAllQty(),
         ];
     }
 
@@ -56,6 +57,17 @@ class DN_DetailViewResource extends JsonResource
        $total = $qty / $snp;
 
        return $total;
+    }
+
+    private function sumAllQty() {
+        $qtyConfirm_1 = $this->qty_confirm;
+        $qtyConfirm_outstanding = DN_Detail_Outstanding::where('no_dn', $this->no_dn)
+        ->where('dn_detail_no', $this->dn_detail_no)
+        ->sum('qty_outstanding');
+
+        $total = $qtyConfirm_1 + $qtyConfirm_outstanding;
+
+        return $total;
     }
 
     // for pass data to DN_HeaderViewResource total box
