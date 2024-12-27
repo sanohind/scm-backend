@@ -23,7 +23,7 @@ class DN_DetailQtyConfirmViewResource extends JsonResource
             'part_name' => $this->partConcat(),
             'pcs_per_kamban' => $this->dn_snp,
             'no_of_kamban' => $this->noOfKanban(),
-            'total_quantity' => $this->dn_qty,
+            'total_quantity' => $this->qty_confirm,
             'box_quantity' => $this->noOfKanban(),
             'qty_confirm' => $this->qty_confirm
         ];
