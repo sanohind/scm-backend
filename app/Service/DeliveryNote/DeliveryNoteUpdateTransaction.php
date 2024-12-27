@@ -5,6 +5,7 @@ namespace App\Service\DeliveryNote;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DeliveryNote\DN_Detail;
@@ -52,7 +53,14 @@ class DeliveryNoteUpdateTransaction
                             Mail::to($email)->send(new DnDetailAndOutstandingNotificationInternal($emailData));
                         }
                     } catch (\Throwable $th) {
-                        throw new \Exception("Error Send Email Notification but the transaction is successful", 207);
+                        // Log report
+                        Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
+
+                        // Return response
+                        return response()->json([
+                            'status' => 'email error',
+                            'message' => 'Quantity confirm process successfully, but notification email to PT Sanoh Indonesia error',
+                        ],200);
                     }
 
                     // Return response
@@ -68,7 +76,14 @@ class DeliveryNoteUpdateTransaction
                             Mail::to($email)->send(new DnDetailAndOutstandingNotificationInternal($emailData));
                         }
                     } catch (\Throwable $th) {
-                        throw new \Exception("Error Send Email Notification but the transaction is successful", 207);
+                        // Log report
+                        Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
+
+                        // Return response
+                        return response()->json([
+                            'status' => 'email error',
+                            'message' => 'Quantity confirm process successfully, but notification email to PT Sanoh Indonesia error',
+                        ],200);
                     }
 
                     // Return response
