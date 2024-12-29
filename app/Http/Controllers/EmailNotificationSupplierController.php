@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\User;
+use App\Service\User\UserGetEmail;
 use Illuminate\Http\Request;
 use App\Mail\PoResponseSupplier;
 use Illuminate\Support\Facades\Mail;
@@ -12,6 +13,10 @@ use App\Models\PurchaseOrder\PO_Header;
 
 class EmailNotificationSupplierController
 {
+    public function __construct(
+        protected UserGetEmail $userGetEmail,
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -24,12 +29,12 @@ class EmailNotificationSupplierController
 
             $po_header = PO_Header::with('user')
             ->where('supplier_code', $data->bp_code)
-            ->whereIn('po_status', ['Sent','Open'])
+            ->whereIn('po_status', ['Open'])
             ->get();
 
             $dn_header = DN_Header::with('partner')
             ->where('supplier_code', $data->bp_code)
-            ->whereIn('status_desc', ['Sent','Open'])
+            ->whereIn('status_desc', ['Open'])
             ->get();
 
             // Store/format the return value of po_header into collection map function
@@ -53,10 +58,15 @@ class EmailNotificationSupplierController
                     'no_dn' => $data->no_dn
                 ];
             });
-
-            Mail::to($data->email)->send(new PoResponseSupplier($collection1,$collection2));
         }
 
-        return response()->json(['message' => 'mail notification successfuly ']);
+        // Mail notification
+        $email = $this->userGetEmail->getEmail($data->bp_code);
+
+        foreach ($email as $data) {
+            Mail::to($data)->send(new PoResponseSupplier($collection1,$collection2));
+        }
+
+        return response()->json(['message' => 'mail notification successfuly']);
     }
 }
