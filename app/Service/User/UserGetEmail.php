@@ -14,10 +14,6 @@ class UserGetEmail
         $getEmail = $findEmail->email()->pluck('email');
 
         // dd($getEmail);
-        return response()->json([
-            'success' => true,
-            'message' => 'Display List User Successfully',
-            'data' => $getEmail,
-        ]);
+        return $getEmail;
     }
 }
