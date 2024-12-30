@@ -92,7 +92,7 @@ class ForecastController
         // Return value
         return response()->json([
             'status'  => true,
-            'message' => "Add Performance Report Successfully",
+            'message' => "Add Forecast Successfully",
             'data'    => new ForecastResource($data_create),
         ], 201);
     }
