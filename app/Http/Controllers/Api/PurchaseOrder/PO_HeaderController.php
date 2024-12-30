@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api\PurchaseOrder;
 
+use App\Service\User\UserGetEmail;
+use App\Service\User\UserGetEmailInternalPurchasing;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\PoResponseInternal;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -15,6 +18,9 @@ use App\Http\Resources\PurchaseOrder\PO_HeaderResource;
 
 class PO_HeaderController
 {
+    public function __construct(
+        protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing
+    ) {}
     // To get PO Header data based supplier_code
     public function index(Request $request)
     {
@@ -149,13 +155,24 @@ class PO_HeaderController
             ]);
         }
 
-        // Variable for get email purchasing
-        $emailPurchasing = User::where('role', 2)->pluck('email');
+        // Email Notification
+        try {
+            // Variable for get email purchasing
+            $emailPurchasing = $this->userGetEmailInternalPurchasing->getEmailPurchasing();
 
-        // Mail response to internal
-        foreach ($emailPurchasing as $email) {
-            # code...
-            Mail::to($email)->send(new PoResponseInternal(po_header: $po_header));
+            // Mail response to internal
+            foreach ($emailPurchasing as $email) {
+                Mail::to($email)->send(new PoResponseInternal(po_header: $po_header));
+            }
+        } catch (\Throwable $th) {
+            // Log report
+            Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
+
+            // Return response
+            return response()->json([
+                'status' => 'email error',
+                'message' => 'Purchase order confirm process successfully, but notification email to PT Sanoh Indonesia error',
+            ],200);
         }
 
         // Return respond
