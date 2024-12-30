@@ -2,6 +2,7 @@
 
 namespace App\Service\DeliveryNote;
 
+use App\Service\User\UserGetEmailInternalPurchasing;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,7 @@ use App\Mail\DnDetailAndOutstandingNotificationInternal;
 
 class DeliveryNoteUpdateTransaction
 {
+    public function __construct(protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing) {}
     public function updateQuantity($data) {
 
 
@@ -37,7 +39,8 @@ class DeliveryNoteUpdateTransaction
         });
 
         // Variable for get email purchasing & get data user
-        $emailPurchasing = User::where('role', 2)->pluck('email');
+        $emailPurchasing = $this->userGetEmailInternalPurchasing->getEmailPurchasing();
+
         $emailData = collect([
             "supplier_code" => Auth::user()->bp_code,
             "supplier_name" => Auth::user()->partner->adr_line_1 ?? Auth::user()->partner->bp_name,
