@@ -11,7 +11,8 @@ class UserUpdateUser
      * Create a new class instance.
      */
     public function __construct(
-        protected UserCreateUser $userCreateUser,
+        protected UserCreateAndAttachEmail $userCreateAndAttachEmail,
+        protected UserDeleteAndDetachEmail $userDeleteAndDetachEmail,
     )
     {}
 
@@ -45,8 +46,12 @@ class UserUpdateUser
 
         // Attach email
         foreach ($data['email'] as $emails) {
-            $this->userCreateUser->createEmail($data['bp_code'], $emails);
+            $this->userCreateAndAttachEmail->createEmail($data['bp_code'], $emails);
         }
+
+        // Detach email
+        $this->userDeleteAndDetachEmail->deleteAndDetachEmail($data['bp_code'], $data['email']);
+
 
         return response()->json([
             'status' => true,
