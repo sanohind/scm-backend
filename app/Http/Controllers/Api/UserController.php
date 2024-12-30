@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
+use App\Service\User\UserCreateUser;
+use App\Service\User\UserGetEmail;
+use App\Service\User\UserUpdateUser;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +16,11 @@ use App\Http\Resources\UserDetailResource;
 
 class UserController
 {
+     function __construct(
+        protected UserCreateUser $userCreateUser,
+        protected UserUpdateUser $userUpdateUser,
+        protected UserGetEmail $userGetEmail,
+     ) {}
     // View list data user
     public function index()
     {
@@ -26,54 +36,30 @@ class UserController
         ]);
     }
 
-    // Store data user to database
-    public function store(Request $request)
-    {
-        // Data input rules
-        $rules = [
-            'bp_code' => 'required|string|max:25',
-            'name' => 'required|string|max:25',
-            'role' => 'required|string|max:25',
-            'status' => 'required|string|max:25',
-            'username' => 'required|string|unique:user,username|max:25', // username must unique
-            'password' => 'required|string|min:8|max:25', //min and max leght 8/25
-            'email' => 'required|email|unique:user,email|max:255' // email must unique
-        ];
-
-        // Validator instance
-        $validator = Validator::make($request->all(), $rules);
-
-        // Check validation fails
-        if ($validator->fails()) {
+    public function userEmail($bp_code) {
+        try {
+            $result = $this->userGetEmail->getEmail($bp_code);
+        } catch (\Exception $ex) {
             return response()->json([
-                'success' => false,
-                'message' => 'Register validation error',
-                'errors' => $validator->errors()
-            ], 422);
+                'status' => false,
+                'error' => $ex->getMessage().$ex->getFile().$ex->getLine(),
+            ],500);
         }
+        return $result;
+    }
 
-        // Checking input if username have duplicate in database
-        // *note for checking username
-        // $usernameExist = User::where('username', $request->username)->first();
-        // if ($usernameExist) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Username has already been used',
-        //     ], 422);
-        // }
-
-        // Create data
-        $data_create = User::create(array_merge(
-            $validator->validated(),
-            ['password' => Hash::make($request->password)]
-        ));
-
-        // Return value
-        return response()->json([
-            'success' => true,
-            'message' => 'Data User "' . $data_create->username . '" Successfully Created',
-            'data' => new UserResource($data_create)
-        ]);
+    // Store data user to database
+    public function store(StoreUserRequest $request)
+    {
+        try {
+            $result = $this->userCreateUser->createUser($request->validated());
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => false,
+                'error' => $ex->getMessage().$ex->getFile().$ex->getLine(),
+            ],500);
+        }
+        return $result;
     }
 
     //Show edit form user
@@ -84,7 +70,19 @@ class UserController
         return new UserDetailResource($data_edit);
     }
 
-    public function update(Request $request, $user)
+    public function update(UpdateUserRequest $request, $user) {
+        try {
+            $result = $this->userUpdateUser->updateUser($request->validated(), $user);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => false,
+                'error' => $ex->getMessage().$ex->getFile().$ex->getLine(),
+            ],500);
+        }
+        return $result;
+    }
+
+    public function update2(Request $request, $user)
     {
         // Find user
         $data_edit = User::findOrFail($user);

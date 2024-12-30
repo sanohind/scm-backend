@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PartnerLocal;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +23,15 @@ class UserDetailResource extends JsonResource
             'status' => $this->status,
             'username' => $this->username,
             'password' => $this->password,
-            'email' => $this->email,
+            'email' => $this->getEmail(),
         ];
+    }
+
+    private function getEmail() {
+        $findEmail = PartnerLocal::find($this->bp_code);
+        // dd($findEmail);
+        $getEmail = $findEmail->email()->pluck('email');
+
+        return $getEmail;
     }
 }

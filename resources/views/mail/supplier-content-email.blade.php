@@ -12,14 +12,16 @@ A new information has been sent to your SMS Portal. Please login to check the sa
     <p>Purchase Order Open Today :</p>
     <p style="text-align: center; "><strong>{{ count($data1) }}</strong></p>
     @else
-    <p>No Purchase Order Open</p>
+    <p>No Purchase Order Open :</p>
+    <p style="text-align: center; "><strong>0</strong></p>
     @endif
 <br>
     @if (isset($data2) && count($data2) > 0)
     <p>Delivery Note Open Today :</p>
     <p style="text-align: center; "><strong>{{ count($data2) }}</strong></p>
     @else
-    <p>No Delivery Note Open</p>
+    <p>No Delivery Note Open :</p>
+    <p style="text-align: center; "><strong>0</strong></p>
     @endif
 </x-mail::panel>
 

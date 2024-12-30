@@ -33,7 +33,33 @@ class PO_HeaderResource extends JsonResource
         return $value;
     }
 
+    // private function statusResponse(){
+    //     if ($this->response == null || '' && $this->status != null || '') {
+    //         switch ($this->po_status) {
+    //             case 'In Process':
+    //                 $value = 'Accepted';
+    //                 break;
+
+    //             case 'Declined':
+    //                 $value = 'Declined';
+    //                 break;
+
+    //             case 'Cancelled':
+    //                 $value = 'Declined';
+    //                 break;
+
+    //             default:
+    //                 $value = 'No Data';
+    //                 break;
+    //         }
+    //         return $value;
+    //     } else {
+    //         return $this->response;
+    //     }
+    // }
+
     private function statusPo() {
+
         switch ($this->response) {
             case 'Accepted':
                 $value = 'In Process';
@@ -44,7 +70,7 @@ class PO_HeaderResource extends JsonResource
                 break;
 
             case null:
-                $value = 'Open';
+                $value = $this->po_status;
                 break;
 
             default:
