@@ -118,7 +118,7 @@ class DN_DetailController extends Controller
     public function edit($dn_detail_no)
     {
         // Find the record by id
-        $data_edit = DN_Detail::findOrFail($dn_detail_no);
+        $data_edit = DN_Detail::with('dnOutstanding')->findOrFail($dn_detail_no);
         return new DN_DetailResource($data_edit);
     }
 
