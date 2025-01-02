@@ -54,7 +54,7 @@ class DN_DetailViewResource extends JsonResource
             return 0;
         }
 
-       $total = $qty / $snp;
+       $total = ceil($qty / $snp);
 
        return $total;
     }
