@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Resources\DeliveryNote\DN_HeaderQtyConfirmViewResource;
 use App\Http\Resources\DeliveryNote\DN_HeaderQtyOutstandingViewResource;
+use App\Http\Resources\DN_LabelAllResource;
 use App\Models\DeliveryNote\DN_Detail;
 use App\Models\DeliveryNote\DN_Detail_Outstanding;
 use PDF;
@@ -128,7 +129,7 @@ class PrintController
 
             // Generate label based of no_of_kanbana
             for ($i = 0; $i < $no_of_kanban; $i++) {
-                $label[] = new DN_LabelResource($dn_detail);
+                $label[] = new DN_LabelAllResource($dn_detail);
             }
         }
 
