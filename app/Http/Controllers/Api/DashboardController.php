@@ -83,21 +83,21 @@ class DashboardController
         }
 
         // Initialize data collections
-        $po_data_closed = collect();
-        $po_data_canceled = collect();
+        $po_data_accepted = collect();
+        $po_data_declined = collect();
         $dn_data_confirmed = collect();
         $dn_data_overtime = collect();
         $dn_data_advance = collect(); // Added for advance data
 
         // Include PO data for roles 5 and 6
         if (in_array($role_id, [5, 6])) {
-            $po_data_closed = PO_Header::where('supplier_code', $sp_code)
-                ->where('po_status', 'Closed')
+            $po_data_accepted = PO_Header::where('supplier_code', $sp_code)
+                ->where('response', 'Accepted')
                 ->whereBetween('po_date', [$startDate, $endDate])
                 ->get();
 
-            $po_data_canceled = PO_Header::where('supplier_code', $sp_code)
-                ->where('po_status', 'Cancelled')
+            $po_data_declined = PO_Header::where('supplier_code', $sp_code)
+                ->where('response', 'Declined')
                 ->whereBetween('po_date', [$startDate, $endDate])
                 ->get();
         }
@@ -139,27 +139,27 @@ class DashboardController
         };
 
         // Group and count the data
-        $po_closed_counts = $groupDataByMonth($po_data_closed, 'po_date');
-        $po_cancelled_counts = $groupDataByMonth($po_data_canceled, 'po_date');
+        $po_accepted_counts = $groupDataByMonth($po_data_accepted, 'po_date');
+        $po_declined_counts = $groupDataByMonth($po_data_declined, 'po_date');
         $dn_confirmed_counts = $groupDataByMonth($dn_data_confirmed, 'dn_created_date');
         $dn_overtime_counts = $groupDataByMonth($dn_data_overtime, 'dn_created_date');
         $dn_advance_counts = $groupDataByMonth($dn_data_advance, 'dn_created_date'); // Added for advance data
 
         // Prepare the final data arrays
-        $po_closed_final = [];
-        $po_cancelled_final = [];
+        $po_accepted_final = [];
+        $po_declined_final = [];
         $dn_confirmed_final = [];
         $dn_overtime_final = [];
         $dn_advance_final = []; // Added for advance data
 
         foreach ($months as $month) {
-            $po_closed_final[] = [
+            $po_accepted_final[] = [
                 'month' => $month,
-                'count' => $po_closed_counts->get($month, 0),
+                'count' => $po_accepted_counts->get($month, 0),
             ];
-            $po_cancelled_final[] = [
+            $po_declined_final[] = [
                 'month' => $month,
-                'count' => $po_cancelled_counts->get($month, 0),
+                'count' => $po_declined_counts->get($month, 0),
             ];
             $dn_confirmed_final[] = [
                 'month' => $month,
@@ -179,8 +179,8 @@ class DashboardController
             'success' => true,
             'message' => 'Yearly Data Retrieved Successfully',
             'data' => [
-                'po_closed'     => $po_closed_final,
-                'po_cancelled'  => $po_cancelled_final,
+                'po_accepted'   => $po_accepted_final,
+                'po_declined'   => $po_declined_final,
                 'dn_confirmed'  => $dn_confirmed_final,
                 'dn_overtime'   => $dn_overtime_final,
                 'dn_advance'    => $dn_advance_final, // Included in response
