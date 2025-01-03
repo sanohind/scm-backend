@@ -81,17 +81,15 @@ class PrintController
     }
 
     // print dn based on outstanding
-    public function dnHeaderViewOutstanding(Request $request)
+    public function dnHeaderViewOutstanding($outstanding, $no_dn)
     {
-        $no_dn = $request->route('no_dn');
-        $outstanding = $request->route('outstanding');
-
         //get data api to view
-        $data_dn = DN_Header::with('dnDetail','partner','dnOutstanding')
-        ->where('no_dn',$no_dn)
-        ->whereHas('dnOutstanding', function ($query) use($outstanding) {
-            $query->where('wave', $outstanding);
-        })
+        $data_dn = DN_Header::with(['dnDetail' => function($query) use ($outstanding) {
+            $query->with(['dnOutstanding' => function($q) use ($outstanding) {
+                $q->where('wave', $outstanding);
+            }]);
+        }, 'partner'])
+        ->where('no_dn', $no_dn)
         ->get();
 
         // print_at

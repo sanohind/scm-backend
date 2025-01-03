@@ -23,9 +23,10 @@ class DN_DetailQtyOutstandingViewResource extends JsonResource
             'part_name' => $this->partConcat(),
             'pcs_per_kamban' => $this->dn_snp,
             'no_of_kamban' => $this->noOfKanban(),
-            'total_quantity' => $this->dnOutstanding->first()->qty_outstanding,
+            'total_quantity' => $this->dnOutstanding->first()?->qty_outstanding ?? 'error data not found',
             'box_quantity' => $this->noOfKanban(),
-            'qty_confirm' => $this->dnOutstanding->first()->qty_outstanding,
+            'qty_confirm' => $this->dnOutstanding->first()?->qty_outstanding ?? 'error data not found',
+
         ];
     }
 
