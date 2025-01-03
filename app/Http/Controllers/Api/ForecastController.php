@@ -65,7 +65,7 @@ class ForecastController
         $role_id = $user->role;
 
         // Determine the bp_code to use
-        if ($role_id == 9) {
+        if ($role_id == 9 || $role_id == 2) {
             // Superuser can specify any bp_code from the request
             $bp_code = $request->bp_code;
         } else {
