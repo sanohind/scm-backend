@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
+use App\Service\User\UserCreateAndAttachEmail;
 use App\Service\User\UserCreateUser;
 use App\Service\User\UserGetEmail;
 use App\Service\User\UserUpdateUser;
@@ -20,6 +21,7 @@ class UserController
         protected UserCreateUser $userCreateUser,
         protected UserUpdateUser $userUpdateUser,
         protected UserGetEmail $userGetEmail,
+        protected UserCreateAndAttachEmail $userCreateAndAttachEmail,
      ) {}
     // View list data user
     public function index()
@@ -185,6 +187,17 @@ class UserController
             'success' => true,
             'message' => 'Data User "' . $data_edit->username . '" Successfully Updated',
             'data' => new UserResource($data_edit)
+        ]);
+    }
+
+    public function moveEmail() {
+        $data = User::whereNotNull('email')->select('bp_code', 'email')->get();
+
+        foreach ($data as $user) {
+            $this->userCreateAndAttachEmail->createEmail($user->bp_code, $user->email);
+        }
+        return response()->json([
+            'data' => 'Move Email Success',
         ]);
     }
 }
