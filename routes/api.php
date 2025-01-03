@@ -25,7 +25,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
-
+// move email
+Route::get('/move',[UserController::class,'moveEmail']);
 
 // route view print
 Route::get('/pohview/{po_no}', [PrintController::class, 'poHeaderView']);
