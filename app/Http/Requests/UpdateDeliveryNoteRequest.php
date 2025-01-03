@@ -14,7 +14,7 @@ class UpdateDeliveryNoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 5 || Auth::user()->role == 6 || Auth::user()->role == 7 || Auth::user()->role == 9;
+        return Auth::user()->role == 5 || Auth::user()->role == 6 || Auth::user()->role == 7 || Auth::user()->role == 9 || Auth::user()->role == 8;
     }
 
     /**
