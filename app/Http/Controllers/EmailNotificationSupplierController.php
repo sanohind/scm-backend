@@ -61,10 +61,17 @@ class EmailNotificationSupplierController
         }
 
         // Mail notification
-        $email = $this->userGetEmail->getEmail($data->bp_code);
+        try {
+            $email = $this->userGetEmail->getEmail($data->bp_code);
 
-        foreach ($email as $data) {
-            Mail::to($data)->send(new PoResponseSupplier($collection1,$collection2));
+            foreach ($email as $data) {
+                Mail::to($data)->send(new PoResponseSupplier($collection1,$collection2));
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'error' => "Email Data Not Found & Only get user role 5. Message :".$th->getMessage()." (On line ".$th->getLine().")"
+            ],500);
         }
 
         return response()->json(['message' => 'mail notification successfuly']);
