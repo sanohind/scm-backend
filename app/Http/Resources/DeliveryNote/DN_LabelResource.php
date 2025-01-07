@@ -4,7 +4,9 @@ namespace App\Http\Resources\DeliveryNote;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use App\Models\PartnerLocal;
 use Illuminate\Http\Request;
+use App\Models\DeliveryNote\DN_Header;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DN_LabelResource extends JsonResource
@@ -25,7 +27,7 @@ class DN_LabelResource extends JsonResource
             'po_number' => $this->dnHeader->po_no,
             // 'dn_number' => $this->no_dn,
             // 'model' => $this->no_dn,
-            'customer_name' => Str::upper('PT. Sanoh Indonesia'),
+            'customer_name' => $this->getAdrLine1(),
             'supplier_name' => $this->dnHeader->supplier_name, // Updated supplier_name
             'part_number' => $this->part_no,
             'part_name' => $this->item_desc_a,
@@ -44,7 +46,7 @@ class DN_LabelResource extends JsonResource
         if ($total != 0) {
             return $qtyConfirm;
         } else {
-            return $dnSnp; 
+            return $dnSnp;
         }
     }
 
@@ -87,5 +89,15 @@ class DN_LabelResource extends JsonResource
 
         // return $concat;
         return $formattedDate;
+    }
+
+    // get adr_line-1
+    private function getAdrLine1(){
+        // query get supplier_code/bp_code
+        $getBpCode = DN_Header::where('no_dn', $this->no_dn)->value('supplier_code');
+        // query get adr_line_1
+        $getAdrLine1 = PartnerLocal::where('bp_code',$getBpCode)->value('adr_line_1');
+
+        return $getAdrLine1;
     }
 }
