@@ -19,6 +19,7 @@ class SubcontCreateItem
                 "bp_code" => $dataItem["bp_code"],
                 "item_code" => $dataItem["item_code"],
                 "item_name" => $dataItem["item_name"],
+                "item_old_name" => $dataItem["item_old_name"],
                 "status" => "1",
             ]);
         }

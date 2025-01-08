@@ -29,6 +29,7 @@ class SubcontItem extends Model
         "bp_code",
         "item_code",
         "item_name",
+        "old_item_name",
         "status",
     ];
 
