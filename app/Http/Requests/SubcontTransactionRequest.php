@@ -26,6 +26,7 @@ class SubcontTransactionRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            "bp_code"=> "string|max:25",
             "data.*.actual_transaction_date"=> "required|date",
             "data.*.actual_transaction_time"=> "date_format:H:i:s",
             "data.*.transaction_type"=> "required|string|in:Incoming,Outgoing,Process",
@@ -45,6 +46,10 @@ class SubcontTransactionRequest extends FormRequest
     public function messages(): array
     {
         return [
+            // Bp Code
+            'bp_code.string' => 'The BP Code must be a string.',
+            'bp_code.max' => 'The BP Code may not be greater than 25 characters.',
+
             // Delivery Note
             "data.*.delivery_note.required" => "The delivery note is required.",
             "data.*.delivery_note.string" => "The delivery note must be a valid string.",
