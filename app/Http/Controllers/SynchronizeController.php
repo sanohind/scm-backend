@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Subcontractor\SubcontItemConnectionErp;
 use App\Models\Subcontractor\SubcontItemErp;
+use App\Service\Syncronization\SyncBusinessPartnerData;
+use App\Service\Syncronization\SyncPurchaseOrderData;
 use Carbon\Carbon;
 use App\Models\Partner;
 use App\Models\PartnerLocal;
@@ -249,5 +251,34 @@ class SynchronizeController
         }
 
         return response()->json(['message' => 'Sync Data successfuly ']);
+    }
+
+    public function __construct(
+        protected SyncBusinessPartnerData $syncBusinessPartnerData,
+        protected SyncPurchaseOrderData $syncPurchaseOrderData,
+    ) {}
+
+    public function sync2(){
+        try {
+            // sync data
+            $this->syncBusinessPartnerData->syncBussinessPartner(); // Business Partner
+
+            $purchaseOrder = ['tes']; // Purchase Order *note: must return array
+
+            if (!empty($purchaseOrder)) {
+
+                // Foreach po no
+                foreach ($purchaseOrder as $po_no) {
+
+                    $purchaseOrderDetail = 'a'; // Purchase Order Detail
+                }
+
+            }
+
+            // delete data
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }
