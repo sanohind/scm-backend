@@ -73,7 +73,7 @@ class SubcontGetListItem
         }
 
         // Get all record of user subcont item data
-        $data = SubcontItem::select('sub_item_id','item_code','item_name','status')
+        $data = SubcontItem::select('sub_item_id','item_code','item_name', 'item_old_name','status')
             ->where('bp_code', $bp_code)
             ->orderBy('item_name', 'asc')
             ->get();
