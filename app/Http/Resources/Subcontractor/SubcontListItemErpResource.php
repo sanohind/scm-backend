@@ -17,7 +17,7 @@ class SubcontListItemErpResource extends JsonResource
         return [
             'part_number' => $this->item,
             'part_name' => $this->description,
-            'part_old_name' => $this->old_item,
+            'old_part_name' => $this->old_item,
         ];
     }
 }

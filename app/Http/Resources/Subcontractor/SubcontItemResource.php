@@ -17,7 +17,7 @@ class SubcontItemResource extends JsonResource
     return [
         'part_number' => $this->item_code,
         'part_name' => $this->item_name,
-        'part_old_name' => $this->item_old_name ?? 'null',
+        'old_part_name' => $this->item_old_name ?? 'null',
         // Fresh
         'incoming_fresh_stock' => $this->subStock->incoming_fresh_stock ?? 0,
         'ready_fresh_stock' => $this->subStock->process_fresh_stock ?? 0,
