@@ -10,7 +10,7 @@ class SubcontGetListItemErp
 {
     public function getListErp() {
         // Get record of subcont item erp data
-        $data = SubcontItemErp::select('item','old_item')->get();
+        $data = SubcontItemErp::select('item', 'description', 'old_item')->get();
 
         // Check if data exist
         if ($data->isEmpty()) {
