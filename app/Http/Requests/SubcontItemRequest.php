@@ -29,6 +29,7 @@ class SubcontItemRequest extends FormRequest
             "data.*.bp_code" => "required|string|max:50",
             "data.*.item_code"=> "required|string|max:50",
             "data.*.item_name"=> "required|string|max:255",
+            "data.*.item_old_name"=> "required|string|max:255",
         ];
     }
 
@@ -49,6 +50,11 @@ class SubcontItemRequest extends FormRequest
             'data.*.item_name.required' => 'The item name is required.',
             'data.*.item_name.string' => 'The item name must be a valid string.',
             'data.*.item_name.max' => 'The item name cannot be longer than 255 characters.',
+
+            // item_name
+            'data.*.item_old_name.required' => 'The item old name is required.',
+            'data.*.item_old_name.string' => 'The item old name must be a valid string.',
+            'data.*.item_old_name.max' => 'The item old name cannot be longer than 255 characters.',
         ];
     }
 

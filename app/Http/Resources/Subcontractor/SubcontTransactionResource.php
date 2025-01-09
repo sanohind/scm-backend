@@ -22,6 +22,7 @@ class SubcontTransactionResource extends JsonResource
             'delivery_note' => $this->delivery_note,
             'part_number' => $this->item_code,
             'part_name' => $this->subItem->item_name,
+            'part_old_name' => $this->subItem->item_old_name,
             'status' => $this->status,
             'qty_ok' => $this->qty_ok,
             'qty_ng' => $this->qty_ng,

@@ -21,11 +21,24 @@ class SubcontCreateTransaction
      */
     public function createTransactionSubcont($data)
     {
+        // check user role
+        $check = Auth::user()->role;
+
+        if ($check == 6 || $check == 8 ) {
+            $bp_code = Auth::user()->bp_code;
+        } else if ($check == 9) {
+            $bp_code = $data['bp_code'];
+        }
+
+
+
         foreach ($data['data'] as $dataTransaction) {
             // Get sub_item_id for each item
             $subItemId = SubcontItem::where('item_code', $dataTransaction["item_code"])
-            ->where('bp_code', Auth::user()->bp_code)
+            ->where('bp_code', $bp_code)
             ->value('sub_item_id');
+
+            // dd($subItemId);
 
             // Generate unique delivery note if not provided
             if (empty($dataTransaction["delivery_note"])) {
