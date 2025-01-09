@@ -17,9 +17,9 @@ class SubcontCreateItem
             // Store logic
             SubcontItem::create([
                 "bp_code" => $dataItem["bp_code"],
-                "item_code" => $dataItem["item_code"],
-                "item_name" => $dataItem["item_name"],
-                "item_old_name" => $dataItem["item_old_name"],
+                "item_code" => $dataItem["part_number"],
+                "item_name" => $dataItem["part_name"],
+                "item_old_name" => $dataItem["old_part_name"],
                 "status" => "1",
             ]);
         }
