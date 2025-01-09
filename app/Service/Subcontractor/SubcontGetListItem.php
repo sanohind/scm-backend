@@ -36,7 +36,7 @@ class SubcontGetListItem
         }
 
         // Get record of subcont item data
-        $data = SubcontItem::select('item_code','item_name')
+        $data = SubcontItem::select('item_code','item_name', 'item_old_name')
             ->where('bp_code', $user)
             ->where('status', '1')
             ->orderBy('item_name', 'asc')
