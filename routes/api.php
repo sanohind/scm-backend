@@ -489,7 +489,7 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     // route view print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     // route view print DN label/ kanban
-    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
 
     /**
      * Route for Performance Report
