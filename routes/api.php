@@ -540,6 +540,12 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     Route::delete('item/delete', [SubcontController::class,'deleteItem']);
     // Route for get index subcont transaction
     Route::get('transaction/index', [SubcontController::class,'indexTrans']);
+    // Route for review subcont transaction header
+    Route::get('transaction-review/header/{bp_code}', [SubcontReceiveController::class,'reviewHeader']);
+    // Route for review subcont transaction detail
+    Route::get('transaction-review/detail/{no_dn}', [SubcontReceiveController::class,'reviewDetail']);
+    // Route for update review subcont transaction
+    Route::patch('transaction-review/update', [SubcontReceiveController::class,'reviewUpdate']);
     // Route for get index subcont transaction
     Route::get('transaction/index/{bp_code}/{start_date}/{end_date}', [SubcontController::class,'indexTrans']);
     // Route for store subcont transaction
