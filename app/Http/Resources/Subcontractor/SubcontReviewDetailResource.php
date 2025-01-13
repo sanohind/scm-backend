@@ -22,9 +22,10 @@ class SubcontReviewDetailResource extends JsonResource
             'part_number' => $this->item_code,
             'qty_ok' => $this->qty_ok,
             'qty_ng' => $this->qty_ng,
-            'actual_qty_ok' => $this->actual_qty_ok_receive ?? 0,
-            'actual_qty_ng' => $this->actual_qty_ng_receive ?? 0,
-            'total' => $this->actual_qty_ok_receive ?? 0 + $this->actual_qty_ng_receive ?? 0
+            'qty_total' => ($this->qty_ok ?? 0) + ($this->qty_ng ?? 0),
+            'actual_qty_ok' => $this->actual_qty_ok_receive,
+            'actual_qty_ng' => $this->actual_qty_ng_receive,
+            'actual_qty_total' => ($this->actual_qty_ok_receive == 0 && $this->actual_qty_ng_receive == 0) ? null : ($this->actual_qty_ok_receive + $this->actual_qty_ng_receive),
         ];
     }
 }
