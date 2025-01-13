@@ -17,7 +17,7 @@ class SubcontReviewHeaderResource extends JsonResource
     {
         return [
             'delivery_note' => $this->delivery_note,
-            'transaction_type' => $this->status,
+            'status' => $this->status,
             'date_time' => $this->dateTime(),
             'response' => $this->response ?? 'Under Review',
         ];
