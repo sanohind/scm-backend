@@ -177,12 +177,24 @@ class SubcontController
         try {
                 $result = $this->subcontCreateTransaction->createTransactionSubcont($request->validated());
 
+                // Return response
+                if ($result == true) {
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Data Successfully Stored',
+                    ], 200);
+                } else{
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Request data format error',
+                    ], 422);
+                }
+
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
                 'error' => $th->getMessage()." (On line ".$th->getLine().")"
             ],500);
         }
-        return $result;
     }
 }

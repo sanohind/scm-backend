@@ -4,6 +4,7 @@ namespace App\Http\Resources\Subcontractor;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 class SubcontReviewHeaderResource extends JsonResource
 {
@@ -17,9 +18,17 @@ class SubcontReviewHeaderResource extends JsonResource
         return [
             'delivery_note' => $this->delivery_note,
             'transaction_type' => $this->transaction_type,
-            'transaction_date' => $this->transaction_date,
-            'transaction_time' => $this->transaction_time,
+            'date_time' => $this->dateTime(),
             'response' => $this->response ?? 'Under Review',
         ];
+    }
+
+    // funciton concat date time
+
+    public function dateTime() {
+        $date = Carbon::parse($this->transaction_date)->format('Y-m-d');
+        $time = Carbon::parse($this->transaction_time)->format('h:i');
+
+        return "$date $time";
     }
 }

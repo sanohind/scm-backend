@@ -31,11 +31,13 @@ class SubcontCreateTransaction
             $bp_code = $data['bp_code'];
         }
 
+        // Start foreach loop subcont transaction
         foreach ($data['data'] as $dataTransaction) {
             // Get sub_item_id for each item
             $subItemId = SubcontItem::where('item_code', $dataTransaction["item_code"])
-                ->where('bp_code', $bp_code)
-                ->value('sub_item_id');
+            ->where('bp_code', $bp_code)
+            ->value('sub_item_id');
+
             // Generate unique delivery note if not provided
             if (empty($dataTransaction["delivery_note"])) {
                 $todayLatestProcess = Carbon::now()->format("Ymd");
@@ -45,14 +47,12 @@ class SubcontCreateTransaction
                     ->where('transaction_type', 'Process')
                     ->where('transaction_date', $todayLatestProcess)
                     ->count();
-                // dd($getLatestProcess);
-                // dd("$user-$today-");
                 $unique_dn_process = "$user$today-" . ($getLatestProcess + 1);
                 $dataTransaction['delivery_note'] = $unique_dn_process;
             }
 
-            $result = DB::transaction(function () use ($dataTransaction, $subItemId) {
-
+            // Start DB::transaction, Create transaction
+            DB::transaction(function () use ($dataTransaction, $subItemId) {
                 // Create the transaction
                 SubcontTransaction::create([
                     'delivery_note' => $dataTransaction['delivery_note'],
@@ -79,7 +79,7 @@ class SubcontCreateTransaction
                 // Validate and calculate stock
                 if ($checkStockRecordAvaibility && !empty($stock)) {
                     // Calculate stock
-                    $calculate = $this->calculatingStock(
+                    $this->calculatingStock(
                         $dataTransaction["status"],
                         $dataTransaction["transaction_type"],
                         $dataTransaction["qty_ok"],
@@ -89,27 +89,12 @@ class SubcontCreateTransaction
                 } else {
                     throw new Exception("Error processing check stock record availability", 500);
                 }
-
-                // Check the if the process calculate stock complete
-                if ($calculate == true) {
-                    return true;
-                } else {
-                    return false;
-                }
             });
+            // End DB::transaction, Create transaction
         }
+        // End foreach loop subcont transaction
 
-        if ($result === false) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Request data format error',
-            ], 422);
-        } elseif ($result === true) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Data Successfully Stored',
-            ], 200);
-        }
+        return true;
     }
 
     public function createSubcontTransactionDifference(
@@ -128,7 +113,6 @@ class SubcontCreateTransaction
             throw new Exception("User Forbidden", 403);
         }
 
-        // Create transaction diffrence
         try {
             DB::transaction(function () use(
                 $subItemId,
@@ -173,7 +157,7 @@ class SubcontCreateTransaction
                 );
             });
         } catch (\Throwable $th) {
-            throw new Exception("Error processing check stock record availability (Error: $th)", 500);
+            throw new Exception("Error processing transaction review", 500);
         }
     }
 
@@ -309,26 +293,28 @@ class SubcontCreateTransaction
      */
     private function checkStockRecordAvailability($item_code, $subItemId): bool
     {
-        // Check if data stock exists
-        $checkAvaibility = SubcontStock::where('sub_item_id', $subItemId)
-            ->where('item_code', $item_code)
-            ->exists();
+        try {
+            // Check if data stock exists
+            $checkAvaibility = SubcontStock::where('sub_item_id', $subItemId)
+                ->where('item_code', $item_code)
+                ->exists();
 
-        if (!$checkAvaibility) {
-            SubcontStock::create([
-                'sub_item_id' => $subItemId,
-                'item_code' => $item_code,
-                'incoming_fresh_stock' => 0,
-                'incoming_replating_stock' => 0,
-                'process_fresh_stock' => 0,
-                'process_replating_stock' => 0,
-                'ng_fresh_stock' => 0,
-                'ng_replating_stock' => 0,
-            ]);
+            if (!$checkAvaibility) {
+                SubcontStock::create([
+                    'sub_item_id' => $subItemId,
+                    'item_code' => $item_code,
+                    'incoming_fresh_stock' => 0,
+                    'incoming_replating_stock' => 0,
+                    'process_fresh_stock' => 0,
+                    'process_replating_stock' => 0,
+                    'ng_fresh_stock' => 0,
+                    'ng_replating_stock' => 0,
+                ]);
+            }
+        } catch (\Throwable $th) {
+            throw new  Exception("Error while checking stock items", 500);
 
-            $checkAvaibility = true;
         }
-
-        return $checkAvaibility;
+        return true;
     }
 }
