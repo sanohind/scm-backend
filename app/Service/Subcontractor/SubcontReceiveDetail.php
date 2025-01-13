@@ -45,6 +45,8 @@ class SubcontReceiveDetail
             'data' => [
                 'dn_number' => $deliveryNote,
                 'date_time' => $getDateTime,
+                'status' => $getDetail->first()->status,
+                'status_confirm' => false,
                 'detail' => SubcontReviewDetailResource::collection($getDetail),
             ],
         ], 200);

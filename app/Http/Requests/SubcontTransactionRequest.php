@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Subcontractor\SubcontTransaction;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontItem;
 use Illuminate\Foundation\Http\FormRequest;
@@ -93,16 +94,36 @@ class SubcontTransactionRequest extends FormRequest
         );
     }
 
-    // Check item_code ownership
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            // Ownership
             if (!$this->ownership()) {
                 $validator->errors()->add('data.*.item_code', 'You do not have ownership of this item.');
             }
+
+            // Dn Duplicate
+            $this->DnDuplicate($validator);
         });
     }
 
+    // Check delivery_note Duplicate
+    private function DnDuplicate($validator) {
+        $getRequest = $this->input('data');
+
+        foreach ($getRequest as $i) {
+            $checkDn = SubcontTransaction::where('delivery_note', $i['delivery_note'])->exists();
+
+            if ($checkDn == true) {
+                $validator->errors()->add(
+                    "data.*.delivery_note",
+                    "Delivery Note Duplicate / Already Exist, Please Use New Delivery Note",
+                );
+            }
+        }
+    }
+
+    // Check item_code ownership
     private function ownership()
     {
         foreach ($this->input('data') as $transaction) {
