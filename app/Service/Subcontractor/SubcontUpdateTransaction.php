@@ -11,7 +11,6 @@ class SubcontUpdateTransaction
         int $subTransactionId,
         int $actualQtyOk,
         int $actualQtyNg,
-        string $response,
     ) {
         // Check user role
         $check = Auth::user()->role;
@@ -28,7 +27,7 @@ class SubcontUpdateTransaction
             $findRecord->update([
                 "actual_qty_ok_receive" => $actualQtyOk,
                 "actual_qty_ng_receive" => $actualQtyNg,
-                "response" => $response,
+                "response" => "Reviewed",
             ]);
 
             return response()->json([

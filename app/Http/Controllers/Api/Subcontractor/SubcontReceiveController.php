@@ -58,15 +58,12 @@ class SubcontReceiveController extends Controller
                         $data['sub_transaction_id'],
                         $data['actual_qty_ok'],
                         $data['actual_qty_ng'],
-                        $data['response'],
                     );
 
                     // Create transaction diffrence review
                     $this->subcontCreateTransaction->createSubcontTransactionDifference(
+                        $data['sub_transaction_id'],
                         $data['sub_item_id'],
-                        $data['delivery_note'],
-                        $data['part_number'],
-                        $data['status'],
                         $data['actual_qty_ok'],
                         $data['actual_qty_ng'],
                     );
