@@ -98,10 +98,8 @@ class SubcontCreateTransaction
     }
 
     public function createSubcontTransactionDifference(
+        string $subTransactionID,
         int $subItemId,
-        string $deliveryNote,
-        int $partNumber,
-        string $status,
         int $actualQtyOk,
         int $actualQtyNg,
     ) {
@@ -115,27 +113,31 @@ class SubcontCreateTransaction
 
         try {
             DB::transaction(function () use(
+                $subTransactionID,
                 $subItemId,
-                $deliveryNote,
-                $partNumber,
-                $status,
                 $actualQtyOk,
                 $actualQtyNg,
             ) {
-                // Variable declaration
-                $type = "Process"; // transaction_type
+                // Get transaction record
+                $getTrans = SubcontTransaction::where('sub_transaction_id', $subTransactionID)->first();
+
+                // Declare variable
+                $dnNo = $getTrans->delivery_note;
+                $itemCode = $getTrans->item_code;
+                $status = $getTrans->status;
+                $type = $getTrans->transaction_type;
 
                 // Format delivery note
-                $formatDn = substr($deliveryNote, 2);
+                $formatDn = substr($dnNo, 2);
 
                 // Create the transaction
                 SubcontTransaction::create([
                     'delivery_note' => "SYS$formatDn",
                     'sub_item_id' => $subItemId,
-                    'transaction_type' => $type,
+                    'transaction_type' => "Process",
                     'transaction_date' => Carbon::now()->format("Y-m-d"),
                     'transaction_time' => Carbon::now()->format("H:i:s"),
-                    'item_code' => $partNumber,
+                    'item_code' => $itemCode,
                     'status' => $status,
                     'qty_ok' => $actualQtyOk,
                     'qty_ng' => $actualQtyNg,
@@ -144,7 +146,7 @@ class SubcontCreateTransaction
 
                 // Get stock
                 $stock = SubcontStock::where('sub_item_id', $subItemId)
-                ->where('item_code', $partNumber)
+                ->where('item_code', $itemCode)
                 ->first();
 
                 // Calculate

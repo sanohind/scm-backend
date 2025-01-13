@@ -26,12 +26,8 @@ class SubcontReviewTransactionRequest extends FormRequest
         $rules = [
             "data.*.sub_transaction_id"=> "required|int",
             "data.*.sub_item_id"=> "required|int",
-            "data.*.delivery_note"=> "required|string|max:255",
-            "data.*.part_number"=> "required|string|max:50",
-            "data.*.status"=> "required|string|in:Fresh,Replating",
             "data.*.actual_qty_ok"=> "integer|min:0",
             "data.*.actual_qty_ng"=> "integer|min:0",
-            "data.*.response"=> "string|max:25"
         ];
 
         return $rules;
@@ -48,21 +44,6 @@ class SubcontReviewTransactionRequest extends FormRequest
             'data.*.sub_item_id.required' => 'Item ID is required',
             'data.*.sub_item_id.int' => 'Item ID must be an integer',
 
-            // delivery_note
-            'data.*.delivery_note.required' => 'Delivery note is required',
-            'data.*.delivery_note.string' => 'Delivery note must be a string',
-            'data.*.delivery_note.max' => 'Delivery note must not exceed 255 characters',
-
-            // part_number
-            'data.*.part_number.required' => 'Part number is required',
-            'data.*.part_number.string' => 'Part number must be a string',
-            'data.*.part_number.max' => 'Part number must not exceed 50 characters',
-
-            // status
-            'data.*.status.required' => 'Status is required',
-            'data.*.status.string' => 'Status must be a string',
-            'data.*.status.in' => 'Status must be either Fresh or Replating',
-
             // actual_qty_ok
             'data.*.actual_qty_ok.integer' => 'OK quantity must be an integer',
             'data.*.actual_qty_ok.min' => 'OK quantity must not be negative',
@@ -70,10 +51,6 @@ class SubcontReviewTransactionRequest extends FormRequest
             // actual_qty_ng
             'data.*.actual_qty_ng.integer' => 'NG quantity must be an integer',
             'data.*.actual_qty_ng.min' => 'NG quantity must not be negative',
-
-            // response
-            'data.*.response.string' => 'Response must be a string',
-            'data.*.response.max' => 'Response must not exceed 25 characters'
         ];
     }
 
