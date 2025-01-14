@@ -152,8 +152,8 @@ class SubcontCreateTransaction
                 $this->calculatingStock(
                     $status,
                     $type,
-                    $actualQtyOk,
-                    $actualQtyNg,
+                    $diffrenceQtyOk,
+                    $diffrenceQtyNg,
                     $stock,
                     "yes"
                 );
@@ -194,7 +194,11 @@ class SubcontCreateTransaction
                         // Start Check system value
                         switch ($system) {
                             case 'yes':
+                                    // Qty Ok
                                     $stock->increment("process_fresh_stock", $qtyOk);
+
+                                    //Qty Ng
+                                    $stock->increment("ng_fresh_stock", $qtyNg);
                                 break;
                             case 'no':
                                     // qty_ok
@@ -215,8 +219,8 @@ class SubcontCreateTransaction
                                 break;
                             default:
                                 throw new Exception("Error for System: Only accept \"yes/no\" value", 500);
+                            }
                             // End Check system value
-                        }
                         break;
 
                     case 'Outgoing':
@@ -254,21 +258,37 @@ class SubcontCreateTransaction
                         break;
 
                     case 'Process':
-                        // qty_ok
-                        if ($stock->incoming_replating_stock < $qtyOk) {
-                            throw new Exception("Incoming replating stock cannot be below 0 / minus", 422);
-                        } else {
-                            $stock->decrement("incoming_replating_stock", $qtyOk);
-                            $stock->increment("process_replating_stock", $qtyOk);
-                        }
+                        // Start Check system value
+                        switch ($system) {
+                            case 'yes':
+                                // Qty Ok
+                                $stock->increment("process_replating_stock", $qtyOk);
 
-                        // qty_ng
-                        if ($stock->incoming_replating_stock < $qtyNg) {
-                            throw new Exception("Incoming replating stock cannot be below 0 / minus", 422);
-                        } else {
-                            $stock->decrement("incoming_replating_stock", $qtyNg);
-                            $stock->increment("ng_replating_stock", $qtyNg);
-                        }
+                                //Qty Ng
+                                $stock->increment("ng_replating_stock", $qtyNg);
+                            break;
+                            case 'no':
+                                    // qty_ok
+                                    if ($stock->incoming_replating_stock < $qtyOk) {
+                                        throw new Exception("Incoming replating stock cannot be below 0 / minus", 422);
+                                    } else {
+                                        $stock->decrement("incoming_replating_stock", $qtyOk);
+                                        $stock->increment("process_replating_stock", $qtyOk);
+                                    }
+
+                                    // qty_ng
+                                    if ($stock->incoming_replating_stock < $qtyNg) {
+                                        throw new Exception("Incoming replating stock cannot be below 0 / minus", 422);
+                                    } else {
+                                        $stock->decrement("incoming_replating_stock", $qtyNg);
+                                        $stock->increment("ng_replating_stock", $qtyNg);
+                                    }
+                                break;
+
+                            default:
+                                throw new Exception("Error for System: Only accept \"yes/no\" value", 500);
+                            }
+                        // End Check system value
                         break;
 
                     case 'Outgoing':
