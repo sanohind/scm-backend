@@ -98,7 +98,7 @@ class SubcontCreateTransaction
     }
 
     public function createSubcontTransactionDifference(
-        string $subTransactionID,
+        string $subTransactionId,
         int $subItemId,
         int $actualQtyOk,
         int $actualQtyNg,
@@ -113,13 +113,13 @@ class SubcontCreateTransaction
 
         try {
             DB::transaction(function () use(
-                $subTransactionID,
+                $subTransactionId,
                 $subItemId,
                 $actualQtyOk,
                 $actualQtyNg,
             ) {
                 // Get transaction record
-                $getTrans = SubcontTransaction::where('sub_transaction_id', $subTransactionID)->first();
+                $getTrans = SubcontTransaction::where('sub_transaction_id', $subTransactionId)->first();
 
                 // Declare variable
                 $dnNo = $getTrans->delivery_note;
@@ -155,6 +155,7 @@ class SubcontCreateTransaction
                     $actualQtyOk,
                     $actualQtyNg,
                     $stock,
+                    "yes"
                 );
             });
         } catch (\Throwable $th) {
@@ -165,14 +166,15 @@ class SubcontCreateTransaction
     /**
      * Summary of calculatingStock
      * @param string $status
-     * @param string $type the value must be type of transaction, like
+     * @param string $type
      * @param int $qtyOk
      * @param int $qtyNg
      * @param \App\Models\Subcontractor\SubcontStock $stock
+     * @param mixed $system
      * @throws \Exception
      * @return bool
      */
-    private function calculatingStock(string $status, string $type, int $qtyOk, int $qtyNg, SubcontStock $stock): bool
+    private function calculatingStock(string $status, string $type, int $qtyOk, int $qtyNg, SubcontStock $stock, $system = "no"): bool
     {
         switch ($status) {
             // Fresh
@@ -189,20 +191,31 @@ class SubcontCreateTransaction
                         break;
 
                     case 'Process':
-                        // qty_ok
-                        if ($stock->incoming_fresh_stock < $qtyOk) {
-                            throw new Exception("Incoming fresh stock cannot be below 0 / minus", 422);
-                        } else {
-                            $stock->decrement("incoming_fresh_stock", $qtyOk);
-                            $stock->increment("process_fresh_stock", $qtyOk);
-                        }
+                        // Start Check system value
+                        switch ($system) {
+                            case 'yes':
+                                    $stock->increment("process_fresh_stock", $qtyOk);
+                                break;
+                            case 'no':
+                                    // qty_ok
+                                    if ($stock->incoming_fresh_stock < $qtyOk) {
+                                        throw new Exception("Incoming fresh stock cannot be below 0 / minus", 422);
+                                    } else {
+                                        $stock->decrement("incoming_fresh_stock", $qtyOk);
+                                        $stock->increment("process_fresh_stock", $qtyOk);
+                                    }
 
-                        // qty_ng
-                        if ($stock->incoming_fresh_stock < $qtyNg) {
-                            throw new Exception("Incoming fresh stock cannot be below 0 / minus", 422);
-                        } else {
-                            $stock->decrement("incoming_fresh_stock", $qtyNg);
-                            $stock->increment("ng_fresh_stock", $qtyNg);
+                                    // qty_ng
+                                    if ($stock->incoming_fresh_stock < $qtyNg) {
+                                        throw new Exception("Incoming fresh stock cannot be below 0 / minus", 422);
+                                    } else {
+                                        $stock->decrement("incoming_fresh_stock", $qtyNg);
+                                        $stock->increment("ng_fresh_stock", $qtyNg);
+                                    }
+                                break;
+                            default:
+                                throw new Exception("Error for System: Only accept \"yes/no\" value", 500);
+                            // End Check system value
                         }
                         break;
 
