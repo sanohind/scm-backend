@@ -125,7 +125,7 @@ class SubcontCreateTransaction
                 $dnNo = $getTrans->delivery_note;
                 $itemCode = $getTrans->item_code;
                 $status = $getTrans->status;
-                $type = $getTrans->transaction_type;
+                $type = "Process";
                 $diffrenceQtyOk = $getTrans->qty_ok - $actualQtyOk;
                 $diffrenceQtyNg = $getTrans->qty_ng - $actualQtyNg;
 
@@ -133,7 +133,7 @@ class SubcontCreateTransaction
                 SubcontTransaction::create([
                     'delivery_note' => "System-$dnNo",
                     'sub_item_id' => $subItemId,
-                    'transaction_type' => "Process",
+                    'transaction_type' => $type,
                     'transaction_date' => Carbon::now()->format("Y-m-d"),
                     'transaction_time' => Carbon::now()->format("H:i:s"),
                     'item_code' => $itemCode,
