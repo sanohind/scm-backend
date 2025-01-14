@@ -40,7 +40,7 @@ class SubcontTransactionResource extends JsonResource
 
         $responseSystem = $this->response;
 
-        if ($responseSystem == "System Review Diffrence") {
+        if (strpos($responseSystem, "System Review") !== false) {
             return -$qtyOkSystem;
         } else{
             return $qtyOkSystem;
@@ -53,7 +53,7 @@ class SubcontTransactionResource extends JsonResource
 
         $responseSystem = $this->response;
 
-        if ($responseSystem == "System Review Diffrence") {
+        if (strpos($responseSystem, "System Review") !== false) {
             return -$qtyNgSystem;
         } else{
             return $qtyNgSystem;
@@ -70,7 +70,7 @@ class SubcontTransactionResource extends JsonResource
         $qtyOkSystem = 0;
         $qtyNgSystem = 0;
 
-        if ($responseSystem == "System Review Diffrence") {
+        if (strpos($responseSystem, "System Review") !== false) {
             $qtyOkSystem = -$qtyOk;
             $qtyNgSystem = -$qtyNg;
 
