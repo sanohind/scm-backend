@@ -36,8 +36,9 @@ class SubcontGetTransaction
         $data = SubcontTransaction::whereHas('subItem', function ($q) use ($user) {
             $q->where('bp_code', $user);
         })
-        ->whereBetween('actual_transaction_date', [$start_date, $end_date])
-            ->orderBy('actual_transaction_date', 'desc')
+        ->whereBetween('transaction_date', [$start_date, $end_date])
+            ->orderBy('transaction_date', 'desc')
+            ->orderBy('transaction_time', 'desc')
             ->get();
 
         // Check if data exist
