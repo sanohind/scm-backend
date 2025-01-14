@@ -126,22 +126,21 @@ class SubcontCreateTransaction
                 $itemCode = $getTrans->item_code;
                 $status = $getTrans->status;
                 $type = $getTrans->transaction_type;
-
-                // Format delivery note
-                $formatDn = substr($dnNo, 2);
+                $diffrenceQtyOk = $getTrans->qty_ok - $actualQtyOk;
+                $diffrenceQtyNg = $getTrans->qty_ng - $actualQtyNg;
 
                 // Create the transaction
                 SubcontTransaction::create([
-                    'delivery_note' => "SYS$formatDn",
+                    'delivery_note' => "System-$dnNo",
                     'sub_item_id' => $subItemId,
                     'transaction_type' => "Process",
                     'transaction_date' => Carbon::now()->format("Y-m-d"),
                     'transaction_time' => Carbon::now()->format("H:i:s"),
                     'item_code' => $itemCode,
                     'status' => $status,
-                    'qty_ok' => $actualQtyOk,
-                    'qty_ng' => $actualQtyNg,
-                    'response' => "System Review Diffrence",
+                    'qty_ok' => $diffrenceQtyOk,
+                    'qty_ng' => $diffrenceQtyNg,
+                    'response' => "System Review-$dnNo",
                 ]);
 
                 // Get stock
