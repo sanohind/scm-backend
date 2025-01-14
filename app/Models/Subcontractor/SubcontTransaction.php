@@ -34,6 +34,8 @@ class SubcontTransaction extends Model
         "qty_ok",
         "qty_ng",
         "status",
+        "actual_qty_ok_receive",
+        "actual_qty_ng_receive",
         "response",
     ];
 
