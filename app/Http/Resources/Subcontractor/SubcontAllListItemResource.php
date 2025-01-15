@@ -18,6 +18,7 @@ class SubcontAllListItemResource extends JsonResource
             'item_id' => $this->sub_item_id,
             'part_number' => $this->item_code,
             'part_name' => $this->item_name,
+            'old_part_name' => $this->item_old_name,
             'status' => $this->status,
         ];
     }

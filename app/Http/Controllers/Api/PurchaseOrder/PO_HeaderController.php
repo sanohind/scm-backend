@@ -34,9 +34,9 @@ class PO_HeaderController
         }
 
         // Eager load the 'poDetail' relationship
-        $data_po = PO_Header::where('supplier_code', $user)
+        $data_po = PO_Header::where('supplier_code', $user) // only return po when status "In Process"
             ->orderBy('po_date', 'desc')
-            ->whereNotIn('po_status', ['Closed', 'closed', 'close', 'Cancelled', 'cancelled', 'cancel','Sent','sent'])
+            ->whereIn('po_status', ['In Process', 'in process'])
             ->with('poDetail')->get();
 
         // Check if user available

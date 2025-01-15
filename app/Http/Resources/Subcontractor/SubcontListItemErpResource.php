@@ -15,8 +15,9 @@ class SubcontListItemErpResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'item_name' => $this->item,
-            'alias' => $this->old_item,
+            'part_number' => $this->item,
+            'part_name' => $this->description,
+            'old_part_name' => $this->old_item,
         ];
     }
 }

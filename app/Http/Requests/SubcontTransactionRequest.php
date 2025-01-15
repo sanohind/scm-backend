@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Subcontractor\SubcontTransaction;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontItem;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,6 +27,7 @@ class SubcontTransactionRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            "bp_code"=> "string|max:25",
             "data.*.actual_transaction_date"=> "required|date",
             "data.*.actual_transaction_time"=> "date_format:H:i:s",
             "data.*.transaction_type"=> "required|string|in:Incoming,Outgoing,Process",
@@ -35,6 +37,7 @@ class SubcontTransactionRequest extends FormRequest
             "data.*.qty_ng"=> "integer|min:0",
         ];
 
+        // Delivery Note rules
         foreach ($this->input('data') as $type) {
             ($type['transaction_type'] !== 'Process') ? $rules["data.*.delivery_note"] = "required|string|max:255" : $rules["data.*.delivery_note"] = "nullable|string|max:255";
         }
@@ -45,6 +48,10 @@ class SubcontTransactionRequest extends FormRequest
     public function messages(): array
     {
         return [
+            // Bp Code
+            'bp_code.string' => 'The BP Code must be a string.',
+            'bp_code.max' => 'The BP Code may not be greater than 25 characters.',
+
             // Delivery Note
             "data.*.delivery_note.required" => "The delivery note is required.",
             "data.*.delivery_note.string" => "The delivery note must be a valid string.",
@@ -87,16 +94,36 @@ class SubcontTransactionRequest extends FormRequest
         );
     }
 
-    // Check item_code ownership
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            // Ownership
             if (!$this->ownership()) {
                 $validator->errors()->add('data.*.item_code', 'You do not have ownership of this item.');
             }
+
+            // Dn Duplicate
+            $this->DnDuplicate($validator);
         });
     }
 
+    // Check delivery_note Duplicate
+    private function DnDuplicate($validator) {
+        $getRequest = $this->input('data');
+
+        foreach ($getRequest as $i) {
+            $checkDn = SubcontTransaction::where('delivery_note', $i['delivery_note'])->exists();
+
+            if ($checkDn == true) {
+                $validator->errors()->add(
+                    "data.*.delivery_note",
+                    "Delivery Note Duplicate / Already Exist, Please Use New Delivery Note",
+                );
+            }
+        }
+    }
+
+    // Check item_code ownership
     private function ownership()
     {
         foreach ($this->input('data') as $transaction) {

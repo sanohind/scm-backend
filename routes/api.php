@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Subcontractor\SubcontReceiveController;
 use App\Service\User\UserCreateUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -187,6 +188,12 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
     Route::patch('item/update', [SubcontController::class,'updateItem']);
     // Route for delete subcont item
     Route::delete('item/delete', [SubcontController::class,'deleteItem']);
+    // Route for review subcont transaction header
+    Route::get('transaction-review/header/{bp_code}', [SubcontReceiveController::class,'reviewHeader']);
+    // Route for review subcont transaction detail
+    Route::get('transaction-review/detail/{no_dn}', [SubcontReceiveController::class,'reviewDetail']);
+    // Route for update review subcont transaction
+    Route::patch('transaction-review/update', [SubcontReceiveController::class,'reviewUpdate']);
     // Route for get index subcont transaction
     Route::get('transaction/index/{bp_code}/{start_date}/{end_date}', [SubcontController::class,'indexTrans']);
 
@@ -490,7 +497,7 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     // route view print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     // route view print DN label/ kanban
-    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelView']);
+    Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
 
     /**
      * Route for Performance Report
@@ -533,6 +540,12 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     Route::delete('item/delete', [SubcontController::class,'deleteItem']);
     // Route for get index subcont transaction
     Route::get('transaction/index', [SubcontController::class,'indexTrans']);
+    // Route for review subcont transaction header
+    Route::get('transaction-review/header/{bp_code}', [SubcontReceiveController::class,'reviewHeader']);
+    // Route for review subcont transaction detail
+    Route::get('transaction-review/detail/{no_dn}', [SubcontReceiveController::class,'reviewDetail']);
+    // Route for update review subcont transaction
+    Route::patch('transaction-review/update', [SubcontReceiveController::class,'reviewUpdate']);
     // Route for get index subcont transaction
     Route::get('transaction/index/{bp_code}/{start_date}/{end_date}', [SubcontController::class,'indexTrans']);
     // Route for store subcont transaction
