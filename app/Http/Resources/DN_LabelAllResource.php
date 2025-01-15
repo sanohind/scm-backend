@@ -35,10 +35,12 @@ class DN_LabelAllResource extends JsonResource
         $part_number = $this->part_no;
         $qty = $this->dn_qty;
         $lot = $this->lot_number;
-        $line = $this->order_line;
+        $poLine = $this->order_line;
         $seq = $this->order_seq;
+        $dnNo = $this->no_dn;
+        $dnLine = $this->dn_line;
 
-        $concat = $part_number.';'.$qty.';'.$lot.';'.$line.';'.$seq;
+        $concat = "$part_number;$qty;$lot;$poLine;$seq;$dnNo;$dnLine";
 
         return $concat;
     }
