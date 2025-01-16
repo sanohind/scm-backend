@@ -129,34 +129,36 @@ class SubcontCreateTransaction
                 $diffrenceQtyOk = $getTrans->qty_ok - $actualQtyOk;
                 $diffrenceQtyNg = $getTrans->qty_ng - $actualQtyNg;
 
-                // Create the transaction
-                SubcontTransaction::create([
-                    'delivery_note' => "System-$dnNo",
-                    'sub_item_id' => $subItemId,
-                    'transaction_type' => $type,
-                    'transaction_date' => Carbon::now()->format("Y-m-d"),
-                    'transaction_time' => Carbon::now()->format("H:i:s"),
-                    'item_code' => $itemCode,
-                    'status' => $status,
-                    'qty_ok' => $diffrenceQtyOk,
-                    'qty_ng' => $diffrenceQtyNg,
-                    'response' => "System Review-$dnNo",
-                ]);
+                if ($diffrenceQtyOk + $diffrenceQtyNg != 0) {
+                    // Create the transaction
+                    SubcontTransaction::create([
+                        'delivery_note' => "System-$dnNo",
+                        'sub_item_id' => $subItemId,
+                        'transaction_type' => $type,
+                        'transaction_date' => Carbon::now()->format("Y-m-d"),
+                        'transaction_time' => Carbon::now()->format("H:i:s"),
+                        'item_code' => $itemCode,
+                        'status' => $status,
+                        'qty_ok' => $diffrenceQtyOk,
+                        'qty_ng' => $diffrenceQtyNg,
+                        'response' => "System Review-$dnNo",
+                    ]);
 
-                // Get stock
-                $stock = SubcontStock::where('sub_item_id', $subItemId)
-                ->where('item_code', $itemCode)
-                ->first();
+                    // Get stock
+                    $stock = SubcontStock::where('sub_item_id', $subItemId)
+                    ->where('item_code', $itemCode)
+                    ->first();
 
-                // Calculate
-                $this->calculatingStock(
-                    $status,
-                    $type,
-                    $diffrenceQtyOk,
-                    $diffrenceQtyNg,
-                    $stock,
-                    "yes"
-                );
+                    // Calculate
+                    $this->calculatingStock(
+                        $status,
+                        $type,
+                        $diffrenceQtyOk,
+                        $diffrenceQtyNg,
+                        $stock,
+                        "yes"
+                    );
+                }
             });
         } catch (\Throwable $th) {
             throw new Exception("Error processing transaction review", 500);

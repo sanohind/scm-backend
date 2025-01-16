@@ -30,7 +30,7 @@ class SubcontTransactionResource extends JsonResource
             'actual_qty_ok' => $this->actual_qty_ok_receive,
             'actual_qty_ng' => $this->actual_qty_ng_receive,
             'actual_qty_total' => ($this->actual_qty_ok_receive == 0 && $this->actual_qty_ng_receive == 0) ? null : ($this->actual_qty_ok_receive + $this->actual_qty_ng_receive),
-            'response' => $this->response,
+            'response' => $this->response ?? "Under Review",
         ];
     }
 

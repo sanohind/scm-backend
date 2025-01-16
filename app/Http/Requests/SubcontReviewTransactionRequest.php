@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Subcontractor\SubcontTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -54,15 +55,41 @@ class SubcontReviewTransactionRequest extends FormRequest
         ];
     }
 
-    // Failed validation response
-    protected function failedValidation($validator)
+    // Validation
+    public function withValidator()
     {
+        $this->checkMinValue();
+    }
+
+    private function checkMinValue()
+{
+    $getRequest = $this->input('data');
+    $customErrors = [];
+
+    foreach ($getRequest as $data) {
+        $getSupplierValue = SubcontTransaction::select('qty_ok', 'qty_ng','item_code')
+            ->where('sub_transaction_id', $data['sub_transaction_id'])
+            ->first();
+
+        if ($data['actual_qty_ok'] > $getSupplierValue->qty_ok) {
+            $customErrors["actual_qty_ok_index_$getSupplierValue->item_code"] =
+                "The actual OK quantity cannot be greater than the supplier's OK quantity.";
+        }
+
+        if ($data['actual_qty_ng'] > $getSupplierValue->qty_ng) {
+            $customErrors["actual_qty_ng_index_$getSupplierValue->item_code"] =
+                "The actual NG quantity cannot be greater than the supplier's NG quantity.";
+        }
+    }
+
+    if (!empty($customErrors)) {
         throw new HttpResponseException(
             response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors'  => $validator->errors(),
-            ], 422)
+                'status' => "Error",
+                'message' => 'Actual Quantity Exceeds Transaction Quantity.',
+                'errors'  => $customErrors,
+            ], 400)
         );
     }
+}
 }
