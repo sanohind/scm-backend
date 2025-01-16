@@ -64,7 +64,7 @@ class SubcontReviewTransactionRequest extends FormRequest
     private function checkMinValue()
 {
     $getRequest = $this->input('data');
-    $customErrors = [];
+    $errorMessage = [];
 
     foreach ($getRequest as $data) {
         $getSupplierValue = SubcontTransaction::select('qty_ok', 'qty_ng','item_code')
@@ -72,22 +72,22 @@ class SubcontReviewTransactionRequest extends FormRequest
             ->first();
 
         if ($data['actual_qty_ok'] > $getSupplierValue->qty_ok) {
-            $customErrors["actual_qty_ok_index_$getSupplierValue->item_code"] =
+            $errorMessage["actual_qty_ok_index_$getSupplierValue->item_code"] =
                 "The actual OK quantity cannot be greater than the supplier's OK quantity.";
         }
 
         if ($data['actual_qty_ng'] > $getSupplierValue->qty_ng) {
-            $customErrors["actual_qty_ng_index_$getSupplierValue->item_code"] =
+            $errorMessage["actual_qty_ng_index_$getSupplierValue->item_code"] =
                 "The actual NG quantity cannot be greater than the supplier's NG quantity.";
         }
     }
 
-    if (!empty($customErrors)) {
+    if (!empty($errorMessage)) {
         throw new HttpResponseException(
             response()->json([
                 'status' => "Error",
                 'message' => 'Actual Quantity Exceeds Transaction Quantity.',
-                'errors'  => $customErrors,
+                'errors'  => $errorMessage,
             ], 400)
         );
     }
