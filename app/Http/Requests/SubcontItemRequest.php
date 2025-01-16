@@ -58,36 +58,37 @@ class SubcontItemRequest extends FormRequest
         ];
     }
 
-    // Failed validation response
-    protected function failedValidation($validator)
-    {
-        throw new HttpResponseException(
-            response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors'  => $validator->errors(),
-            ], 422)
-        );
-    }
-
     // Check if part_number already exist
     // Call the withValidation method (method injection from formRequest.php. it's core of framework method)
-    protected function withValidator($validator){
-        $this->duplicateCheck($validator);
+    protected function withValidator(){
+        $this->duplicateCheck();
     }
 
     // Duplicate logic
-    private function duplicateCheck($validator) {
-        foreach ($this->input('data') as $item) {
-            $data = SubcontItem::where('bp_code', $item['bp_code'])
+    private function duplicateCheck() {
+        $getRequest = $this->input('data');
+        $errorMessage = [];
+
+        foreach ($getRequest as $key => $item) {
+            $checkItem = SubcontItem::where('bp_code', $item['bp_code'])
             ->where('item_code', $item['part_number'])
             ->exists();
 
-            $validator->after(function ($validator) use($data) {
-                if ($data) {
-                    $validator->errors()->add('data.*.part_number', 'This item code already exist.');
-                }
-            });
+            if ($checkItem == true) {
+                $errorMessage[] = [
+                    "tes.$key" => "This {$item['part_number']} Part Number Already Exist"
+                ];
+            }
+        }
+
+        if (!empty($errorMessage)) {
+            throw new HttpResponseException(
+                response()->json([
+                    'status' => false,
+                    'message' => 'Duplicate Part Number.',
+                    'errors'  => $errorMessage,
+                ], 400)
+            );
         }
     }
 }
