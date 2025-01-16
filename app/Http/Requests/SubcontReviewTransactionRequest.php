@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Subcontractor\SubcontTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -64,5 +65,38 @@ class SubcontReviewTransactionRequest extends FormRequest
                 'errors'  => $validator->errors(),
             ], 422)
         );
+    }
+
+    // Validation
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            // CheckMinValue
+            $this->checkMinValue($validator);
+        });
+    }
+
+    private function checkMinValue($validator) {
+        $getRequest = $this->input('data');
+
+        foreach ($getRequest as $data) {
+            $getSupplierValue = SubcontTransaction::select('qty_ok','qty_ng')
+            ->where('sub_transaction_id', $data['sub_transaction_id'])
+            ->get();
+
+            if ($data['actual_qty_ok'] > $getSupplierValue->qty_ok) {
+                $validator->errors()->add(
+                    "data.*.actual_qty_ok",
+                    "The actual OK quantity cannot be greater than the supplier's OK quantity."
+                );
+            }
+
+            if ($data['actual_qty_ng'] > $getSupplierValue->qty_ng) {
+                $validator->errors()->add(
+                    "data.*.actual_qty_ng",
+                    "The actual NG quantity cannot be greater than the supplier's NG quantity."
+                );
+            }
+        }
     }
 }
