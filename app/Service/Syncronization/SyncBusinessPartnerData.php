@@ -2,6 +2,9 @@
 
 namespace App\Service\Syncronization;
 
+use App\Models\Partner;
+use App\Models\PartnerLocal;
+
 class SyncBusinessPartnerData
 {
     public function syncBussinessPartner(){

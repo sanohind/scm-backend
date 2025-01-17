@@ -2,16 +2,17 @@
 
 namespace App\Service\Syncronization;
 
+use Carbon\Carbon;
+use App\Models\PurchaseOrder\PO_Detail;
+use App\Models\PurchaseOrder\PO_Header;
+use App\Models\PurchaseOrder\PO_Detail_ERP;
+use App\Models\PurchaseOrder\PO_Header_ERP;
+
 class SyncPurchaseOrderData
 {
-    public function syncPurchaseOrder() {
-        /*
-
-                po header
-
-
-
-        */
+    public function syncPurchaseOrder()
+    {
+        // Po Header
         //year and period
         $actualYear = Carbon::now()->year;
         $actualPeriod = Carbon::now()->month;
@@ -24,9 +25,9 @@ class SyncPurchaseOrderData
 
 
         // copy all data from sql server
-        $passPoNo = [];
+        $poNumber = [];
         foreach ($sqlsrvDataPoHeader as $data) {
-            $passPoNo[] = $data->po_no;
+            $poNumber[] = $data->po_no;
 
             PO_Header::updateOrCreate(
                 // find the po_no
@@ -56,8 +57,36 @@ class SyncPurchaseOrderData
             );
         }
 
-        // return po_no
+        // Po Detail
+        foreach ($poNumber as $data) {
+            $sqlsrvDataPoDetail = PO_Detail_ERP::where('po_no', $data)->get();
 
-        return $passPoNo;
+            // copy all data from sql server
+            foreach ($sqlsrvDataPoDetail as $data) {
+                PO_Detail::updateOrCreate(
+                    [
+                        'po_no' => $data->po_no,
+                        'po_line' => $data->po_line
+                    ],
+                    [
+                        'po_sequence' => $data->po_sequence,
+                        'item_code' => $data->item_code,
+                        'code_item_type' => $data->code_item_type,
+                        'bp_part_no' => $data->bp_part_no,
+                        'bp_part_name' => $data->bp_part_name,
+                        'item_desc_a' => $data->item_desc_a,
+                        'item_desc_b' => $data->item_desc_b,
+                        'planned_receipt_date' => $data->planned_receipt_date,
+                        'po_qty' => $data->po_qty,
+                        'receipt_qty' => $data->receipt_qty,
+                        'invoice_qty' => $data->invoice_qty,
+                        'purchase_unit' => $data->purchase_unit,
+                        'price' => $data->price,
+                        'amount' => $data->amount,
+                    ]
+                );
+            }
+            return $poNumber;
+        }
     }
 }
