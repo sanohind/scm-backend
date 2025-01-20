@@ -26,7 +26,7 @@ use App\Models\PurchaseOrder\PO_Header_ERP;
 class SynchronizeController
 {
     // function for copy the data from sql server to mysql
-    public function sync()
+    public function synctes()
     {
         set_time_limit(0);
         /**
@@ -264,7 +264,7 @@ class SynchronizeController
         protected SyncDeleteData $syncDeleteData,
     ) {}
 
-    public function sync2(){
+    public function sync(){
         try {
             set_time_limit(0);
             // sync data
@@ -280,9 +280,9 @@ class SynchronizeController
 
                 // delete data
 
-                // $this->syncDeleteData->deletePo(); // Delete Purchase Order
+                $this->syncDeleteData->deletePo(); // Delete Purchase Order
 
-                // $this->syncDeleteData->deleteDn(); // Delete Delivery Note
+                $this->syncDeleteData->deleteDn(); // Delete Delivery Note
 
             }
 
@@ -291,7 +291,8 @@ class SynchronizeController
             ]);
 
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
+            \Log::error("$th");
         }
     }
 }
