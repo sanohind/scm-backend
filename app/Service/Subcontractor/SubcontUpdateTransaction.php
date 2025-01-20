@@ -27,7 +27,7 @@ class SubcontUpdateTransaction
             $findRecord->update([
                 "actual_qty_ok_receive" => $actualQtyOk,
                 "actual_qty_ng_receive" => $actualQtyNg,
-                "response" => "Reviewed",
+                "response" => "Receipt",
             ]);
 
             return response()->json([
