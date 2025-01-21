@@ -83,6 +83,8 @@ Route::middleware(['auth:sanctum','userRole:1'])->prefix('super-admin')->group(f
     Route::put('user/update/{user}',[UserController::class, "update"]);
     // Route for update status user
     Route::put('user/update/status/{user}',[UserController::class, "updateStatus"]);
+    // Route for delete user
+    Route::delete('user/delete/{user}', [UserController::class,"deleteUser"]);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
