@@ -200,4 +200,15 @@ class UserController
             'data' => 'Move Email Success',
         ]);
     }
+
+    public function deleteUser($id) {
+        $getUser = User::findOrFail($id);
+
+        $getUser->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'User deleted successfully'
+        ]);
+    }
 }

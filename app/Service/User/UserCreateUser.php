@@ -15,6 +15,9 @@ class UserCreateUser
     public function createUser($data) {
         // business process
         $result = DB::transaction(function () use($data) {
+            $email = $data['email'];
+            $getFirstEmail = $email[0];
+            
             // Create user
             $createUser = $this->createUserProcess(
                 $data['bp_code'],
@@ -23,6 +26,8 @@ class UserCreateUser
                 $data['status'],
                 $data['username'],
                 $data['password'],
+                $getFirstEmail,
+
             );
 
             // Create Email
@@ -44,7 +49,7 @@ class UserCreateUser
         return $result;
     }
 
-    private function createUserProcess(string $bp_code, string $name, string $role, int $status, string $username, string $password) {
+    private function createUserProcess(string $bp_code, string $name, string $role, int $status, string $username, string $password, string $email) {
         try {
             // logic
             User::create([
@@ -54,6 +59,7 @@ class UserCreateUser
                 'status' => $status,
                 'username' => $username,
                 'password' => Hash::make($password),
+                'email' => $email
             ]);
 
             // for callback
