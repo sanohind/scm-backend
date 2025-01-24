@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\Subcontractor;
 
+use App\Http\Requests\SubcontImportStockItemRequest;
 use App\Http\Requests\SubcontItemUpdateRequest;
 use App\Models\User;
 use App\Service\Subcontractor\SubcontDeleteItem;
+use App\Service\Subcontractor\SubcontImportStockItem;
 use App\Service\Subcontractor\SubcontUpdateItem;
 use Str;
 
@@ -37,6 +39,7 @@ class SubcontController
         protected SubcontGetListItemErp $subcontGetListItemErp,
         protected SubcontUpdateItem $subcontUpdateItem,
         protected SubcontDeleteItem $subcontDeleteItem,
+        protected SubcontImportStockItem $subcontImportStockItem,
     ) {
     }
 
@@ -194,6 +197,30 @@ class SubcontController
                 'message' => 'Request data format error',
             ], 422);
         }
+
+    }
+
+    public function importStockItems(SubcontImportStockItemRequest $request){
+        $validateData = $request->validated();
+
+        foreach ($validateData as $data) {
+            $this->subcontImportStockItem->importStockItem(
+                $data['bp_code'],
+                $data['part_number'],
+                $data['fresh_unprocess_incoming_items'],
+                $data['fresh_ready_delivery_items'],
+                $data['fresh_ng_items'],
+                $data['replating_unprocess_incoming_items'],
+                $data['replating_ready_delivery_items'],
+                $data['replating_ng_items'],
+            );
+        }
+
+        // Response
+        return response()->json([
+            'status' => true,
+            'message' => "Import Stock Items Successfully",
+        ], 200);
 
     }
 }
