@@ -536,6 +536,8 @@ Route::middleware(['auth:sanctum','userRole:9'])->prefix('super-user')->group(fu
     Route::get('item/index/{bp_code}', [SubcontController::class,'indexItem']);
     // Route for store subcont item
     Route::post('item/store', [SubcontController::class,'createItem']);
+    // Route for import stock subcont item
+    Route::post('item/stock/initial', [SubcontController::class,'importStockItems']);
     // Route for update subcont item
     Route::patch('item/update', [SubcontController::class,'updateItem']);
     // Route for delete subcont item
