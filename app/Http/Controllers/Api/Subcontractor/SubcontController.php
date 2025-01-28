@@ -201,11 +201,10 @@ class SubcontController
     }
 
     public function importStockItems(SubcontImportStockItemRequest $request){
+        // validated request data
         $validateData = $request->validated();
-        // dd($request);
-        // dd($validateData);
+
         foreach ($validateData['data'] as $data) {
-            // dd($data['bp_code']);
             $this->subcontImportStockItem->importStockItem(
                 $data['bp_code'],
                 $data['part_number'],

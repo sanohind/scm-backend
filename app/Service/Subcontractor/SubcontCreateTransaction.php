@@ -34,6 +34,20 @@ class SubcontCreateTransaction
 
         // Start foreach loop subcont transaction
         foreach ($data['data'] as $dataTransaction) {
+            // Check item statuus
+            $itemStatus = $this->checkItemStatus($bp_code,$dataTransaction['item_code']);
+
+            // handle if check item status return false
+            if ($itemStatus == false) {
+                // Response
+                throw new HttpResponseException(
+                    response()->json([
+                        "status" => false,
+                        "message" => "The item is inactive and cannot be used.",
+                    ],403)
+                );
+            }
+
             // Get sub_item_id for each item
             $subItemId = SubcontItem::where('item_code', $dataTransaction["item_code"])
             ->where('bp_code', $bp_code)
@@ -481,5 +495,19 @@ class SubcontCreateTransaction
 
         }
         return true;
+    }
+
+    private function checkItemStatus(String $bp_code, string $partNumber) {
+        // query get items status
+        $getStatus = SubcontItem::where("bp_code", $bp_code)
+        ->where('item_code', $partNumber)
+        ->value('status');
+
+        if ($getStatus == 1) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
