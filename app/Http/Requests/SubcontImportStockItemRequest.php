@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SubcontImportStockItemRequest extends FormRequest
 {
@@ -80,6 +81,18 @@ class SubcontImportStockItemRequest extends FormRequest
             "data.*.replating_ng_items.integer" => "The replating_ng_items field must be an integer.",
             "data.*.replating_ng_items.min" => "The replating_ng_items field must be at least 0.",
         ];
+    }
+
+    // Failed validation response
+    protected function failedValidation($validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422)
+        );
     }
 }
 

@@ -11,6 +11,8 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SubcontImportStockItem
 {
+    public function __construct(protected SubcontCreateStock $subcontCreateStock) {}
+
    public function importStockItem(
     string $bpCode,
     string $partNumber,
@@ -27,20 +29,24 @@ class SubcontImportStockItem
             ->where('item_code', $partNumber)
             ->value('sub_item_id');
 
+            // Check stock record availability
+            $this->subcontCreateStock->createAndCheckStock($partNumber, $getItem);
+
             // Query to get stock record form table subcont_stock
             $getStock = SubcontStock::where('sub_item_id', $getItem)
             ->where('item_code', $partNumber)
             ->first();
 
+
             // Update/import stock
             DB::transaction(function () use(
+                $getStock,
                 $freshIncomingItems,
                 $freshProcessItems,
                 $freshNgItems,
                 $replatingIncomingItems,
                 $replatingProcessItems,
                 $replatingNgItems,
-                $getStock,
                 ) {
                 $getStock->update([
                     "incoming_fresh_stock" => $freshIncomingItems,
