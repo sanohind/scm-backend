@@ -3,6 +3,7 @@
 namespace App\Service\Subcontractor;
 
 use App\Models\Subcontractor\SubcontItem;
+use App\Models\Subcontractor\SubcontStock;
 use DB;
 
 class SubcontDeleteItem
@@ -11,8 +12,11 @@ class SubcontDeleteItem
         // Get record subcont item
         $itemRecord = SubcontItem::findOrFail( $data['sub_item_id'], 'sub_item_id');
 
-        $result = DB::transaction(function () use($itemRecord) {
+        $getStock = SubcontStock::where('sub_item_id', $data['sub_item_id'])->firstOrFail();
+
+        $result = DB::transaction(function () use($itemRecord, $getStock) {
             $itemRecord->delete();
+            $getStock->delete();
 
             return true;
         });

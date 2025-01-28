@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\Subcontractor;
 
+use App\Http\Requests\SubcontImportStockItemRequest;
 use App\Http\Requests\SubcontItemUpdateRequest;
 use App\Models\User;
 use App\Service\Subcontractor\SubcontDeleteItem;
+use App\Service\Subcontractor\SubcontImportStockItem;
 use App\Service\Subcontractor\SubcontUpdateItem;
 use Str;
 
@@ -37,7 +39,9 @@ class SubcontController
         protected SubcontGetListItemErp $subcontGetListItemErp,
         protected SubcontUpdateItem $subcontUpdateItem,
         protected SubcontDeleteItem $subcontDeleteItem,
-        ) {}
+        protected SubcontImportStockItem $subcontImportStockItem,
+    ) {
+    }
 
     /**
      * To get item record user
@@ -51,7 +55,7 @@ class SubcontController
             return response()->json([
                 'status' => "Failed",
                 'error' => "{$ex->getMessage()} (On line {$ex->getLine()}) {$ex->getFile()}"
-            ],500);
+            ], 500);
         }
 
         return $result;
@@ -64,11 +68,11 @@ class SubcontController
     public function indexTrans(Request $request)
     {
         try {
-            $result = $this->subcontGetTransaction->getAllTransactionSubcont($request->start_date ?? null,$request->end_date ?? null, $request->bp_code ?? null);
+            $result = $this->subcontGetTransaction->getAllTransactionSubcont($request->start_date ?? null, $request->end_date ?? null, $request->bp_code ?? null);
         } catch (\Exception $ex) {
             return response()->json([
                 'error' => $ex->getMessage()
-            ],500);
+            ], 500);
         }
 
         return $result;
@@ -78,28 +82,30 @@ class SubcontController
      * Get list item user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getListItem(Request $param) {
+    public function getListItem(Request $param)
+    {
         try {
             $result = $this->subcontGetListItem->getList($param ?? null);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'error' => $th->getMessage()." (On line ".$th->getLine().")"
-            ],500);
+                'error' => $th->getMessage() . " (On line " . $th->getLine() . ")"
+            ], 500);
         }
 
         return $result;
     }
 
 
-    public function adminGetAllItem(Request $bp_code) {
+    public function adminGetAllItem(Request $bp_code)
+    {
         try {
             $result = $this->subcontGetListItem->adminGetAllItemUser($bp_code->bp_code ?? null);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'error' => $th->getMessage()." (On line ".$th->getLine().")"
-            ],500);
+                'error' => $th->getMessage() . " (On line " . $th->getLine() . ")"
+            ], 500);
         }
 
         return $result;
@@ -109,14 +115,15 @@ class SubcontController
      * Summary of getListItemErp
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getListItemErp() {
+    public function getListItemErp()
+    {
         try {
             $result = $this->subcontGetListItemErp->getListErp();
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'error' => $th->getMessage()." (On line ".$th->getLine().")"
-            ],500);
+                'error' => $th->getMessage() . " (On line " . $th->getLine() . ")"
+            ], 500);
         }
 
         return $result;
@@ -135,7 +142,7 @@ class SubcontController
         } catch (\Exception $ex) {
             return response()->json([
                 'error' => $ex->getMessage()
-            ],500);
+            ], 500);
         }
         return $result;
     }
@@ -145,24 +152,26 @@ class SubcontController
      * @param \App\Http\Requests\SubcontItemUpdateRequest $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function updateItem(SubcontItemUpdateRequest $request) {
+    public function updateItem(SubcontItemUpdateRequest $request)
+    {
         try {
             $result = $this->subcontUpdateItem->updateItem($request->validated());
         } catch (\Throwable $ex) {
             return response()->json([
                 'error' => $ex->getMessage(),
-            ],500);
+            ], 500);
         }
         return $result;
     }
 
-    public function deleteItem(SubcontItemUpdateRequest $request){
+    public function deleteItem(SubcontItemUpdateRequest $request)
+    {
         try {
             $result = $this->subcontDeleteItem->deleteItem($request->validated());
         } catch (\Throwable $ex) {
             return response()->json([
                 'error' => $ex->getMessage()
-            ],500);
+            ], 500);
         }
         return $result;
     }
@@ -174,27 +183,45 @@ class SubcontController
      */
     public function createTransaction(SubcontTransactionRequest $request)
     {
-        try {
-                $result = $this->subcontCreateTransaction->createTransactionSubcont($request->validated());
+        $result = $this->subcontCreateTransaction->createTransactionSubcont($request->validated());
 
-                // Return response
-                if ($result == true) {
-                    return response()->json([
-                        'status' => true,
-                        'message' => 'Data Successfully Stored',
-                    ], 200);
-                } else{
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Request data format error',
-                    ], 422);
-                }
-
-        } catch (\Throwable $th) {
+        // Return response
+        if ($result == true) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Data Successfully Stored',
+            ], 200);
+        } else {
             return response()->json([
                 'status' => false,
-                'error' => $th->getMessage()." (On line ".$th->getLine().")"
-            ],500);
+                'message' => 'Request data format error',
+            ], 422);
         }
+
+    }
+
+    public function importStockItems(SubcontImportStockItemRequest $request){
+        // validated request data
+        $validateData = $request->validated();
+
+        foreach ($validateData['data'] as $data) {
+            $this->subcontImportStockItem->importStockItem(
+                $data['bp_code'],
+                $data['part_number'],
+                $data['fresh_unprocess_incoming_items'],
+                $data['fresh_ready_delivery_items'],
+                $data['fresh_ng_items'],
+                $data['replating_unprocess_incoming_items'],
+                $data['replating_ready_delivery_items'],
+                $data['replating_ng_items'],
+            );
+        }
+
+        // Response
+        return response()->json([
+            'status' => true,
+            'message' => "Import Stock Items Successfully",
+        ], 200);
+
     }
 }

@@ -4,6 +4,7 @@ namespace App\Service\Subcontractor;
 
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontItem;
@@ -33,22 +34,59 @@ class SubcontCreateTransaction
 
         // Start foreach loop subcont transaction
         foreach ($data['data'] as $dataTransaction) {
+            // Check item statuus
+            $itemStatus = $this->checkItemStatus($bp_code,$dataTransaction['item_code']);
+
+            // handle if check item status return false
+            if ($itemStatus == false) {
+                // Response
+                throw new HttpResponseException(
+                    response()->json([
+                        "status" => false,
+                        "message" => "The item is inactive and cannot be used.",
+                    ],403)
+                );
+            }
+
             // Get sub_item_id for each item
             $subItemId = SubcontItem::where('item_code', $dataTransaction["item_code"])
             ->where('bp_code', $bp_code)
             ->value('sub_item_id');
 
-            // Generate unique delivery note if not provided
-            if (empty($dataTransaction["delivery_note"])) {
-                $todayLatestProcess = Carbon::now()->format("Ymd");
-                $today = Carbon::now()->format("dmy");
-                $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 5);
-                $getLatestProcess = SubcontTransaction::where('delivery_note', 'like', "$user$today-%")
-                    ->where('transaction_type', 'Process')
-                    ->where('transaction_date', $todayLatestProcess)
-                    ->count();
-                $unique_dn_process = "$user$today-" . ($getLatestProcess + 1);
-                $dataTransaction['delivery_note'] = $unique_dn_process;
+            try {
+                // Generate unique delivery note if not provided
+                if (empty($dataTransaction["delivery_note"])) {
+                    $todayLatestProcess = Carbon::now()->format("Ymd");
+                    $today = Carbon::now()->format("dmy");
+                    $user = substr(Auth::user()->bp_code, strpos(Auth::user()->bp_code, 'SLS') + 3, 5);
+                    $getLatestProcess = SubcontTransaction::where('delivery_note', 'like', "$user$today-%")
+                        ->where('transaction_type', 'Process')
+                        ->where('transaction_date', $todayLatestProcess)
+                        ->count();
+                    $unique_dn_process = "$user$today-" . ($getLatestProcess + 1);
+                    $dataTransaction['delivery_note'] = $unique_dn_process;
+                }
+            } catch (\Throwable $th) {
+                // Generate random request id
+                $randomReqId = "error_".Carbon::now()->format("Ymd;H:i:s")."_".\Str::random(10);
+
+                // Log error to channel internal system error
+                Log::error("
+                    Message => Generate Delivery Note error
+                    Error => {$th->getMessage()},
+                    File => {$th->getFile()},
+                    Line => {$th->getLine()},
+                    RequestId => $randomReqId,
+                ");
+
+                // Response
+                throw new HttpResponseException(
+                    response()->json([
+                        "status" => false,
+                        "message" => "Internal error while generate delivery note (Request_id:$randomReqId)",
+                        "error" => "Internal error while generate delivery note (Request_id:$randomReqId)",
+                    ],500)
+                );
             }
 
             // Start DB::transaction, Create transaction
@@ -72,7 +110,8 @@ class SubcontCreateTransaction
                 $checkStockRecordAvaibility = $this->checkStockRecordAvailability($dataTransaction["item_code"], $subItemId);
 
                 // Get stock
-                $stock = SubcontStock::where('sub_item_id', $subItemId)
+                $stock = SubcontStock::with('subItem')
+                    ->where('sub_item_id', $subItemId)
                     ->where('item_code', $dataTransaction["item_code"])
                     ->first();
 
@@ -97,6 +136,16 @@ class SubcontCreateTransaction
         return true;
     }
 
+    /**
+     * Summary of createSubcontTransactionDifference
+     * create system transaction after review the diffrance receipt
+     * @param string $subTransactionId
+     * @param int $subItemId
+     * @param int $actualQtyOk
+     * @param int $actualQtyNg
+     * @throws \Exception
+     * @return void
+     */
     public function createSubcontTransactionDifference(
         string $subTransactionId,
         int $subItemId,
@@ -145,7 +194,8 @@ class SubcontCreateTransaction
                     ]);
 
                     // Get stock
-                    $stock = SubcontStock::where('sub_item_id', $subItemId)
+                    $stock = SubcontStock::with('subItem')
+                    ->where('sub_item_id', $subItemId)
                     ->where('item_code', $itemCode)
                     ->first();
 
@@ -167,12 +217,14 @@ class SubcontCreateTransaction
 
     /**
      * Summary of calculatingStock
+     * add new item stock
+     * Adding and reducing item stock.
      * @param string $status
      * @param string $type
      * @param int $qtyOk
      * @param int $qtyNg
      * @param \App\Models\Subcontractor\SubcontStock $stock
-     * @param mixed $system
+     * @param mixed $system, if no the transaction will be identified as human interaction, then if yes the transaction will be identified as system interaction
      * @throws \Exception
      * @return bool
      */
@@ -205,7 +257,16 @@ class SubcontCreateTransaction
                             case 'no':
                                     // qty_ok
                                     if ($stock->incoming_fresh_stock < $qtyOk) {
-                                        throw new Exception("Incoming fresh stock cannot be below 0 / minus", 422);
+                                        // Throw response
+                                        throw new HttpResponseException(
+                                            response()->json([
+                                                'status' => false,
+                                                'message' => 'Insufficient stock.',
+                                                'error'  => [
+                                                    "The remaining unprocess fresh stock (Item: {$stock->subItem->item_name}) is currently \"{$stock->incoming_fresh_stock}\"."
+                                                    ],
+                                                ], 422)
+                                            );
                                     } else {
                                         $stock->decrement("incoming_fresh_stock", $qtyOk);
                                         $stock->increment("process_fresh_stock", $qtyOk);
@@ -213,7 +274,16 @@ class SubcontCreateTransaction
 
                                     // qty_ng
                                     if ($stock->incoming_fresh_stock < $qtyNg) {
-                                        throw new Exception("Incoming fresh stock cannot be below 0 / minus", 422);
+                                        // Throw Response
+                                        throw new HttpResponseException(
+                                            response()->json([
+                                                'status' => false,
+                                                'message' => 'Insufficient stock.',
+                                                'error'  => [
+                                                    "The remaining unprocess fresh stock (Item: {$stock->subItem->item_name}) is currently \"{$stock->incoming_fresh_stock}\"."
+                                                    ],
+                                                ], 422)
+                                            );
                                     } else {
                                         $stock->decrement("incoming_fresh_stock", $qtyNg);
                                         $stock->increment("ng_fresh_stock", $qtyNg);
@@ -228,14 +298,32 @@ class SubcontCreateTransaction
                     case 'Outgoing':
                         // qty_ok
                         if ($stock->process_fresh_stock < $qtyOk) {
-                            throw new Exception("Ready fresh stock cannot be below 0 / minus", 422);
+                            // Throw response
+                            throw new HttpResponseException(
+                                response()->json([
+                                    'status' => false,
+                                    'message' => 'Insufficient stock.',
+                                    'error'  => [
+                                        "The remaining ready fresh stock (Item: {$stock->subItem->item_name}) is currently \"{$stock->process_fresh_stock}\"."
+                                        ],
+                                    ], 422)
+                                );
                         } else {
                             $stock->decrement("process_fresh_stock", $qtyOk);
                         }
 
                         // qty_ng
                         if ($stock->ng_fresh_stock < $qtyNg) {
-                            throw new Exception("NG fresh stock cannot be below 0 / minus", 422);
+                            // Throw response
+                            throw new HttpResponseException(
+                                response()->json([
+                                    'status' => false,
+                                    'message' => 'Insufficient stock.',
+                                    'error'  => [
+                                        "The remaining NG fresh stock (Item: {$stock->subItem->item_name}) is currently \"{$stock->ng_fresh_stock}\"."
+                                        ],
+                                    ], 422)
+                                );
                         } else {
                             $stock->decrement("ng_fresh_stock", $qtyNg);
                         }
@@ -272,7 +360,16 @@ class SubcontCreateTransaction
                             case 'no':
                                     // qty_ok
                                     if ($stock->incoming_replating_stock < $qtyOk) {
-                                        throw new Exception("Incoming replating stock cannot be below 0 / minus", 422);
+                                        // Throw response
+                                        throw new HttpResponseException(
+                                            response()->json([
+                                                'status' => false,
+                                                'message' => 'Insufficient stock.',
+                                                'error'  => [
+                                                    "The remaining unprocess replating stock (Item: {$stock->subItem->item_name}) is currently \"{$stock->incoming_replating_stock}\"."
+                                                    ],
+                                                ], 422)
+                                            );
                                     } else {
                                         $stock->decrement("incoming_replating_stock", $qtyOk);
                                         $stock->increment("process_replating_stock", $qtyOk);
@@ -280,7 +377,16 @@ class SubcontCreateTransaction
 
                                     // qty_ng
                                     if ($stock->incoming_replating_stock < $qtyNg) {
-                                        throw new Exception("Incoming replating stock cannot be below 0 / minus", 422);
+                                        // Throw response
+                                        throw new HttpResponseException(
+                                            response()->json([
+                                                'status' => false,
+                                                'message' => 'Insufficient stock.',
+                                                'error'  => [
+                                                    "The remaining unprocess replating stock (Item: {$stock->subItem->item_name}) is currently \"{$stock->incoming_replating_stock}\"."
+                                                    ],
+                                                ], 422)
+                                            );
                                     } else {
                                         $stock->decrement("incoming_replating_stock", $qtyNg);
                                         $stock->increment("ng_replating_stock", $qtyNg);
@@ -296,14 +402,32 @@ class SubcontCreateTransaction
                     case 'Outgoing':
                         // qty_ok
                         if ($stock->process_replating_stock < $qtyOk) {
-                            throw new Exception("Ready replating stock cannot be below 0 / minus", 422);
+                            // Throw response
+                            throw new HttpResponseException(
+                                response()->json([
+                                    'status' => false,
+                                    'message' => 'Insufficient stock.',
+                                    'error'  => [
+                                        "The remaining ready replating stock (Item: {$stock->subItem->item_name}) is currently \"{$stock->process_replating_stock}\"."
+                                        ],
+                                    ], 422)
+                                );
                         } else {
                             $stock->decrement("process_replating_stock", $qtyOk);
                         }
 
                         // qty_ng
                         if ($stock->ng_replating_stock < $qtyNg) {
-                            throw new Exception("NG replating stock cannot be below 0 / minus", 422);
+                            // Throw response
+                            throw new HttpResponseException(
+                                response()->json([
+                                    'status' => false,
+                                    'message' => 'Insufficient stock.',
+                                    'error'  => [
+                                        "The remaining NG replating stock (Item: {$stock->subItem->item_name}) is currently \"{$stock->ng_replating_stock}\"."
+                                        ],
+                                    ], 422)
+                                );
                         } else {
                             $stock->decrement("ng_replating_stock", $qtyNg);
                         }
@@ -348,9 +472,42 @@ class SubcontCreateTransaction
                 ]);
             }
         } catch (\Throwable $th) {
-            throw new  Exception("Error while checking stock items", 500);
+            // Generate random request id
+            $randomReqId = "error_".Carbon::now()->format("Ymd;H:i:s")."_".\Str::random(10);
+
+            // Log error to channel internal system error
+            Log::error("
+                Message => Generate Delivery Note error
+                Error => {$th->getMessage()},
+                File => {$th->getFile()},
+                Line => {$th->getLine()},
+                RequestId => $randomReqId,
+            ");
+
+            // Response
+            throw new HttpResponseException(
+                response()->json([
+                    "status" => false,
+                    "message" => "Internal error while checking stock item (Request_id:$randomReqId)",
+                    "error" => "Internal error while checking stock item (Request_id:$randomReqId)",
+                ],500)
+            );
 
         }
         return true;
+    }
+
+    private function checkItemStatus(String $bp_code, string $partNumber) {
+        // query get items status
+        $getStatus = SubcontItem::where("bp_code", $bp_code)
+        ->where('item_code', $partNumber)
+        ->value('status');
+
+        if ($getStatus == 1) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
