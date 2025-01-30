@@ -2,6 +2,7 @@
 
 namespace App\Service\Subcontractor;
 
+use App\Models\Subcontractor\SubcontItemErp;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontItem;
 
@@ -16,12 +17,18 @@ class SubcontCreateItem
      */
     public function createItemSubcont($data) {
         foreach ($data['data'] as $dataItem) {
+
+            // Get part_name and old_part_name
+            $getPartName = SubcontItemErp::select('description', 'old_item')
+            ->where('item', $dataItem['part_number'])
+            ->first();
+
             // Store logic
             $createItem = SubcontItem::create([
                 "bp_code" => $dataItem["bp_code"],
                 "item_code" => $dataItem["part_number"],
-                "item_name" => $dataItem["part_name"],
-                "item_old_name" => $dataItem["old_part_name"],
+                "item_name" => $getPartName["description"] ?? null,
+                "item_old_name" => $getPartName["old_item"] ?? null,
                 "status" => "1",
             ]);
 
