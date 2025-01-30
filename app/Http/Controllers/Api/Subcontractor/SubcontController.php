@@ -136,14 +136,14 @@ class SubcontController
      */
     public function createItem(SubcontItemRequest $request)
     {
-        try {
+        // try {
             // Validate request data and process
             $result = $this->subcontCreateItem->createItemSubcont($request->validated());
-        } catch (\Exception $ex) {
-            return response()->json([
-                'error' => $ex->getMessage()
-            ], 500);
-        }
+        // } catch (\Exception $ex) {
+        //     return response()->json([
+        //         'error' => $ex->getMessage()
+        //     ], 500);
+        // }
         return $result;
     }
 

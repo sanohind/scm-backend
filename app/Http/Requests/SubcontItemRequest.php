@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 
+use App\Models\PartnerLocal;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontItem;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,8 +29,8 @@ class SubcontItemRequest extends FormRequest
         return [
             "data.*.bp_code" => "required|string|max:50",
             "data.*.part_number"=> "required|string|max:50",
-            "data.*.part_name"=> "required|string|max:255",
-            "data.*.old_part_name"=> "required|string|max:255",
+            "data.*.part_name"=> "string|max:255",
+            "data.*.old_part_name"=> "string|max:255",
         ];
     }
 
@@ -62,6 +63,34 @@ class SubcontItemRequest extends FormRequest
     // Call the withValidation method (method injection from formRequest.php. it's core of framework method)
     protected function withValidator(){
         $this->duplicateCheck();
+        $this->checkBpCode();
+    }
+
+    // Check bp_code
+    private function  checkBpCode() {
+        $getRequest = $this->input('data');
+        $errorMessage = [];
+
+        foreach ($getRequest as $key => $item) {
+            $checkBpCode = PartnerLocal::where('bp_code', $item['bp_code'])
+            ->exists();
+
+            if ($checkBpCode == false) {
+                $errorMessage[] = [
+                    "item.$key" => "This Partner Code \"{$item['bp_code']}\" Doesn't Already Exist"
+                ];
+            }
+        }
+
+        if (!empty($errorMessage)) {
+            throw new HttpResponseException(
+                response()->json([
+                    'status' => false,
+                    'message' => 'Partner Code Doesn\'t Exists.',
+                    'errors'  => $errorMessage,
+                ], 40)
+            );
+        }
     }
 
     // Duplicate logic
@@ -76,7 +105,7 @@ class SubcontItemRequest extends FormRequest
 
             if ($checkItem == true) {
                 $errorMessage[] = [
-                    "tes.$key" => "This {$item['part_number']} Part Number Already Exist"
+                    "item.$key" => "This {$item['part_number']} Part Number Already Exist"
                 ];
             }
         }
