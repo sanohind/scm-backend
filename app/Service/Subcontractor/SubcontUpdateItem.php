@@ -9,11 +9,17 @@ class SubcontUpdateItem
 {
     public function updateItem($data){
         // Get record subcont item
-        $itemRecord = SubcontItem::findOrFail( $data['sub_item_id'], 'sub_item_id');
-
+        $itemRecord = SubcontItem::findOrFail( $data['sub_item_id']);
+        // dd($data);
         $result = DB::transaction(function () use($data,$itemRecord) {
+            $itemRecord->update([
+                "item_code" => $data['part_number'] ?? $itemRecord->item_code,
+                "item_name" => $data['part_name'] ?? $itemRecord->item_name,
+                "item_old_name" => $data['old_part_name'] ?? $itemRecord->item_old_name,
+                "status" => $data['status'] ?? $itemRecord->status,
+            ]);
+
             if (!empty($itemRecord)) {
-                $itemRecord->update($data);
             } else {
                 throw new \Exception("Item not found", 403);
             }

@@ -26,8 +26,9 @@ class SubcontItemUpdateRequest extends FormRequest
     {
         return [
             "sub_item_id" =>"required",
-            "item_code" =>"string|max:50",
-            "item_name" =>"string|max:255",
+            "part_number" =>"string|max:50",
+            "part_name" =>"string|max:255",
+            "old_part_name" =>"string|max:255",
             "status" =>"string|in:1,0",
         ];
     }
@@ -66,19 +67,19 @@ class SubcontItemUpdateRequest extends FormRequest
 
     // Check if item_code already exist
     // Call the withValidation method (method injection from formRequest.php. it's core of framework method)
-    protected function withValidator($validator){
-        $this->duplicateCheck($validator);
-    }
+    // protected function withValidator($validator){
+    //     $this->duplicateCheck($validator);
+    // }
 
-    // Duplicate logic
-    private function duplicateCheck($validator): void {
-        $data = SubcontItem::where('sub_item_id', $this->sub_item_id)
-        ->where('item_code', $this->item_code)
-        ->exists();
+    // // Duplicate logic
+    // private function duplicateCheck($validator): void {
+    //     $data = SubcontItem::where('sub_item_id', $this->sub_item_id)
+    //     ->where('item_code', $this->item_code)
+    //     ->exists();
 
-        $validator->after(function ($validator) use($data) {
-            if ($data) {
-                $validator->errors()->add('item_code', 'This Part Number already exist.');                }
-            });
-    }
+    //     $validator->after(function ($validator) use($data) {
+    //         if ($data) {
+    //             $validator->errors()->add('item_code', 'This Part Number already exist.');                }
+    //         });
+    // }
 }
