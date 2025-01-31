@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('subcont_transaction', function (Blueprint $table) {
+        Schema::connection('mysql')->table('subcont_transaction', function (Blueprint $table) {
             $table->integer('actual_qty_ok_receive')->nullable();
             $table->integer('actual_qty_ng_receive')->nullable();
             $table->string('response', 25)->nullable();
