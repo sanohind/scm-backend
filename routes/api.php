@@ -172,6 +172,8 @@ Route::middleware(['auth:sanctum','userRole:3'])->prefix('admin-warehouse')->gro
 Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->group(function () {
     // Route for get partner list
     Route::get('partner/list', [PartnerController::class, 'index']);
+    // Route for dashboard admin
+    Route::get('dashboard/performance-subcont/{bp_code}', [DashboardController::class,'adminSubcontGraphic']);
 
     /**
      * Route for Subcontractor
