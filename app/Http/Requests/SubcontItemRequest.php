@@ -88,7 +88,7 @@ class SubcontItemRequest extends FormRequest
                     'status' => false,
                     'message' => 'Partner Code Doesn\'t Exists.',
                     'errors'  => $errorMessage,
-                ], 40)
+                ], 422)
             );
         }
     }
