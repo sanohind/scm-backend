@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Subcontractor\SubcontTransaction;
+use Carbon\Carbon;
+use App\Models\User;
+use Carbon\CarbonPeriod;
 use GuzzleHttp\Psr7\Header;
+use App\Models\PartnerLocal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\DeliveryNote\DN_Header;
 use App\Models\DeliveryNote\DN_Detail;
+use App\Models\DeliveryNote\DN_Header;
 use App\Models\PurchaseOrder\PO_Header;
-use App\Http\Resources\DashboardViewResource;
-use App\Models\User;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use Laravel\Sanctum\PersonalAccessToken;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
+use App\Http\Resources\DashboardViewResource;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 class DashboardController
 {
@@ -455,5 +458,183 @@ class DashboardController
             'message' => 'Calendar Events Retrieved Successfully',
             'data'    => $events,
         ]);
+    }
+
+    // function to get subcont activity admin
+    public function adminSubcontGraphic(string $bp_code){
+        $checkBpCode = PartnerLocal::where('bp_code', $bp_code)->exists();
+
+        if ($checkBpCode == false) {
+            // Response
+            throw new HttpResponseException(
+                response()->json([
+                    "status" => false,
+                    "message" => "Bp_code not found.",
+                ],422)
+            );
+        }
+        /*
+         * note: balikin tiga response (transaksi: Incoming,Process,Outgoing) dengan urutan berdasarkan 11 hari sebelum hari ini.
+         * buat for untuk mengambil 11 hari kebelakang.
+         * test apakah array map dapat mengubah key indexnya.
+        */
+        // initialize variable
+
+        // this variable iterate to get 11 days back, reversed
+        $getDate = array_map(fn($i) => Carbon::now()->subDays($i)->format('Y-m-d'), range(11, 0));
+
+        // fresh
+        $getDataFreshIncoming= array_map(
+            fn($date) =>
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Incoming")
+                ->where('status', "Fresh")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ok')
+                +
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Incoming")
+                ->where('status', "Fresh")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ng'),
+                iterator_to_array($getDate)
+        );
+
+        $getDataFreshProcess= array_map(
+            fn($date) =>
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Process")
+                ->where('status', "Fresh")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ok')
+                +
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Process")
+                ->where('status', "Fresh")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ng'),
+                iterator_to_array($getDate)
+        );
+
+        $getDataFreshOutgoing= array_map(
+            fn($date) =>
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Outgoing")
+                ->where('status', "Fresh")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ok')
+                +
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Outgoing")
+                ->where('status', "Fresh")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ng'),
+                iterator_to_array($getDate)
+        );
+
+        // replating
+        $getDataReplatingIncoming= array_map(
+            fn($date) =>
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Incoming")
+                ->where('status', "Replating")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ok')
+                +
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Incoming")
+                ->where('status', "Replating")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ng'),
+                iterator_to_array($getDate)
+        );
+
+        $getDataReplatingProcess= array_map(
+            fn($date) =>
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Process")
+                ->where('status', "Replating")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ok')
+                +
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Process")
+                ->where('status', "Replating")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ng'),
+                iterator_to_array($getDate)
+        );
+
+        $getDataReplatingOutgoing= array_map(
+            fn($date) =>
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Outgoing")
+                ->where('status', "Replating")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ok')
+                +
+                SubcontTransaction::where('transaction_date', $date)
+                ->where('transaction_type', "Outgoing")
+                ->where('status', "Replating")
+                ->whereHas('subItem', function ($query) use($bp_code) {
+                    $query->where('bp_code', $bp_code);
+                })
+                ->sum('qty_ng'),
+                iterator_to_array($getDate)
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Subcont Activity Data Retrieved Successfully',
+            'data' => [
+                "fresh_incoming" => $getDataFreshIncoming,
+                "fresh_process" => $getDataFreshProcess,
+                "fresh_outgoing" => $getDataFreshOutgoing,
+                "replating_incoming" => $getDataReplatingIncoming,
+                "replating_process" => $getDataReplatingProcess,
+                "replating_outgoing" => $getDataReplatingOutgoing,
+            ]
+        ]);
+
+        // return response()->json([
+        //     "fresh" => [
+        //         "Incoming" => $getDataFreshIncoming,
+        //         "Process" => $getDataFreshProcess,
+        //         "Outgoing" => $getDataFreshOutgoing,
+        //     ],
+        //     "replating" =>[
+        //         "Incoming" =>$getDataReplatingIncoming,
+        //         "Process" => $getDataReplatingProcess,
+        //         "Outgoing" => $getDataReplatingOutgoing,
+        //     ]
+        // ]);
+        // return $tes1A;
+        // dd($tes);
+        // dd($months);
+        // dd($startDate);
+        // dd($endDate);
+        // $getSubcontData = SubcontTransaction::where("",);
     }
 }
