@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DN_Detail_Delete_ERP extends Model
 {
-    protected $connection = "sqlsrv";
+    protected $connection = 'sqlsrv';
 
-    protected $table = "dn_detail_deleted";
+    protected $table = 'dn_detail_deleted';
 }

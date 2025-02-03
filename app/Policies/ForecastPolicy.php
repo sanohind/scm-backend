@@ -2,9 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Forecast;
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Forecast\Forecast;
+use App\Models\User\User;
 
 class ForecastPolicy
 {

@@ -34,8 +34,8 @@ return new class extends Migration
             $table->integer('receipt_qty')->nullable();
             $table->string('dn_unit')->nullable();
             $table->integer('dn_snp')->nullable();
-            $table->string('reference',255)->nullable();
-            $table->string('status_desc',255)->nullable();
+            $table->string('reference', 255)->nullable();
+            $table->string('status_desc', 255)->nullable();
             $table->integer('qty_confirm')->nullable();
         });
     }

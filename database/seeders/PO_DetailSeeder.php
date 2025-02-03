@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\PO_Detail;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class PO_DetailSeeder extends Seeder
 {
@@ -16,8 +15,8 @@ class PO_DetailSeeder extends Seeder
     public function run(): void
     {
         //create dummy data
-        for ($i=0; $i <= 10; $i++) {
-            # code...
+        for ($i = 0; $i <= 10; $i++) {
+            // code...
             PO_Detail::create([
                 'po_detail_no' => rand(),
                 'po_no' => '07TgGeZhCN',

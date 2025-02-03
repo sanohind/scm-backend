@@ -2,22 +2,21 @@
 
 namespace App\Service\Subcontractor;
 
-
-use App\Models\User;
-use App\Models\Partner;
-use App\Models\PartnerLocal;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Subcontractor\SubcontItem;
-use App\Http\Resources\Subcontractor\SubcontListItemResource;
 use App\Http\Resources\Subcontractor\SubcontAllListItemResource;
+use App\Http\Resources\Subcontractor\SubcontListItemResource;
+use App\Models\Subcontractor\SubcontItem;
+use App\Models\User\PartnerLocal;
+use Illuminate\Support\Facades\Auth;
 
 class SubcontGetListItem
 {
     /**
      * Get list of item based of user session
+     *
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getList($param) {
+    public function getList($param)
+    {
         // Show all subcont item data based on authorized user
         $check = Auth::user()->role;
 
@@ -28,15 +27,15 @@ class SubcontGetListItem
         }
 
         // Check if user exist
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'status' => false,
-                'message' => 'User Not Found'
+                'message' => 'User Not Found',
             ], 404);
         }
 
         // Get record of subcont item data
-        $data = SubcontItem::select('item_code','item_name', 'item_old_name')
+        $data = SubcontItem::select('item_code', 'item_name', 'item_old_name')
             ->where('bp_code', $user)
             ->where('status', '1')
             ->orderBy('item_name', 'asc')
@@ -55,25 +54,25 @@ class SubcontGetListItem
             return response()->json([
                 'status' => true,
                 'message' => 'Display List Subcont Item Successfully',
-                'data' => SubcontListItemResource::collection($data)
+                'data' => SubcontListItemResource::collection($data),
             ], 200);
         }
     }
 
-
-    public function adminGetAllItemUser($bp_code) {
+    public function adminGetAllItemUser($bp_code)
+    {
         // Check if user exist
-        $user = PartnerLocal::findOrFail($bp_code,'bp_code');
+        $user = PartnerLocal::findOrFail($bp_code, 'bp_code');
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'status' => false,
-                'message' => 'User Not Found'
+                'message' => 'User Not Found',
             ], 404);
         }
 
         // Get all record of user subcont item data
-        $data = SubcontItem::select('sub_item_id','item_code','item_name', 'item_old_name','status')
+        $data = SubcontItem::select('sub_item_id', 'item_code', 'item_name', 'item_old_name', 'status')
             ->where('bp_code', $bp_code)
             ->orderBy('item_name', 'asc')
             ->get();
@@ -91,7 +90,7 @@ class SubcontGetListItem
             return response()->json([
                 'status' => true,
                 'message' => 'Display List Subcont Item Successfully',
-                'data' => SubcontAllListItemResource::collection($data)
+                'data' => SubcontAllListItemResource::collection($data),
             ], 200);
         }
     }

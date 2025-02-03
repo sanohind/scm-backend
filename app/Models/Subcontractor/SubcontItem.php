@@ -2,35 +2,32 @@
 
 namespace App\Models\Subcontractor;
 
-
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Subcontractor\SubcontStock;
-use App\Models\Subcontractor\SubcontTransaction;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SubcontItem extends Model
 {
     use HasFactory;
 
-    protected $connection = "mysql";
+    protected $connection = 'mysql';
 
-    protected $table = "subcont_item";
+    protected $table = 'subcont_item';
 
-    protected $primaryKey = "sub_item_id";
+    protected $primaryKey = 'sub_item_id';
 
-    protected $keyType = "integer";
+    protected $keyType = 'integer';
 
     public $timestamps = false;
 
     protected $fillable = [
-        "sub_item_id",
-        "bp_code",
-        "item_code",
-        "item_name",
-        "item_old_name",
-        "status",
+        'sub_item_id',
+        'bp_code',
+        'item_code',
+        'item_name',
+        'item_old_name',
+        'status',
     ];
 
     // SubcontTransaction relation
@@ -41,6 +38,6 @@ class SubcontItem extends Model
 
     public function subStock(): HasOne
     {
-        return $this->hasOne(SubcontStock::class, 'sub_item_id','sub_item_id');
+        return $this->hasOne(SubcontStock::class, 'sub_item_id', 'sub_item_id');
     }
 }

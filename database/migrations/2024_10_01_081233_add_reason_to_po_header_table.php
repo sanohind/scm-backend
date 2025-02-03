@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('mysql')->table('po_header', function (Blueprint $table) {
-            $table->string('reason',255)->nullable();
+            $table->string('reason', 255)->nullable();
         });
     }
 

@@ -4,7 +4,5 @@ namespace App\Service\Syncronization;
 
 class SyncSubcontItemData
 {
-    public function syncSubcontItem() {
-        
-    }
+    public function syncSubcontItem() {}
 }

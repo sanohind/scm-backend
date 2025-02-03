@@ -23,6 +23,6 @@ class TestJob implements ShouldQueue
     public function handle()
     {
         //
-        return "halo";
+        return 'halo';
     }
 }

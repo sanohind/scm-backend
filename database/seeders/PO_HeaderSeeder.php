@@ -3,12 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\PO_Header;
-use Illuminate\Support\Str;
-use Ramsey\Uuid\Type\Integer;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class PO_HeaderSeeder extends Seeder
 {
@@ -19,9 +16,9 @@ class PO_HeaderSeeder extends Seeder
     {
         //create dummy data
 
-        # code...
+        // code...
         PO_Header::create([
-            'po_no' => "07TgGeZhCN",
+            'po_no' => '07TgGeZhCN',
             'supplier_code' => 'APFEY',
             'supplier_name' => Str::random(10),
             'po_type_desc' => Str::random(10),
@@ -33,9 +30,9 @@ class PO_HeaderSeeder extends Seeder
             'references_2' => Str::random(10),
             'attn_name' => Str::random(10),
             'po_currency' => Str::random(10),
-            'pr_no' => (string)rand(2000, 2024),
+            'pr_no' => (string) rand(2000, 2024),
             'planned_receipt_date' => Carbon::now(),
-            'payment_term' => "45D",
+            'payment_term' => '45D',
             'po_origin' => Str::random(10),
             'po_revision_no' => rand(1, 4),
             'po_revision_date' => Carbon::now(),

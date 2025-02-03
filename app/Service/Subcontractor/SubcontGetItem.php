@@ -2,20 +2,21 @@
 
 namespace App\Service\Subcontractor;
 
-use FontLib\TrueType\Collection;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Subcontractor\SubcontItem;
 use App\Http\Resources\Subcontractor\SubcontItemResource;
+use App\Models\Subcontractor\SubcontItem;
+use Illuminate\Support\Facades\Auth;
 
 class SubcontGetItem
 {
     /**
      * Get subcont item data based of user session
+     *
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getAllItemSubcont($param){
+    public function getAllItemSubcont($param)
+    {
         // Show all subcont item data based on authorized user
-        $check =Auth::user()->role;
+        $check = Auth::user()->role;
 
         if ($check == 6 || $check == 8) {
             $user = Auth::user()->bp_code;
@@ -23,15 +24,15 @@ class SubcontGetItem
             $user = $param->bp_code;
         }
         // Check if user exist
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'status' => false,
-                'message' => 'User Not Found'
+                'message' => 'User Not Found',
             ], 404);
         }
 
         // Get record of subcont item data
-        $data = SubcontItem::with( 'subStock')
+        $data = SubcontItem::with('subStock')
             ->where('bp_code', $user)
             ->orderBy('item_code', 'asc')
             ->get();

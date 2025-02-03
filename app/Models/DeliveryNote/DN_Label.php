@@ -2,20 +2,19 @@
 
 namespace App\Models\DeliveryNote;
 
-use App\Models\DeliveryNote\DN_Detail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DN_Label extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = "dn_label_no";
+    protected $primaryKey = 'dn_label_no';
 
     public $timestamps = false;
 
-    protected $table = "dn_label";
+    protected $table = 'dn_label';
 
     protected $fillable = [
         'dn_label_no',

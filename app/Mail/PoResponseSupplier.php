@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -16,11 +15,11 @@ class PoResponseSupplier extends Mailable
     /**
      * Create a new message instance.
      */
+    protected $po_header;
 
-     protected $po_header;
-     protected $dn_header;
+    protected $dn_header;
 
-    public function __construct($po_header,$dn_header)
+    public function __construct($po_header, $dn_header)
     {
         //
         $this->po_header = $po_header;
@@ -47,7 +46,7 @@ class PoResponseSupplier extends Mailable
             with: [
                 'data1' => $this->po_header,
                 'data2' => $this->dn_header,
-                'url' => 'https://sms.sanohindonesia.co.id'
+                'url' => 'https://sms.sanohindonesia.co.id',
             ],
         );
     }

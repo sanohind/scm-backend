@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('mysql')->table('business_partner', function (Blueprint $table) {
-            $table->string('bp_role',25)->nullable();
-            $table->string('bp_role_desc',25)->nullable();
+            $table->string('bp_role', 25)->nullable();
+            $table->string('bp_role_desc', 25)->nullable();
         });
     }
 

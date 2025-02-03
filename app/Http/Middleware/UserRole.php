@@ -16,14 +16,14 @@ class UserRole
      */
     public function handle(Request $request, Closure $next, $isRole): Response
     {
-         // Explode the roles into an array if passed as a comma-separated string
+        // Explode the roles into an array if passed as a comma-separated string
         $roles = explode(',', $isRole);
 
         // authenticating user login
         $user = Auth::user();
 
         // check the authentication
-        if (!in_array($user->role, $roles)) {
+        if (! in_array($user->role, $roles)) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

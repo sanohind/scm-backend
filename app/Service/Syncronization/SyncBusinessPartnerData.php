@@ -7,11 +7,12 @@ use App\Models\PartnerLocal;
 
 class SyncBusinessPartnerData
 {
-    public function syncBussinessPartner(){
+    public function syncBussinessPartner()
+    {
         // get data
-        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'LIKE','%Supplier%')
-        ->where('contry', 'IDN')
-        ->get();
+        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'LIKE', '%Supplier%')
+            ->where('contry', 'IDN')
+            ->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {

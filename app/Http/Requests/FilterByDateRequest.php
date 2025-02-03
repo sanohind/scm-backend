@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
@@ -51,7 +50,7 @@ class FilterByDateRequest extends FormRequest
             response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422)
         );
     }

@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\DN_Header;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class DN_HeaderSeeder extends Seeder
 {
@@ -17,9 +16,9 @@ class DN_HeaderSeeder extends Seeder
     {
         //create dummy data
 
-        # code...
+        // code...
         DN_Header::create([
-            'no_dn' => "E8f8qjvZN6",
+            'no_dn' => 'E8f8qjvZN6',
             'po_no' => '07TgGeZhCN',
             'supplier_code' => Str::random(10),
             'supplier_name' => Str::random(10),

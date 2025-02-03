@@ -2,7 +2,7 @@
 
 namespace App\Service\User;
 
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserUpdateUser
@@ -13,17 +13,16 @@ class UserUpdateUser
     public function __construct(
         protected UserCreateAndAttachEmail $userCreateAndAttachEmail,
         protected UserDeleteAndDetachEmail $userDeleteAndDetachEmail,
-    )
-    {}
+    ) {}
 
-    public function updateUser($data, $user) {
+    public function updateUser($data, $user)
+    {
 
-        $isUserExist =  User::findOrFail($user);
+        $isUserExist = User::findOrFail($user);
 
-        if (!$isUserExist) {
-            throw new \Exception("User doesnt exist", 403);
+        if (! $isUserExist) {
+            throw new \Exception('User doesnt exist', 403);
         }
-
 
         // Prepare the update data
         $updateData = [
@@ -32,12 +31,12 @@ class UserUpdateUser
             'role' => $data['role'],
         ];
 
-        if (!empty($data['username'])) {
+        if (! empty($data['username'])) {
             $updateData['username'] = $data['username']; // Remove username if not provided
         }
 
         // Only hash and include the password if provided
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $updateData['password'] = Hash::make($data['password']);
         }
 
@@ -51,7 +50,6 @@ class UserUpdateUser
 
         // Detach email
         $this->userDeleteAndDetachEmail->deleteAndDetachEmail($data['bp_code'], $data['email']);
-
 
         return response()->json([
             'status' => true,

@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,10 +13,10 @@ class DnDetailAndOutstandingNotificationInternal extends Mailable
     use Queueable, SerializesModels;
 
     protected $dn_detail;
+
     /**
      * Create a new message instance.
      */
-
     public function __construct($dn_detail)
     {
         $this->dn_detail = $dn_detail;
@@ -40,8 +39,8 @@ class DnDetailAndOutstandingNotificationInternal extends Mailable
     {
         return new Content(
             markdown: 'mail.dn-detail-and-outstanding-notification-internal',
-            with:[
-                 'data' => $this->dn_detail,
+            with: [
+                'data' => $this->dn_detail,
                 'url' => 'https://sms.sanohindonesia.co.id',
             ]
         );

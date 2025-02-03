@@ -25,7 +25,8 @@ class SubcontReviewHeaderResource extends JsonResource
 
     // funciton concat date time
 
-    public function dateTime() {
+    public function dateTime()
+    {
         $date = Carbon::parse($this->transaction_date)->format('Y-m-d');
         $time = Carbon::parse($this->transaction_time)->format('h:i');
 

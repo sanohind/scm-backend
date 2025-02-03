@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DN_Header_Delete_ERP extends Model
 {
-    protected $connection = "sqlsrv";
+    protected $connection = 'sqlsrv';
 
-    protected $table = "dn_header_deleted";
+    protected $table = 'dn_header_deleted';
 }

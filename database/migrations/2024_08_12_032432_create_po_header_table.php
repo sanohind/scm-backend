@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::connection('mysql')->create('po_header', function (Blueprint $table) {
             $table->string('po_no', 25)->primary();
-            $table->string('supplier_code',255)->nullable();
+            $table->string('supplier_code', 255)->nullable();
             $table->foreign('supplier_code')->references('bp_code')->on('business_partner')->onDelete('cascade');
             $table->string('supplier_name', 255)->nullable();
             $table->string('po_type_desc', 25)->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('reference_2', 255)->nullable();
             $table->string('attn_name', 255)->nullable();
             $table->string('po_currency', 25)->nullable();
-            $table->string('pr_no',255)->nullable();
+            $table->string('pr_no', 255)->nullable();
             $table->date('planned_receipt_date')->nullable();
             $table->string('payment_term', 25)->nullable();
             $table->string('po_origin', 25)->nullable();

@@ -3,17 +3,17 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PoResponseInternal  extends Mailable
+class PoResponseInternal extends Mailable
 {
     use Queueable, SerializesModels;
 
     protected $po_header;
+
     /**
      * Create a new message instance.
      */
@@ -37,10 +37,10 @@ class PoResponseInternal  extends Mailable
     public function content(): Content
     {
         return new Content(markdown: 'mail.internal-content-email',
-         with: [
-            'data' => $this->po_header,
-            'url' => 'https://sms.sanohindonesia.co.id',
-        ]);
+            with: [
+                'data' => $this->po_header,
+                'url' => 'https://sms.sanohindonesia.co.id',
+            ]);
     }
 
     /**

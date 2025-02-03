@@ -2,11 +2,11 @@
 
 namespace App\Service\Syncronization;
 
-use Carbon\Carbon;
 use App\Models\PurchaseOrder\PO_Detail;
-use App\Models\PurchaseOrder\PO_Header;
 use App\Models\PurchaseOrder\PO_Detail_ERP;
+use App\Models\PurchaseOrder\PO_Header;
 use App\Models\PurchaseOrder\PO_Header_ERP;
+use Carbon\Carbon;
 
 class SyncPurchaseOrderData
 {
@@ -23,7 +23,6 @@ class SyncPurchaseOrderData
             ->where('po_type_desc', 'PO LOCAL')
             ->get();
 
-
         // copy all data from sql server
         $poNumber = [];
         foreach ($sqlsrvDataPoHeader as $data) {
@@ -33,7 +32,7 @@ class SyncPurchaseOrderData
                 // find the po_no
                 [
                     'po_no' => $data->po_no,
-                    'supplier_code' => $data->supplier_code
+                    'supplier_code' => $data->supplier_code,
                 ],
                 // update data
                 [
@@ -66,7 +65,7 @@ class SyncPurchaseOrderData
                 PO_Detail::updateOrCreate(
                     [
                         'po_no' => $data->po_no,
-                        'po_line' => $data->po_line
+                        'po_line' => $data->po_line,
                     ],
                     [
                         'po_sequence' => $data->po_sequence,
@@ -86,6 +85,7 @@ class SyncPurchaseOrderData
                     ]
                 );
             }
+
             return $poNumber;
         }
     }

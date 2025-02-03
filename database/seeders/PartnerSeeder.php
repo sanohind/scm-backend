@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Str;
-use App\Models\PartnerLocal;
+use App\Models\User\PartnerLocal;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
 
 class PartnerSeeder extends Seeder
 {
@@ -25,7 +24,7 @@ class PartnerSeeder extends Seeder
             'adr_line_3' => Str::random(10),
             'adr_line_4' => Str::random(10),
             'bp_phone' => Str::random(10),
-            'bp_fax' => Str::random(10)
+            'bp_fax' => Str::random(10),
         ]);
     }
 }

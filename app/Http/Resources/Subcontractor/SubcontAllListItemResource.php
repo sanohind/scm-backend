@@ -23,4 +23,3 @@ class SubcontAllListItemResource extends JsonResource
         ];
     }
 }
-

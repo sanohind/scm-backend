@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('subcont_item_erp', function (Blueprint $table) {
             $table->id('item_id');
-            $table->string('item',255);
-            $table->string('description',255);
-            $table->string('item_group',255);
-            $table->string('group_desc',255);
-            $table->string('material',255);
-            $table->string('old_item',255);
-            $table->string('unit',255);
-            $table->string('div_code',255);
-            $table->string('divisi',255);
-            $table->string('model',255);
+            $table->string('item', 255);
+            $table->string('description', 255);
+            $table->string('item_group', 255);
+            $table->string('group_desc', 255);
+            $table->string('material', 255);
+            $table->string('old_item', 255);
+            $table->string('unit', 255);
+            $table->string('div_code', 255);
+            $table->string('divisi', 255);
+            $table->string('model', 255);
             $table->timestamps();
         });
     }

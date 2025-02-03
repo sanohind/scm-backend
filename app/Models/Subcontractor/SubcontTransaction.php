@@ -2,41 +2,40 @@
 
 namespace App\Models\Subcontractor;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Subcontractor\SubcontItem;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SubcontTransaction extends Model
 {
     use HasFactory;
 
-    protected $connection = "mysql";
+    protected $connection = 'mysql';
 
-    protected $table = "subcont_transaction";
+    protected $table = 'subcont_transaction';
 
-    protected $primaryKey = "sub_transaction_id";
+    protected $primaryKey = 'sub_transaction_id';
 
-    protected $keyType = "integer";
+    protected $keyType = 'integer';
 
     public $timestamps = false;
 
     protected $fillable = [
-        "sub_transaction_id",
-        "delivery_note",
-        "sub_item_id",
-        "item_code",
-        "transaction_type",
-        "actual_transaction_date",
-        "actual_transaction_time",
-        "transaction_date",
-        "transaction_time",
-        "qty_ok",
-        "qty_ng",
-        "status",
-        "actual_qty_ok_receive",
-        "actual_qty_ng_receive",
-        "response",
+        'sub_transaction_id',
+        'delivery_note',
+        'sub_item_id',
+        'item_code',
+        'transaction_type',
+        'actual_transaction_date',
+        'actual_transaction_time',
+        'transaction_date',
+        'transaction_time',
+        'qty_ok',
+        'qty_ng',
+        'status',
+        'actual_qty_ok_receive',
+        'actual_qty_ng_receive',
+        'response',
     ];
 
     // SubcontItem relation

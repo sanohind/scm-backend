@@ -2,11 +2,12 @@
 
 namespace App\Service\User;
 
-use App\Models\Email;
+use App\Models\User\Email;
 
 class UserCreateAndAttachEmail
 {
-    public function createEmail(string $bp_code, string $email) {
+    public function createEmail(string $bp_code, string $email)
+    {
         try {
             // Update or create email
             $emailRecord = Email::updateOrCreate(['email' => $email]);
@@ -15,7 +16,7 @@ class UserCreateAndAttachEmail
             $isAttached = $emailRecord->partner()->where('bp_code', $bp_code)->exists();
 
             // Attach only if the relationship does not already exist
-            if (!$isAttached) {
+            if (! $isAttached) {
                 $emailRecord->partner()->attach($bp_code);
             }
 

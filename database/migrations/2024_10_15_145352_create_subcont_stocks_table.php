@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('sub_stock_id', true)->primary();
             $table->integer('sub_item_id');
             $table->foreign('sub_item_id')->references('sub_item_id')->on('subcont_item')->onDelete('cascade');
-            $table->string('item_code',length: 50);
+            $table->string('item_code', length: 50);
             $table->integer('incoming_fresh_stock')->default(0);
             $table->integer('incoming_replating_stock')->default(0);
             $table->integer('process_fresh_stock')->default(0);

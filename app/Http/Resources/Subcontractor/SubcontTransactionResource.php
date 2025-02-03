@@ -18,7 +18,7 @@ class SubcontTransactionResource extends JsonResource
             'sub_transaction_id' => $this->sub_transaction_id,
             'transaction_date' => $this->actual_transaction_date ?? $this->transaction_date,
             'transaction_time' => $this->actual_transaction_time ?? $this->transaction_time,
-            'transaction_type'=> $this->transaction_type,
+            'transaction_type' => $this->transaction_type,
             'delivery_note' => $this->delivery_note,
             'part_number' => $this->item_code,
             'part_name' => $this->subItem->item_name,
@@ -35,32 +35,35 @@ class SubcontTransactionResource extends JsonResource
     }
 
     //
-    public function qtyOkCheck(){
+    public function qtyOkCheck()
+    {
         $qtyOkSystem = $this->qty_ok;
 
         $responseSystem = $this->response;
 
-        if (strpos($responseSystem, "System Review") !== false) {
+        if (strpos($responseSystem, 'System Review') !== false) {
             return -$qtyOkSystem;
-        } else{
+        } else {
             return $qtyOkSystem;
         }
     }
 
     //
-    public function qtyNgCheck(){
+    public function qtyNgCheck()
+    {
         $qtyNgSystem = $this->qty_ng;
 
         $responseSystem = $this->response;
 
-        if (strpos($responseSystem, "System Review") !== false) {
+        if (strpos($responseSystem, 'System Review') !== false) {
             return -$qtyNgSystem;
-        } else{
+        } else {
             return $qtyNgSystem;
         }
     }
 
-    public function qtyTotal(){
+    public function qtyTotal()
+    {
         // Input by user
         $qtyOk = $this->qty_ok;
         $qtyNg = $this->qty_ng;
@@ -70,7 +73,7 @@ class SubcontTransactionResource extends JsonResource
         $qtyOkSystem = 0;
         $qtyNgSystem = 0;
 
-        if (strpos($responseSystem, "System Review") !== false) {
+        if (strpos($responseSystem, 'System Review') !== false) {
             $qtyOkSystem = -$qtyOk;
             $qtyNgSystem = -$qtyNg;
 
@@ -84,23 +87,24 @@ class SubcontTransactionResource extends JsonResource
         }
     }
 
-    public function transactionResponse(){
+    public function transactionResponse()
+    {
         $transType = $this->transaction_type;
         $response = $this->response;
 
-        if (($transType == "Incoming" && $response == null) || ($transType == "Process" && $response == null)) {
-            return "-";
+        if (($transType == 'Incoming' && $response == null) || ($transType == 'Process' && $response == null)) {
+            return '-';
         }
 
-        if ($transType == "Outgoing" && $response == null) {
-            return "Under Review";
+        if ($transType == 'Outgoing' && $response == null) {
+            return 'Under Review';
         }
 
-        if ($transType == "Outgoing" && $response != null) {
-            return "Receipt";
+        if ($transType == 'Outgoing' && $response != null) {
+            return 'Receipt';
         }
 
-        if ($transType == "Process" && $response != null) {
+        if ($transType == 'Process' && $response != null) {
             return $response;
         }
     }

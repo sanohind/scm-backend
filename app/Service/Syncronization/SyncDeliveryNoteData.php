@@ -3,13 +3,14 @@
 namespace App\Service\Syncronization;
 
 use App\Models\DeliveryNote\DN_Detail;
-use App\Models\DeliveryNote\DN_Header;
 use App\Models\DeliveryNote\DN_Detail_ERP;
+use App\Models\DeliveryNote\DN_Header;
 use App\Models\DeliveryNote\DN_Header_ERP;
 
 class SyncDeliveryNoteData
 {
-    public function syncDeliveryNote(array $poNumber) {
+    public function syncDeliveryNote(array $poNumber)
+    {
         $dnNumber = [];
         foreach ($poNumber as $data) {
             $sqlsrvDataDnHeader = DN_Header_ERP::where('po_no', $data)->get();
@@ -20,7 +21,7 @@ class SyncDeliveryNoteData
                 DN_Header::updateOrCreate(
                     [
                         'no_dn' => $data->no_dn,
-                        'po_no' => $data->po_no
+                        'po_no' => $data->po_no,
                     ],
                     [
                         'supplier_code' => $data->supplier_code,
@@ -45,7 +46,7 @@ class SyncDeliveryNoteData
                 DN_Detail::updateOrCreate(
                     [
                         'no_dn' => $data->no_dn,
-                        'dn_line' => $data->dn_line
+                        'dn_line' => $data->dn_line,
                     ],
                     [
                         'order_origin' => $data->order_origin,

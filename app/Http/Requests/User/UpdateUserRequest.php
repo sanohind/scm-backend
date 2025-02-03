@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\User;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -29,7 +29,7 @@ class UpdateUserRequest extends FormRequest
             'role' => 'required|string|max:25',
             'password' => 'nullable|string|min:8',
             'username' => 'nullable|string|unique:user,username|max:25', // username must unique
-            'email.*' => 'email|max:255'
+            'email.*' => 'email|max:255',
         ];
     }
 
@@ -67,7 +67,7 @@ class UpdateUserRequest extends FormRequest
             response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422)
         );
     }

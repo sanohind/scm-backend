@@ -2,8 +2,8 @@
 
 namespace App\Service\Subcontractor;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontTransaction;
+use Illuminate\Support\Facades\Auth;
 
 class SubcontUpdateTransaction
 {
@@ -17,7 +17,7 @@ class SubcontUpdateTransaction
 
         if ($check == 4 || $check == 9) {
         } else {
-            throw new \Exception("User Forbidden", 403);
+            throw new \Exception('User Forbidden', 403);
         }
 
         try {
@@ -25,9 +25,9 @@ class SubcontUpdateTransaction
             $findRecord = SubcontTransaction::findOrFail($subTransactionId);
 
             $findRecord->update([
-                "actual_qty_ok_receive" => $actualQtyOk,
-                "actual_qty_ng_receive" => $actualQtyNg,
-                "response" => "Receipt",
+                'actual_qty_ok_receive' => $actualQtyOk,
+                'actual_qty_ng_receive' => $actualQtyNg,
+                'response' => 'Receipt',
             ]);
 
             return response()->json([

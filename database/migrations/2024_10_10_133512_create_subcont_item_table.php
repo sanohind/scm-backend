@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::connection('mysql')->create('subcont_item', function (Blueprint $table) {
             $table->integer('sub_item_id', true)->primary();
-            $table->string('bp_code',25)->nullable();
+            $table->string('bp_code', 25)->nullable();
             $table->foreign('bp_code')->references('bp_code')->on('business_partner')->onDelete('cascade');
             $table->string('item_code', 50)->nullable();
-            $table->string('item_name',255)->nullable();
+            $table->string('item_name', 255)->nullable();
         });
     }
 

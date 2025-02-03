@@ -3,8 +3,7 @@
 namespace App\Policies;
 
 use App\Models\SubcontStock;
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\User\User;
 
 class SubcontStockPolicy
 {

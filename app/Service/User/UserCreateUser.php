@@ -2,8 +2,7 @@
 
 namespace App\Service\User;
 
-use App\Models\Email;
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,12 +11,14 @@ class UserCreateUser
     public function __construct(
         protected UserCreateAndAttachEmail $userCreateAndAttachEmail,
     ) {}
-    public function createUser($data) {
+
+    public function createUser($data)
+    {
         // business process
-        $result = DB::transaction(function () use($data) {
+        $result = DB::transaction(function () use ($data) {
             $email = $data['email'];
             $getFirstEmail = $email[0];
-            
+
             // Create user
             $createUser = $this->createUserProcess(
                 $data['bp_code'],
@@ -49,7 +50,8 @@ class UserCreateUser
         return $result;
     }
 
-    private function createUserProcess(string $bp_code, string $name, string $role, int $status, string $username, string $password, string $email) {
+    private function createUserProcess(string $bp_code, string $name, string $role, int $status, string $username, string $password, string $email)
+    {
         try {
             // logic
             User::create([
@@ -59,7 +61,7 @@ class UserCreateUser
                 'status' => $status,
                 'username' => $username,
                 'password' => Hash::make($password),
-                'email' => $email
+                'email' => $email,
             ]);
 
             // for callback

@@ -2,16 +2,17 @@
 
 namespace App\Service\User;
 
-use App\Models\Email;
-use App\Models\PartnerLocal;
+use App\Models\User\Email;
+use App\Models\User\PartnerLocal;
 
 class UserDeleteAndDetachEmail
 {
     public function __construct(
         protected UserGetEmail $userGetEmail,
-    ){}
+    ) {}
 
-    public function deleteAndDetachEmail(string $bp_code, array $email) {
+    public function deleteAndDetachEmail(string $bp_code, array $email)
+    {
         try {
             // get partner
             $partner = PartnerLocal::find($bp_code);
@@ -22,9 +23,9 @@ class UserDeleteAndDetachEmail
             // check the  array email diffrence
             // dd($currentEmail);
             // dd($email);
-            $diffEmail = array_diff($currentEmail,$email);
+            $diffEmail = array_diff($currentEmail, $email);
 
-            if (!empty($diffEmail)) {
+            if (! empty($diffEmail)) {
                 foreach ($diffEmail as $email) {
                     // Get email id
                     $email_id = Email::where('email', $email)->value('email_id');

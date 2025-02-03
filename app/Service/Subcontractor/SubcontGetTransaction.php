@@ -2,18 +2,18 @@
 
 namespace App\Service\Subcontractor;
 
-use FontLib\TrueType\Collection;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Subcontractor\SubcontTransaction;
 use App\Http\Resources\Subcontractor\SubcontTransactionResource;
+use App\Models\Subcontractor\SubcontTransaction;
+use Illuminate\Support\Facades\Auth;
 
 class SubcontGetTransaction
 {
     /**
      * Get all log user transaction
+     *
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getAllTransactionSubcont($start_date,$end_date,$bp_code)
+    public function getAllTransactionSubcont($start_date, $end_date, $bp_code)
     {
         // Show all subcont transaction data based on authorized user
         $check = Auth::user()->role;
@@ -25,10 +25,10 @@ class SubcontGetTransaction
         }
 
         // Check if user exist
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'status' => false,
-                'message' => 'User Not Found'
+                'message' => 'User Not Found',
             ], 404);
         }
 
@@ -36,7 +36,7 @@ class SubcontGetTransaction
         $data = SubcontTransaction::whereHas('subItem', function ($q) use ($user) {
             $q->where('bp_code', $user);
         })
-        ->whereBetween('transaction_date', [$start_date, $end_date])
+            ->whereBetween('transaction_date', [$start_date, $end_date])
             ->orderBy('transaction_date', 'desc')
             ->orderBy('transaction_time', 'desc')
             ->get();

@@ -9,7 +9,7 @@ class DN_Detail_ERP extends Model
 {
     use HasFactory;
 
-    protected $connection = "sqlsrv";
+    protected $connection = 'sqlsrv';
 
-    protected $table = "dn_detail";
+    protected $table = 'dn_detail';
 }

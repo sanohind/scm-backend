@@ -2,27 +2,25 @@
 
 namespace App\Models\DeliveryNote;
 
-use App\Models\PartnerLocal;
-use App\Models\DeliveryNote\DN_Detail;
-use App\Models\PurchaseOrder\PO_Header;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use App\Models\DeliveryNote\DN_Detail_Outstanding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\PurchaseOrder\PoHeader;
+use App\Models\User\PartnerLocal;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
 class DN_Header extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $primaryKey = "no_dn";
+    protected $primaryKey = 'no_dn';
 
     protected $keyType = 'string';
 
     public $timestamps = false;
 
-    protected $table = "dn_header";
+    protected $table = 'dn_header';
 
     protected $fillable = [
         'no_dn',
@@ -46,9 +44,10 @@ class DN_Header extends Model
     {
         return $this->belongsTo(PartnerLocal::class, 'supplier_code', 'bp_code');
     }
+
     public function poHeader(): BelongsTo
     {
-        return $this->belongsTo(PO_Header::class, 'po_no', 'po_no');
+        return $this->belongsTo(PoHeader::class, 'po_no', 'po_no');
     }
 
     // Relationship dndetail

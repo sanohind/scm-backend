@@ -6,26 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubcontItemErp extends Model
 {
-    protected $connection = "mysql";
+    protected $connection = 'mysql';
 
-    protected $table = "subcont_item_erp";
+    protected $table = 'subcont_item_erp';
 
-    protected $primaryKey = "item_id";
+    protected $primaryKey = 'item_id';
 
-    protected $keyType = "integer";
+    protected $keyType = 'integer';
 
     public $timestamps = true;
 
     protected $fillable = [
-        "item",
-        "description",
-        "item_group",
-        "group_desc",
-        "material",
-        "old_item",
-        "unit",
-        "div_code",
-        "divisi",
-        "model",
+        'item',
+        'description',
+        'item_group',
+        'group_desc',
+        'material',
+        'old_item',
+        'unit',
+        'div_code',
+        'divisi',
+        'model',
     ];
 }

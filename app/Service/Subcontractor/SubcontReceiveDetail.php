@@ -2,29 +2,30 @@
 
 namespace App\Service\Subcontractor;
 
+use App\Http\Resources\Subcontractor\SubcontReviewDetailResource;
+use App\Models\Subcontractor\SubcontTransaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Subcontractor\SubcontTransaction;
-use App\Http\Resources\Subcontractor\SubcontReviewDetailResource;
 
 class SubcontReceiveDetail
 {
-    public function getDetail($no_dn){
+    public function getDetail($no_dn)
+    {
         // Check role
         $check = Auth::user()->role;
 
         if ($check == 4 || $check == 9) {
             $deliveryNote = $no_dn;
         } else {
-            throw new \Exception("User Unauthorized", 403);
+            throw new \Exception('User Unauthorized', 403);
         }
 
         try {
             // Query get detail
             $getDetail = SubcontTransaction::with('subItem')
-            ->where('delivery_note', $deliveryNote)
-            ->whereIn('transaction_type', ['Outgoing', 'outgoing'])
-            ->get();
+                ->where('delivery_note', $deliveryNote)
+                ->whereIn('transaction_type', ['Outgoing', 'outgoing'])
+                ->get();
 
             // query get and format date & time
             $firstRecord = $getDetail->first();
@@ -34,8 +35,8 @@ class SubcontReceiveDetail
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => true,
-                'message' => "Delivery Note Not Found"
-            ],200);
+                'message' => 'Delivery Note Not Found',
+            ], 200);
         }
 
         // return response

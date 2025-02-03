@@ -2,18 +2,18 @@
 
 namespace App\Service\Subcontractor;
 
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use App\Models\Subcontractor\SubcontStock;
+use Carbon\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class SubcontCreateStock
 {
     /**
      * Check the item stock record
-     * @param mixed $item_code
-     * @param mixed $subItemId
-     * @return bool
+     *
+     * @param  mixed  $item_code
+     * @param  mixed  $subItemId
      */
     public function createAndCheckStock($item_code, $subItemId): bool
     {
@@ -23,7 +23,7 @@ class SubcontCreateStock
                 ->where('item_code', $item_code)
                 ->exists();
 
-            if (!$checkAvaibility) {
+            if (! $checkAvaibility) {
                 SubcontStock::create([
                     'sub_item_id' => $subItemId,
                     'item_code' => $item_code,
@@ -37,7 +37,7 @@ class SubcontCreateStock
             }
         } catch (\Throwable $th) {
             // Generate random request id
-            $randomReqId = "error_".Carbon::now()->format("Ymd;H:i:s")."_".\Str::random(10);
+            $randomReqId = 'error_'.Carbon::now()->format('Ymd;H:i:s').'_'.\Str::random(10);
 
             // Log error to channel internal system error
             Log::error("
@@ -51,13 +51,14 @@ class SubcontCreateStock
             // Response
             throw new HttpResponseException(
                 response()->json([
-                    "status" => false,
-                    "message" => "Internal error while checking stock item (Request_id:$randomReqId)",
-                    "error" => "Internal error while checking stock item (Request_id:$randomReqId)",
-                ],500)
+                    'status' => false,
+                    'message' => "Internal error while checking stock item (Request_id:$randomReqId)",
+                    'error' => "Internal error while checking stock item (Request_id:$randomReqId)",
+                ], 500)
             );
 
         }
+
         return true;
     }
 }
