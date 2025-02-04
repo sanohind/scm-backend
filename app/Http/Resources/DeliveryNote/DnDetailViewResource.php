@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\DeliveryNote;
 
-use App\Models\DeliveryNote\DN_Detail_Outstanding;
+use App\Models\DeliveryNote\DnDetailOutstanding;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -64,7 +64,7 @@ class DnDetailViewResource extends JsonResource
     private function sumAllQty()
     {
         $qtyConfirm_1 = $this->qty_confirm;
-        $qtyConfirm_outstanding = DN_Detail_Outstanding::where('no_dn', $this->no_dn)
+        $qtyConfirm_outstanding = DnDetailOutstanding::where('no_dn', $this->no_dn)
             ->where('dn_detail_no', $this->dn_detail_no)
             ->sum('qty_outstanding');
 

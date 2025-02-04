@@ -5,7 +5,7 @@ namespace App\Models\DeliveryNote;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DN_Detail_ERP extends Model
+class DnDetailErp extends Model
 {
     use HasFactory;
 

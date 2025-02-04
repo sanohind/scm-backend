@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\DeliveryNote\DN_Header;
+use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
 use App\Models\Subcontractor\SubcontTransaction;
 use App\Models\User\PartnerLocal;
@@ -36,12 +36,12 @@ class DashboardController
             ->count();
 
         // get data dn
-        $data_dn_open = DN_Header::where('supplier_code', $sp_code)
+        $data_dn_open = DnHeader::where('supplier_code', $sp_code)
             ->whereIn('status_desc', ['Open', 'open'])
             ->where('confirm_update_at', '=', null)
             ->count();
 
-        $data_dn_confirmed = DN_Header::where('supplier_code', $sp_code)
+        $data_dn_confirmed = DnHeader::where('supplier_code', $sp_code)
             ->whereIn('status_desc', ['Open', 'open'])
             ->where('confirm_update_at', '!=', null)
             ->count();
@@ -104,7 +104,7 @@ class DashboardController
         // Include DN data for roles 5, 6, 7, and 8
         if (in_array($role_id, [5, 6, 7, 8])) {
             // DNs with actual_receipt_date equal to plan_delivery_date (On-Time)
-            $dn_data_confirmed = DN_Header::where('supplier_code', $sp_code)
+            $dn_data_confirmed = DnHeader::where('supplier_code', $sp_code)
                 ->whereBetween('dn_created_date', [$startDate, $endDate])
                 ->whereHas('dnDetail', function ($query) {
                     $query->whereColumn('actual_receipt_date', '=', 'plan_delivery_date');
@@ -112,7 +112,7 @@ class DashboardController
                 ->get();
 
             // DNs with actual_receipt_date greater than plan_delivery_date (Overtime)
-            $dn_data_overtime = DN_Header::where('supplier_code', $sp_code)
+            $dn_data_overtime = DnHeader::where('supplier_code', $sp_code)
                 ->whereBetween('dn_created_date', [$startDate, $endDate])
                 ->whereHas('dnDetail', function ($query) {
                     $query->whereColumn('actual_receipt_date', '>', 'plan_delivery_date');
@@ -120,7 +120,7 @@ class DashboardController
                 ->get();
 
             // DNs with actual_receipt_date less than plan_delivery_date (Advance)
-            $dn_data_advance = DN_Header::where('supplier_code', $sp_code)
+            $dn_data_advance = DnHeader::where('supplier_code', $sp_code)
                 ->whereBetween('dn_created_date', [$startDate, $endDate])
                 ->whereHas('dnDetail', function ($query) {
                     $query->whereColumn('actual_receipt_date', '<', 'plan_delivery_date');
@@ -227,11 +227,11 @@ class DashboardController
 
         // Include DN statistics for roles 5, 6, 7, and 8
         if (in_array($role_id, [5, 6, 7, 8])) {
-            $data['dn_total'] = DN_Header::where('supplier_code', $user->bp_code)->count();
-            $data['dn_confirmed'] = DN_Header::where('supplier_code', $user->bp_code)
+            $data['dn_total'] = DnHeader::where('supplier_code', $user->bp_code)->count();
+            $data['dn_confirmed'] = DnHeader::where('supplier_code', $user->bp_code)
                 ->where('status_desc', 'Confirmed')
                 ->count();
-            $data['dn_open'] = DN_Header::where('supplier_code', $user->bp_code)
+            $data['dn_open'] = DnHeader::where('supplier_code', $user->bp_code)
                 ->where('status_desc', 'Open')
                 ->count();
         }
@@ -383,7 +383,7 @@ class DashboardController
             $events = $events->merge($po_events);
 
             // Superuser: Include DN events where dn_created_date is within 30 days before today
-            $dn_events = DN_Header::whereBetween('dn_created_date', [$startDate, $endDate])
+            $dn_events = DnHeader::whereBetween('dn_created_date', [$startDate, $endDate])
                 ->get([
                     'no_dn',
                     'dn_created_date',
@@ -426,7 +426,7 @@ class DashboardController
             // For roles 5, 6, 7, and 8, include DN events
             if (in_array($role_id, [5, 6, 7, 8])) {
                 // Get DN data filtered by user's bp_code
-                $dn_events = DN_Header::where('supplier_code', $sp_code)
+                $dn_events = DnHeader::where('supplier_code', $sp_code)
                     ->get([
                         'no_dn',
                         'dn_created_date',

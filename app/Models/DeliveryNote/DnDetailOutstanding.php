@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DN_Detail_Outstanding extends Model
+class DnDetailOutstanding extends Model
 {
     /** @use HasFactory<\Database\Factories\DNDetailOutstandingFactory> */
     use HasFactory;
@@ -30,12 +30,12 @@ class DN_Detail_Outstanding extends Model
     // Relationship to dnDetail
     public function dnDetail(): BelongsTo
     {
-        return $this->belongsTo(DN_Detail::class, 'dn_detail_no', 'dn_detail_no');
+        return $this->belongsTo(DnDetail::class, 'dn_detail_no', 'dn_detail_no');
     }
 
     // Relationship to dnHeader
     public function dnHeader(): BelongsTo
     {
-        return $this->belongsTo(DN_Header::class, 'no_dn', 'no_dn');
+        return $this->belongsTo(DnHeader::class, 'no_dn', 'no_dn');
     }
 }

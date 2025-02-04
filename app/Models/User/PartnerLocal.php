@@ -2,7 +2,7 @@
 
 namespace App\Models\User;
 
-use App\Models\DeliveryNote\DN_Header;
+use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -46,7 +46,7 @@ class PartnerLocal extends Model
 
     public function dnHeaders(): HasMany
     {
-        return $this->hasMany(DN_Header::class, 'supplier_code', 'bp_code');
+        return $this->hasMany(DnHeader::class, 'supplier_code', 'bp_code');
     }
 
     /**

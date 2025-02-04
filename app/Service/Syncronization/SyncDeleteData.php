@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Service\SyncData;
+namespace App\Service\Syncronization;
 
-use App\Models\DeliveryNote\DN_Detail;
-use App\Models\DeliveryNote\DN_Detail_Delete_ERP;
-use App\Models\DeliveryNote\DN_Header;
-use App\Models\DeliveryNote\DN_Header_Delete_ERP;
-use App\Models\PurchaseOrder\PO_Detail;
-use App\Models\PurchaseOrder\PO_Detail_Delete_ERP;
-use App\Models\PurchaseOrder\PO_Header;
-use App\Models\PurchaseOrder\PO_Header_Delete_ERP;
+use App\Models\DeliveryNote\DnDetail;
+use App\Models\DeliveryNote\DnDetailDeleteErp;
+use App\Models\DeliveryNote\DnHeader;
+use App\Models\DeliveryNote\DnHeaderDeleteErp;
+use App\Models\PurchaseOrder\PoDetail;
+use App\Models\PurchaseOrder\PoDetailDeleteErp;
+use App\Models\PurchaseOrder\PoHeader;
+use App\Models\PurchaseOrder\PoHeaderDeleteErp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -20,12 +20,12 @@ class SyncDeleteData
         // Purchase Order Header
         try {
             // Query get deleted po_header from ERP
-            $getPoHeader = PO_Header_Delete_ERP::select('po_no', 'supplier_code')->get();
+            $getPoHeader = PoHeaderDeleteErp::select('po_no', 'supplier_code')->get();
 
             // Conditioning and query delete po_header
             if (! empty($getPoHeader)) {
                 foreach ($getPoHeader as $data) {
-                    PO_Header::where('po_no', $data['po_no'])
+                    PoHeader::where('po_no', $data['po_no'])
                         ->where('supplier_code', $data['supplier_code'])
                         ->delete();
                 }
@@ -38,12 +38,12 @@ class SyncDeleteData
         // Purchase Order Detail
         try {
             // Query get deleted po_detail from ERP
-            $getPoDetail = PO_Detail_Delete_ERP::select('po_no', 'po_line', 'po_sequence')->get();
+            $getPoDetail = PoDetailDeleteErp::select('po_no', 'po_line', 'po_sequence')->get();
 
             // Conditioning and query delete po_detail
             if (! empty($getPoDetail)) {
                 foreach ($getPoDetail as $data) {
-                    PO_Detail::where('po_no', $data['po_no'])
+                    PoDetail::where('po_no', $data['po_no'])
                         ->where('po_line', $data['po_line'])
                         ->where('po_sequence', $data['po_sequence'])
                         ->delete();
@@ -62,7 +62,7 @@ class SyncDeleteData
         // Delivery Note Header
         try {
             // Query get deleted dn_header from ERP
-            $getDnHeader = DN_Header_Delete_ERP::select('dn_no', 'plan_delivery_date', 'supplier_code')->get();
+            $getDnHeader = DnHeaderDeleteErp::select('dn_no', 'plan_delivery_date', 'supplier_code')->get();
 
             // Conditioning and query delete dn_header
             if (! empty($getDnHeader)) {
@@ -70,7 +70,7 @@ class SyncDeleteData
                     // format date & time
                     $formatPlanDeliveryDate = Carbon::parse($data['plan_delivery_date'])->format('Y-m-d');
                     $formatPlanDeliverytime = Carbon::parse($data['plan_delivery_date'])->format('H:i:s');
-                    DN_Header::where('no_dn', $data['dn_no'])
+                    DnHeader::where('no_dn', $data['dn_no'])
                         ->where('plan_delivery_date', $formatPlanDeliveryDate)
                         ->where('plan_delivery_time', $formatPlanDeliverytime)
                         ->where('supplier_code', $data['supplier_code'])
@@ -84,12 +84,12 @@ class SyncDeleteData
         // Delivery Note Detail
         try {
             // Query get deleted dn_detail from ERP
-            $getDnDetail = DN_Detail_Delete_ERP::select('dn_no', 'dn_line', 'order_origin', 'no_order', 'order_set', 'order_line', 'order_seq')->get();
+            $getDnDetail = DnDetailDeleteErp::select('dn_no', 'dn_line', 'order_origin', 'no_order', 'order_set', 'order_line', 'order_seq')->get();
 
             // Conditioning and query delete dn_detail
             if (! empty($getDnDetail)) {
                 foreach ($getDnDetail as $data) {
-                    DN_Detail::where('no_dn', $data['dn_no'])
+                    DnDetail::where('no_dn', $data['dn_no'])
                         ->where('dn_line', $data['dn_line'])
                         ->where('order_origin', $data['order_origin'])
                         ->where('no_order', $data['no_order'])

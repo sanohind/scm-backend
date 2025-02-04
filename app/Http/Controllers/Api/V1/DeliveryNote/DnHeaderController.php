@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\DeliveryNote;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DeliveryNote\DnHeaderResource;
-use App\Models\DeliveryNote\DN_Header;
+use App\Models\DeliveryNote\DnHeader;
 use Illuminate\Support\Facades\Auth;
 
 class DnHeaderController extends Controller
@@ -16,7 +16,7 @@ class DnHeaderController extends Controller
         // dd($sp_code);
 
         // Eager load the 'podetail' relationship
-        $data_po = DN_Header::with('poHeader', 'dnDetail')
+        $data_po = DnHeader::with('poHeader', 'dnDetail')
             ->orderBy('plan_delivery_date', 'desc')
             ->where('supplier_code', $sp_code)
             ->whereNotIn(
@@ -39,7 +39,7 @@ class DnHeaderController extends Controller
     {
         //get data api to view
         // Using eager loading request data to database for efficiency data
-        $data_dnheader = DN_Header::with('poHeader', 'dnDetail')
+        $data_dnheader = DnHeader::with('poHeader', 'dnDetail')
             ->whereNotIn('status_desc', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed'])
             ->orderBy('plan_delivery_date', 'desc')
             ->where('supplier_code', $sp_code)
@@ -59,7 +59,7 @@ class DnHeaderController extends Controller
         //get data api to view
         // Using eager loading request data to database for efficiency data
         //in case calling data relation
-        $data_dnheader = DN_Header::with('poHeader')->get();
+        $data_dnheader = DnHeader::with('poHeader')->get();
 
         return response()->json([
             'success' => true,

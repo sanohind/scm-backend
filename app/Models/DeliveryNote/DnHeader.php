@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
-class DN_Header extends Model
+class DnHeader extends Model
 {
     use HasFactory, Notifiable;
 
@@ -53,12 +53,12 @@ class DN_Header extends Model
     // Relationship dndetail
     public function dnDetail(): HasMany
     {
-        return $this->hasMany(DN_Detail::class, 'no_dn', 'no_dn');
+        return $this->hasMany(DnDetail::class, 'no_dn', 'no_dn');
     }
 
     // Relationship dnOutstanding
     public function dnOutstanding(): HasMany
     {
-        return $this->hasMany(DN_Detail_Outstanding::class, 'no_dn', 'no_dn');
+        return $this->hasMany(DnDetailOutstanding::class, 'no_dn', 'no_dn');
     }
 }

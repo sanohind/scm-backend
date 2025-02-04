@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Resources\DeliveryNote\DnHistoryViewResource;
 use App\Http\Resources\PurchaseOrder\PoHistoryViewResource;
-use App\Models\DeliveryNote\DN_Header;
+use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +48,7 @@ class HistoryController
             $user = $request->bp_code;
         }
         //get data api to view
-        $data_dn = DN_Header::with('poHeader', 'dnDetail')
+        $data_dn = DnHeader::with('poHeader', 'dnDetail')
             ->where('supplier_code', $user)
             ->orderBy('plan_delivery_date', 'desc')
             ->whereIn('status_desc', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed'])

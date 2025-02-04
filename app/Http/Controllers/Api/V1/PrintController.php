@@ -8,8 +8,8 @@ use App\Http\Resources\DeliveryNote\DnHeaderQtyOutstandingViewResource;
 use App\Http\Resources\DeliveryNote\DnLabelAllResource;
 use App\Http\Resources\DeliveryNote\DnLabelResource;
 use App\Http\Resources\PurchaseOrder\PoHeaderViewResource;
-use App\Models\DeliveryNote\DN_Detail_Outstanding;
-use App\Models\DeliveryNote\DN_Header;
+use App\Models\DeliveryNote\DnDetailOutstanding;
+use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
 use Carbon\Carbon;
 use PDF;
@@ -41,10 +41,10 @@ class PrintController
     public function dnHeaderView($no_dn)
     {
         //get data api to view
-        $data_dn = DN_Header::with('dnDetail', 'partner')->where('no_dn', $no_dn)->get();
+        $data_dn = DnHeader::with('dnDetail', 'partner')->where('no_dn', $no_dn)->get();
 
         // print_at
-        $data_update = DN_Header::where('no_dn', $no_dn)->first();
+        $data_update = DnHeader::where('no_dn', $no_dn)->first();
         $data_update->update([
             'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
         ]);
@@ -60,10 +60,10 @@ class PrintController
     public function dnHeaderViewQtyConfirm($no_dn)
     {
         //get data api to view
-        $data_dn = DN_Header::with('dnDetail', 'partner')->where('no_dn', $no_dn)->get();
+        $data_dn = DnHeader::with('dnDetail', 'partner')->where('no_dn', $no_dn)->get();
 
         // print_at
-        $data_update = DN_Header::where('no_dn', $no_dn)->first();
+        $data_update = DnHeader::where('no_dn', $no_dn)->first();
         $data_update->update([
             'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
         ]);
@@ -79,7 +79,7 @@ class PrintController
     public function dnHeaderViewOutstanding($outstanding, $no_dn)
     {
         //get data api to view
-        $data_dn = DN_Header::with(['dnDetail' => function ($query) use ($outstanding) {
+        $data_dn = DnHeader::with(['dnDetail' => function ($query) use ($outstanding) {
             $query->with(['dnOutstanding' => function ($q) use ($outstanding) {
                 $q->where('wave', $outstanding);
             }]);
@@ -88,7 +88,7 @@ class PrintController
             ->get();
 
         // print_at
-        $data_update = DN_Header::where('no_dn', $no_dn)->first();
+        $data_update = DnHeader::where('no_dn', $no_dn)->first();
         $data_update->update([
             'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
         ]);
@@ -104,10 +104,10 @@ class PrintController
     public function labelAllView($no_dn)
     {
         // get data
-        $dn_header = DN_Header::with('dnDetail')->where('no_dn', $no_dn)->first();
+        $dn_header = DnHeader::with('dnDetail')->where('no_dn', $no_dn)->first();
 
         // print_at
-        $data_update = DN_Header::where('no_dn', $no_dn)->first();
+        $data_update = DnHeader::where('no_dn', $no_dn)->first();
         $data_update->update([
             'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i'),
         ]);
@@ -137,10 +137,10 @@ class PrintController
     public function labelQtyConfirm($no_dn)
     {
         // get data
-        $dn_header = DN_Header::with('dnDetail')->where('no_dn', $no_dn)->first();
+        $dn_header = DnHeader::with('dnDetail')->where('no_dn', $no_dn)->first();
 
         // print_at
-        $data_update = DN_Header::where('no_dn', $no_dn)->first();
+        $data_update = DnHeader::where('no_dn', $no_dn)->first();
         $data_update->update([
             'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i'),
         ]);
@@ -184,8 +184,8 @@ class PrintController
     // Label / kanban outstanding
     public function labelOutstanding($outstanding, $no_dn)
     {
-        // Ambil data DN_Detail_Outstanding dengan hubungan ke dnDetail
-        $dn_detail_outstanding = DN_Detail_Outstanding::with('dnDetail')
+        // Ambil data DnDetailOutstanding dengan hubungan ke dnDetail
+        $dn_detail_outstanding = DnDetailOutstanding::with('dnDetail')
             ->where('wave', $outstanding)
             ->whereHas('dnDetail', function ($query) use ($no_dn) {
                 $query->where('no_dn', $no_dn);

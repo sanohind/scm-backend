@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\V1\DeliveryNote;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DeliveryNote\UpdateDeliveryNoteRequest;
 use App\Http\Resources\DeliveryNote\DnDetailResource;
-use App\Models\DeliveryNote\DN_Detail;
-use App\Models\DeliveryNote\DN_Header;
+use App\Models\DeliveryNote\DnDetail;
+use App\Models\DeliveryNote\DnHeader;
 use App\Service\DeliveryNote\DeliveryNoteUpdateTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ class DnDetailController extends Controller
     // View list data DNDetail
     public function index($no_dn)
     {
-        $data_dndetail = DN_Detail::with('dnOutstanding')
+        $data_dndetail = DnDetail::with('dnOutstanding')
             ->where('no_dn', $no_dn)
             ->orderBy('plan_delivery_date', 'asc')
             ->orderBy('dn_line', 'asc')
@@ -93,7 +93,7 @@ class DnDetailController extends Controller
     public function indexAll()
     {
         // Fetch PO details based on the provided po_no
-        $data_podetail = DN_Detail::with('dnHeader')->get();
+        $data_podetail = DnDetail::with('dnHeader')->get();
 
         if ($data_podetail->isEmpty()) {
             return response()->json([
@@ -113,7 +113,7 @@ class DnDetailController extends Controller
     public function edit($dn_detail_no)
     {
         // Find the record by id
-        $data_edit = DN_Detail::with('dnOutstanding')->findOrFail($dn_detail_no);
+        $data_edit = DnDetail::with('dnOutstanding')->findOrFail($dn_detail_no);
 
         return new DnDetailResource($data_edit);
     }
@@ -150,8 +150,8 @@ class DnDetailController extends Controller
             // Dump the validated data to verify
             // dd($data); // Uncomment this for debugging if needed
 
-            // Update DN_Header with current timestamp
-            $update_header = DN_Header::where('no_dn', $data['no_dn'])->first();
+            // Update DnHeader with current timestamp
+            $update_header = DnHeader::where('no_dn', $data['no_dn'])->first();
 
             if ($update_header) {
                 $time = Carbon::now()->format('Y-m-d H:i:s'); // Correct datetime format
@@ -163,9 +163,9 @@ class DnDetailController extends Controller
             }
 
             DB::transaction(function () use ($data) {
-                // Update DN_Detail records
+                // Update DnDetail records
                 foreach ($data['updates'] as $update) {
-                    $record = DN_Detail::where('dn_detail_no', $update['dn_detail_no'])->first();
+                    $record = DnDetail::where('dn_detail_no', $update['dn_detail_no'])->first();
 
                     if ($record) {
                         $record->update([

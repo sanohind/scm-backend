@@ -2,10 +2,10 @@
 
 namespace App\Service\Syncronization;
 
-use App\Models\DeliveryNote\DN_Detail;
-use App\Models\DeliveryNote\DN_Detail_ERP;
-use App\Models\DeliveryNote\DN_Header;
-use App\Models\DeliveryNote\DN_Header_ERP;
+use App\Models\DeliveryNote\DnDetail;
+use App\Models\DeliveryNote\DnDetailErp;
+use App\Models\DeliveryNote\DnHeader;
+use App\Models\DeliveryNote\DnHeaderErp;
 
 class SyncDeliveryNoteData
 {
@@ -13,12 +13,12 @@ class SyncDeliveryNoteData
     {
         $dnNumber = [];
         foreach ($poNumber as $data) {
-            $sqlsrvDataDnHeader = DN_Header_ERP::where('po_no', $data)->get();
+            $sqlsrvDataDnHeader = DnHeaderErp::where('po_no', $data)->get();
             // copy all data from sql server
             foreach ($sqlsrvDataDnHeader as $data) {
                 $dnNumber[] = $data->no_dn;
 
-                DN_Header::updateOrCreate(
+                DnHeader::updateOrCreate(
                     [
                         'no_dn' => $data->no_dn,
                         'po_no' => $data->po_no,
@@ -40,10 +40,10 @@ class SyncDeliveryNoteData
 
         // Delivery Note Deltail
         foreach ($dnNumber as $data) {
-            $sqlsrvDataDnDetail = DN_Detail_ERP::where('no_dn', $data)->get();
+            $sqlsrvDataDnDetail = DnDetailErp::where('no_dn', $data)->get();
             // copy all data from sql server
             foreach ($sqlsrvDataDnDetail as $data) {
-                DN_Detail::updateOrCreate(
+                DnDetail::updateOrCreate(
                     [
                         'no_dn' => $data->no_dn,
                         'dn_line' => $data->dn_line,

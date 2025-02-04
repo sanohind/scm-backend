@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\DeliveryNote;
 
-use App\Models\DeliveryNote\DN_Detail;
+use App\Models\DeliveryNote\DnDetail;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
@@ -73,7 +73,7 @@ class UpdateDeliveryNoteRequest extends FormRequest
         $getRequestUpdate = $this->input('updates');
 
         foreach ($getRequestUpdate as $i) {
-            $getData = DN_Detail::select('dn_qty', 'receipt_qty', 'dn_snp', 'qty_confirm')
+            $getData = DnDetail::select('dn_qty', 'receipt_qty', 'dn_snp', 'qty_confirm')
                 ->where('dn_detail_no', $i['dn_detail_no'])
                 ->first();
 

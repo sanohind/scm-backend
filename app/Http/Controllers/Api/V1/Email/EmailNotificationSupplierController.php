@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Email;
 
 use App\Mail\PoResponseSupplier;
-use App\Models\DeliveryNote\DN_Header;
+use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
 use App\Models\User\User;
 use App\Service\User\UserGetEmail;
@@ -30,7 +30,7 @@ class EmailNotificationSupplierController
                 ->whereIn('po_status', ['Open'])
                 ->get();
 
-            $dn_header = DN_Header::with('partner')
+            $dn_header = DnHeader::with('partner')
                 ->where('supplier_code', $data->bp_code)
                 ->whereIn('status_desc', ['Open'])
                 ->get();

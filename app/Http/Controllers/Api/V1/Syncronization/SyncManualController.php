@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api\V1\Syncronization;
 
 use App\Http\Controllers\Controller;
-use App\Models\DeliveryNote\DN_Detail;
-use App\Models\DeliveryNote\DN_Detail_ERP;
-use App\Models\DeliveryNote\DN_Header;
-use App\Models\DeliveryNote\DN_Header_ERP;
+use App\Models\DeliveryNote\DnDetail;
+use App\Models\DeliveryNote\DnDetailErp;
+use App\Models\DeliveryNote\DnHeader;
+use App\Models\DeliveryNote\DnHeaderErp;
 use App\Models\PurchaseOrder\PoDetail;
 use App\Models\PurchaseOrder\PoDetailErp;
 use App\Models\PurchaseOrder\PoHeader;
-use App\Models\PurchaseOrder\PoHeader_ERP;
+use App\Models\PurchaseOrder\PoHeaderErp;
 use App\Models\User\Partner;
 use App\Models\User\PartnerLocal;
 use Illuminate\Http\Request;
@@ -106,7 +106,7 @@ class SyncManualController extends Controller
         // $requestedMonth = $this->month;
         // dd($requestedYear,$requestedMonth);
 
-        $sqlsrvDataPoHeader = PoHeader_ERP::where('po_period', $month)
+        $sqlsrvDataPoHeader = PoHeaderErp::where('po_period', $month)
             ->where('po_year', $year)
             ->where('po_type_desc', 'PO LOCAL')
             ->get();
@@ -190,12 +190,12 @@ class SyncManualController extends Controller
         // dd($passPoNo);
         $passDnNo = [];
         foreach ($passPoNo as $data) {
-            $sqlsrvDataDnHeader = DN_Header_ERP::where('po_no', $data)->get();
+            $sqlsrvDataDnHeader = DnHeaderErp::where('po_no', $data)->get();
             // copy all data from sql server
             foreach ($sqlsrvDataDnHeader as $data) {
                 $passDnNo[] = $data->no_dn;
 
-                DN_Header::updateOrCreate(
+                DnHeader::updateOrCreate(
                     [
                         'no_dn' => $data->no_dn,
                         'po_no' => $data->po_no,
@@ -223,10 +223,10 @@ class SyncManualController extends Controller
 
         */
         foreach ($passDnNo as $data) {
-            $sqlsrvDataDnDetail = DN_Detail_ERP::where('no_dn', $data)->get();
+            $sqlsrvDataDnDetail = DnDetailErp::where('no_dn', $data)->get();
             // copy all data from sql server
             foreach ($sqlsrvDataDnDetail as $data) {
-                DN_Detail::updateOrCreate(
+                DnDetail::updateOrCreate(
                     [
                         'no_dn' => $data->no_dn,
                         'dn_line' => $data->dn_line,

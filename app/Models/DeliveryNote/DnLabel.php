@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DN_Label extends Model
+class DnLabel extends Model
 {
     use HasFactory;
 
@@ -24,6 +24,6 @@ class DN_Label extends Model
     // relationship dn_detail
     public function dnDetail(): BelongsTo
     {
-        return $this->belongsTo(DN_Detail::class, 'dn_detail_no', 'dn_detail_no');
+        return $this->belongsTo(DnDetail::class, 'dn_detail_no', 'dn_detail_no');
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Service\Syncronization;
 
-use App\Models\PurchaseOrder\PO_Detail;
+use App\Models\PurchaseOrder\PoDetail;
 use App\Models\PurchaseOrder\PO_Detail_ERP;
-use App\Models\PurchaseOrder\PO_Header;
+use App\Models\PurchaseOrder\PoHeader;
 use App\Models\PurchaseOrder\PO_Header_ERP;
 use Carbon\Carbon;
 
@@ -28,7 +28,7 @@ class SyncPurchaseOrderData
         foreach ($sqlsrvDataPoHeader as $data) {
             $poNumber[] = $data->po_no;
 
-            PO_Header::updateOrCreate(
+            PoHeader::updateOrCreate(
                 // find the po_no
                 [
                     'po_no' => $data->po_no,
@@ -62,7 +62,7 @@ class SyncPurchaseOrderData
 
             // copy all data from sql server
             foreach ($sqlsrvDataPoDetail as $data) {
-                PO_Detail::updateOrCreate(
+                PoDetail::updateOrCreate(
                     [
                         'po_no' => $data->po_no,
                         'po_line' => $data->po_line,
