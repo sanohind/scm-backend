@@ -55,7 +55,7 @@ class DnLabelResource extends JsonResource
     private function qrNumber()
     {
         $part_number = $this->part_no;
-        $qty = $this->dn_qty;
+        $qty = $this->currentQuantity;
         $lot = $this->lot_number;
         $poLine = $this->order_line;
         $seq = $this->order_seq;
