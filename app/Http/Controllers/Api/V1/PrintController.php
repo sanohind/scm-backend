@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Resources\DeliveryNote\DnHeaderViewResource;
 use App\Http\Resources\DeliveryNote\DnHeaderQtyConfirmViewResource;
 use App\Http\Resources\DeliveryNote\DnHeaderQtyOutstandingViewResource;
+use App\Http\Resources\DeliveryNote\DnHeaderViewResource;
 use App\Http\Resources\DeliveryNote\DnLabelAllResource;
 use App\Http\Resources\DeliveryNote\DnLabelResource;
 use App\Http\Resources\PurchaseOrder\PoHeaderViewResource;

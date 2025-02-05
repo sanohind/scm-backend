@@ -11,8 +11,8 @@ use App\Models\PO_Detail;
 use App\Models\PO_Detail_ERP;
 use App\Models\PO_Header;
 use App\Models\PO_Header_ERP;
-use App\Models\User\Partner;
-use App\Models\User\PartnerLocal;
+use App\Models\Users\Partner;
+use App\Models\Users\PartnerLocal;
 
 class SyncOldController extends Controller
 {

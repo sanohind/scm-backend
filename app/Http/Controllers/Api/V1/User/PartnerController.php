@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1\User;
 
 use App\Http\Resources\User\PartnerResource;
-use App\Models\User\Partner;
-use App\Models\User\PartnerLocal;
+use App\Models\Users\Partner;
+use App\Models\Users\PartnerLocal;
 
 class PartnerController
 {

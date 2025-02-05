@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\SubcontStock;
-use App\Models\User\User;
+use App\Models\Users\User;
 
 class SubcontStockPolicy
 {

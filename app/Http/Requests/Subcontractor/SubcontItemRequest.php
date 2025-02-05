@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Subcontractor;
 
 use App\Models\Subcontractor\SubcontItem;
-use App\Models\User\PartnerLocal;
+use App\Models\Users\PartnerLocal;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;

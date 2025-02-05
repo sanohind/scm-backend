@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V1\Email;
 
 use App\Http\Controllers\Controller;
 use App\Mail\PoResponseSupplier;
-use App\Models\PO_Header;
-use App\Models\User\User;
+use App\Models\PurchaseOrder\PoHeader;
+use App\Models\Users\User;
 use Illuminate\Support\Facades\Mail;
 
 class TestMailController extends Controller
@@ -19,7 +19,7 @@ class TestMailController extends Controller
         // Get PO open based of bp_code
         foreach ($user as $data) {
 
-            $po_header = PO_Header::with('user')
+            $po_header = PoHeader::with('user')
                 ->where('supplier_code', $data->bp_code)
                 ->whereIn('po_status', ['Sent', 'Open'])
                 ->get();

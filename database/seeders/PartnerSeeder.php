@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User\PartnerLocal;
+use App\Models\Users\PartnerLocal;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 

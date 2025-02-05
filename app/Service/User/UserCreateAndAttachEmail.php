@@ -2,7 +2,7 @@
 
 namespace App\Service\User;
 
-use App\Models\User\Email;
+use App\Models\Users\Email;
 
 class UserCreateAndAttachEmail
 {

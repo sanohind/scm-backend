@@ -2,8 +2,8 @@
 
 namespace App\Jobs\User;
 
-use App\Models\User\Partner;
-use App\Models\User\PartnerLocal;
+use App\Models\Users\Partner;
+use App\Models\Users\PartnerLocal;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 

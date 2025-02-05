@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Forecast\Forecast;
-use App\Models\User\User;
+use App\Models\Users\User;
 
 class ForecastPolicy
 {

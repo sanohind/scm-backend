@@ -11,8 +11,8 @@ use App\Models\PurchaseOrder\PoDetail;
 use App\Models\PurchaseOrder\PoDetailErp;
 use App\Models\PurchaseOrder\PoHeader;
 use App\Models\PurchaseOrder\PoHeaderErp;
-use App\Models\User\Partner;
-use App\Models\User\PartnerLocal;
+use App\Models\Users\Partner;
+use App\Models\Users\PartnerLocal;
 use Illuminate\Http\Request;
 
 class SyncManualController extends Controller

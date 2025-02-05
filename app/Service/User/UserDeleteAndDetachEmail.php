@@ -2,8 +2,8 @@
 
 namespace App\Service\User;
 
-use App\Models\User\Email;
-use App\Models\User\PartnerLocal;
+use App\Models\Users\Email;
+use App\Models\Users\PartnerLocal;
 
 class UserDeleteAndDetachEmail
 {

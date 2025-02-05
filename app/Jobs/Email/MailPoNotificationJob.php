@@ -4,7 +4,7 @@ namespace App\Jobs\Email;
 
 use App\Mail\PoResponseSupplier;
 use App\Models\PO_Header;
-use App\Models\User\User;
+use App\Models\Users\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;

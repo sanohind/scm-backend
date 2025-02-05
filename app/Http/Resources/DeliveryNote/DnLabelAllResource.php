@@ -3,7 +3,7 @@
 namespace App\Http\Resources\DeliveryNote;
 
 use App\Models\DeliveryNote\DnHeader;
-use App\Models\User\PartnerLocal;
+use App\Models\Users\PartnerLocal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

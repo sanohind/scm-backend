@@ -2,7 +2,7 @@
 
 namespace App\Models\PerformanceReport;
 
-use App\Models\User\PartnerLocal;
+use App\Models\Users\PartnerLocal;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

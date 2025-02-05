@@ -5,7 +5,7 @@ namespace App\Service\Subcontractor;
 use App\Http\Resources\Subcontractor\SubcontAllListItemResource;
 use App\Http\Resources\Subcontractor\SubcontListItemResource;
 use App\Models\Subcontractor\SubcontItem;
-use App\Models\User\PartnerLocal;
+use App\Models\Users\PartnerLocal;
 use Illuminate\Support\Facades\Auth;
 
 class SubcontGetListItem

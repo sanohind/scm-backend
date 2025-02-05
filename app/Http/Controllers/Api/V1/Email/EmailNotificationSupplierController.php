@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Email;
 use App\Mail\PoResponseSupplier;
 use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
-use App\Models\User\User;
+use App\Models\Users\User;
 use App\Service\User\UserGetEmail;
 use Illuminate\Support\Facades\Mail;
 

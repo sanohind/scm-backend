@@ -6,7 +6,7 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\User\UserDetailResource;
 use App\Http\Resources\User\UserResource;
-use App\Models\User\User;
+use App\Models\Users\User;
 use App\Service\User\UserCreateAndAttachEmail;
 use App\Service\User\UserCreateUser;
 use App\Service\User\UserGetEmail;

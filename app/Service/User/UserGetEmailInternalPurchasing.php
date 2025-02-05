@@ -2,7 +2,7 @@
 
 namespace App\Service\User;
 
-use App\Models\User\PartnerLocal;
+use App\Models\Users\PartnerLocal;
 
 class UserGetEmailInternalPurchasing
 {
