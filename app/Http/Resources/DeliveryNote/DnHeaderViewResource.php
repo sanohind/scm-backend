@@ -5,7 +5,7 @@ namespace App\Http\Resources\DeliveryNote;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Dn_HeaderViewResource extends JsonResource
+class DnHeaderViewResource extends JsonResource
 {
     public function toArray(Request $request): array
     {

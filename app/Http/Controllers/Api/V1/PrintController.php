@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Resources\DeliveryNote\Dn_HeaderViewResource;
+use App\Http\Resources\DeliveryNote\DnHeaderViewResource;
 use App\Http\Resources\DeliveryNote\DnHeaderQtyConfirmViewResource;
 use App\Http\Resources\DeliveryNote\DnHeaderQtyOutstandingViewResource;
 use App\Http\Resources\DeliveryNote\DnLabelAllResource;
@@ -12,9 +12,6 @@ use App\Models\DeliveryNote\DnDetailOutstanding;
 use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
 use Carbon\Carbon;
-use PDF;
-
-// use Barryvdh\DomPDF\Facade as PDF;
 
 class PrintController
 {
@@ -52,7 +49,7 @@ class PrintController
         return response()->json([
             'success' => true,
             'message' => 'DN Generated Successfully',
-            'data' => Dn_HeaderViewResource::collection($data_dn),
+            'data' => DnHeaderViewResource::collection($data_dn),
         ]);
     }
 
