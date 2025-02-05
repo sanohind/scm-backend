@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\DeliveryNote\DnHeader;
-use App\Models\PurchaseOrder\PoHeader;
-use App\Models\Subcontractor\SubcontTransaction;
-use App\Models\User\PartnerLocal;
-use App\Models\User\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Models\Users\User;
 use Illuminate\Http\Request;
+use App\Models\Users\PartnerLocal;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DeliveryNote\DnHeader;
+use App\Models\PurchaseOrder\PoHeader;
 use Laravel\Sanctum\PersonalAccessToken;
+use App\Models\Subcontractor\SubcontTransaction;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class DashboardController
 {
@@ -254,6 +254,7 @@ class DashboardController
         // Get the active tokens created within the last hour
         $active_tokens = PersonalAccessToken::where('created_at', '>=', $oneHourAgo)
             ->with('tokenable') // Ensure we load the related user
+            ->whereNull('expires_at')
             ->get();
 
         // Map the active tokens to the required details
@@ -315,8 +316,8 @@ class DashboardController
             ->get();
 
         // Group the tokens by tokenable_id and count the logins for each user
-        $monthly_login_data = $monthly_tokens->groupBy('tokenable_id')->map(function ($tokens, $tokenable_id) {
-            $tokenable = $tokens->first()->tokenable;
+        $monthly_login_data = $monthly_tokens->groupBy('tokenable_id')->map(function ($tokens) {
+            $tokenable = $tokens->sortByDesc('tokenable_type')->first()->tokenable;
 
             return [
                 'username' => $tokenable ? $tokenable->username : 'Unknown',
@@ -333,7 +334,7 @@ class DashboardController
             ->get();
 
         // Group the tokens by tokenable_id and count the logins for each user
-        $daily_login_data = $daily_tokens->groupBy('tokenable_id')->map(function ($tokens, $tokenable_id) {
+        $daily_login_data = $daily_tokens->groupBy('tokenable_id')->map(function ($tokens) {
             $tokenable = $tokens->first()->tokenable;
 
             return [

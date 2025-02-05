@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\Models\User\User;
+use App\Models\Users\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -71,7 +71,7 @@ class AuthController
     public function logout(Request $request)
     {
         // Revoke token
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()->update(['expires_at' => now()]);
 
         // logout success respond
         return response()->json([
