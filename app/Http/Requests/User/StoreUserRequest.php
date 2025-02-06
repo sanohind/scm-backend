@@ -30,7 +30,7 @@ class StoreUserRequest extends FormRequest
             'status' => 'required|string|max:25',
             'username' => 'required|string|unique:user,username|max:25', // username must unique
             'password' => 'required|string|min:8|max:25', //min and max length 8/25
-            'email.*' => 'email|max:255',
+            'email' => 'required|email:rfc,strict|max:255',
         ];
     }
 
@@ -57,8 +57,9 @@ class StoreUserRequest extends FormRequest
             'password.string' => 'The password must be a string.',
             'password.min' => 'The password must be at least 8 characters.',
             'password.max' => 'The password may not be greater than 25 characters.',
-            'email.*.email' => 'Each email must be a valid email address.',
-            'email.*.max' => 'Each email may not be greater than 255 characters.',
+            'email.required' => 'The email field is required.',
+            'email.email' => 'The email must be a valid email address.',
+            'email.max' => 'The email may not be greater than 255 characters.',
         ];
     }
 
@@ -67,8 +68,8 @@ class StoreUserRequest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
+                'status' => false,
+                'message' => 'You Must Fill All Input Fields Correctly.',
                 'errors' => $validator->errors(),
             ], 422)
         );

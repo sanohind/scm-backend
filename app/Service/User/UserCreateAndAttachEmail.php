@@ -16,15 +16,10 @@ class UserCreateAndAttachEmail
             $isAttached = $emailRecord->partner()->where('bp_code', $bp_code)->exists();
 
             // Attach only if the relationship does not already exist
-            if (! $isAttached) {
+            if (!$isAttached) {
                 $emailRecord->partner()->attach($bp_code);
             }
 
-            // Attach email to the partner
-            // $emailRecord->partner()->attach($bp_code);
-
-            // Return true if the email was processed successfully
-            return true;
         } catch (\Exception $e) {
             throw new \Exception("Error processing create email: cause of data request is null or {$e->getMessage()}", 403);
         }

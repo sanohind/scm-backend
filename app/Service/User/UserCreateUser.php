@@ -8,66 +8,55 @@ use Illuminate\Support\Facades\Hash;
 
 class UserCreateUser
 {
+    /**
+     * Call service class
+     * @param \App\Service\User\UserCreateAndAttachEmail $userCreateAndAttachEmail
+     */
     public function __construct(
         protected UserCreateAndAttachEmail $userCreateAndAttachEmail,
     ) {}
 
-    public function createUser($data)
-    {
-        // business process
-        $result = DB::transaction(function () use ($data) {
-            $email = $data['email'];
-            $getFirstEmail = $email[0];
+    /**
+     * Create new user and add/attach new email to business partner code
+     * @param string $bpCode
+     * @param string $name
+     * @param string $role
+     * @param string $status
+     * @param string $username
+     * @param string $password
+     * @param string $email
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function createUser(
+        string $bpCode,
+        string $name,
+        string $role,
+        string $status = "1",
+        string $username,
+        string $password,
+        string $email,
+    ) {
+        // Create user
+        User::create([
+            'bp_code' => $bpCode,
+            'name' => $name,
+            'role' => $role,
+            'status' => $status,
+            'username' => $username,
+            'password' => Hash::make($password),
+            'email' => $email,
+        ]);
 
-            // Create user
-            $createUser = $this->createUserProcess(
-                $data['bp_code'],
-                $data['name'],
-                $data['role'],
-                $data['status'],
-                $data['username'],
-                $data['password'],
-                $getFirstEmail,
+        // add/attach new email to business partner code
+        $this->userCreateAndAttachEmail->createEmail(
+            $bpCode,
+            $email
+        );
 
-            );
-
-            // Create Email
-            foreach ($data['email'] as $emails) {
-                $createEmail = $this->userCreateAndAttachEmail->createEmail(
-                    $data['bp_code'],
-                    $emails
-                );
-            }
-
-            if ($createUser == true && $createEmail == true) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data Successfully Stored',
-                ], 200);
-            }
-        });
-
-        return $result;
-    }
-
-    private function createUserProcess(string $bp_code, string $name, string $role, int $status, string $username, string $password, string $email)
-    {
-        try {
-            // logic
-            User::create([
-                'bp_code' => $bp_code,
-                'name' => $name,
-                'role' => $role,
-                'status' => $status,
-                'username' => $username,
-                'password' => Hash::make($password),
-                'email' => $email,
-            ]);
-
-            // for callback
-            return true;
-        } catch (\Exception $e) {
-            throw new \Exception("Error processing create user: cause of data request is null or {$e->getMessage()}", 403);
-        }
+        // Response
+        return response()->json([
+            'status' => true,
+            'message' => 'Data Successfully Stored',
+        ], 200);
     }
 }

@@ -66,6 +66,14 @@ Route::middleware(['auth:sanctum', 'userRole:1'])->prefix('super-admin')->group(
     Route::get('user/monthly', [DashboardController::class, 'monthlyLoginData']);
 
     /**
+     * Route for Business Partner
+     */
+    // Route for get business partner
+    Route::get('organization/email/{bp_code}', [BusinessPartnerController::class,'getBussinessPartnerEmail']);
+    // Route for update business partner
+    Route::put('organization/email/update/{bp_code}', [BusinessPartnerController::class,'updateBusinessPartnerEmail']);
+
+    /**
      * Route For User
      */
     // Route for get record data
@@ -77,7 +85,7 @@ Route::middleware(['auth:sanctum', 'userRole:1'])->prefix('super-admin')->group(
     // Route for edit user form
     Route::get('user/edit/{user}', [UserController::class, 'getUserDetail']);
     // Route for update user data
-    Route::put('user/update/{user}', [UserController::class, 'update']);
+    Route::put('user/update/{user}', [UserController::class, 'updateUser']);
     // Route for update status user
     Route::put('user/update/status/{user}', [UserController::class, 'updateStatus']);
     // Route for delete user

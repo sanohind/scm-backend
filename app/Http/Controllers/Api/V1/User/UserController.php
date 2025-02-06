@@ -12,11 +12,17 @@ use App\Service\User\UserCreateUser;
 use App\Service\User\UserGetEmail;
 use App\Service\User\UserUpdateUser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController
 {
+    /**
+     * Call service class
+     * @param \App\Service\User\UserCreateUser $userCreateUser
+     * @param \App\Service\User\UserUpdateUser $userUpdateUser
+     * @param \App\Service\User\UserGetEmail $userGetEmail
+     * @param \App\Service\User\UserCreateAndAttachEmail $userCreateAndAttachEmail
+     */
     public function __construct(
         protected UserCreateUser $userCreateUser,
         protected UserUpdateUser $userUpdateUser,
@@ -66,8 +72,19 @@ class UserController
      */
     public function createUser(StoreUserRequest $request)
     {
+        // Validate request
+        $request->validated();
+
         // Create new user
-        $this->userCreateUser->createUser($request->validated());
+        $this->userCreateUser->createUser(
+            $request->bp_code,
+            $request->name,
+            $request->role,
+            $request->status,
+            $request->username,
+            $request->password,
+            $request->email,
+        );
 
         // Response
         return response()->json([
@@ -96,18 +113,27 @@ class UserController
      * @param mixed $user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function updateUser(UpdateUserRequest $request, $user)
+    public function updateUser(UpdateUserRequest $request, $id)
     {
-        try {
-            $result = $this->userUpdateUser->updateUser($request->validated(), $user);
-        } catch (\Exception $ex) {
-            return response()->json([
-                'status' => false,
-                'error' => $ex->getMessage() . $ex->getFile() . $ex->getLine(),
-            ], 500);
-        }
+        // Validate User
+        $request->validated();
 
-        return $result;
+        // Update User
+        $this->userUpdateUser->updateUser(
+            $id,
+            $request->bp_code,
+            $request->name,
+            $request->role,
+            $request->username,
+            $request->password,
+            $request->email,
+        );
+
+        // Response
+        return response()->json([
+            'status' => true,
+            'message' => 'User Successfully Updated',
+        ], 200);
     }
 
     /**
@@ -161,7 +187,7 @@ class UserController
     }
 
     /**
-     * Move main email user from table user to table email
+     * Move/migrate main email user from table user to table email
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function moveEmail()
