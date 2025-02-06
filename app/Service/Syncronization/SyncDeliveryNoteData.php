@@ -9,6 +9,11 @@ use App\Models\DeliveryNote\DnHeaderErp;
 
 class SyncDeliveryNoteData
 {
+    /**
+     * Sync Delivery Note Header and Detail
+     * @param array $poNumber
+     * @return void
+     */
     public function syncDeliveryNote(array $poNumber)
     {
         $dnNumber = [];

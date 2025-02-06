@@ -2,23 +2,27 @@
 
 namespace App\Service\Syncronization;
 
-use App\Models\PurchaseOrder\PO_Detail_ERP;
-use App\Models\PurchaseOrder\PO_Header_ERP;
 use App\Models\PurchaseOrder\PoDetail;
+use App\Models\PurchaseOrder\PoDetailErp;
 use App\Models\PurchaseOrder\PoHeader;
+use App\Models\PurchaseOrder\PoHeaderErp;
 use Carbon\Carbon;
 
 class SyncPurchaseOrderData
 {
+    /**
+     * Sync Purchase Order Header and Detail
+     * @return array
+     */
     public function syncPurchaseOrder()
     {
         // Po Header
-        //year and period
+        // Initialize year and period
         $actualYear = Carbon::now()->year;
         $actualPeriod = Carbon::now()->month;
-        // dd($actualYear,$actualPeriod);
 
-        $sqlsrvDataPoHeader = PO_Header_ERP::where('po_period', $actualPeriod)
+        // Get Purchase Order from ERP
+        $sqlsrvDataPoHeader = PoHeaderErp::where('po_period', $actualPeriod)
             ->where('po_year', $actualYear)
             ->where('po_type_desc', 'PO LOCAL')
             ->get();
@@ -58,7 +62,7 @@ class SyncPurchaseOrderData
 
         // Po Detail
         foreach ($poNumber as $data) {
-            $sqlsrvDataPoDetail = PO_Detail_ERP::where('po_no', $data)->get();
+            $sqlsrvDataPoDetail = PoDetailErp::where('po_no', $data)->get();
 
             // copy all data from sql server
             foreach ($sqlsrvDataPoDetail as $data) {
@@ -85,8 +89,8 @@ class SyncPurchaseOrderData
                     ]
                 );
             }
-
-            return $poNumber;
         }
+        // Return array Purchase Order number
+        return $poNumber;
     }
 }

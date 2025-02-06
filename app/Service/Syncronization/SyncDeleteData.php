@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Log;
 
 class SyncDeleteData
 {
+    /**
+     * Delete Purchase Order if in ERP was deleted
+     * @return void
+     */
     public function deletePo()
     {
         // Purchase Order Header
@@ -57,6 +61,10 @@ class SyncDeleteData
         // return "Delete Purchase Order Successful";
     }
 
+    /**
+     * Delete Delivery Note if in ERP was deleted
+     * @return void
+     */
     public function deleteDn()
     {
         // Delivery Note Header
@@ -102,7 +110,5 @@ class SyncDeleteData
         } catch (\Throwable $th) {
             Log::debug("$th");
         }
-
-        // return "Delete Delivery Note Successful";
     }
 }

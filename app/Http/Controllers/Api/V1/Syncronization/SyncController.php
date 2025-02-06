@@ -18,6 +18,17 @@ class SyncController
         protected SyncDeleteData $syncDeleteData,
     ) {}
 
+    /**
+     * Sync data from erp to data
+     * List Sync;
+     * 1. Business Partner
+     * 2. Subcont Item
+     * 3. PurchaseOrder
+     * 4. DeliveryNote
+     * 5. Delete PurchaseOrder
+     * 6. Delete DeliveryNote
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function sync()
     {
         try {
@@ -39,14 +50,14 @@ class SyncController
                 $this->syncDeleteData->deleteDn(); // Delete Delivery Note
 
             }
-
-            return response()->json([
-                'message' => 'Sync Data Successfuly',
-            ]);
-
         } catch (\Throwable $th) {
             // throw $th;
             \Log::error("$th");
         }
+
+        // Response
+        return response()->json([
+            'message' => 'Sync Data Successfuly',
+        ]);
     }
 }
