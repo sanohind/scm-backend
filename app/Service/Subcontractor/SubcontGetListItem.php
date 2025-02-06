@@ -5,7 +5,7 @@ namespace App\Service\Subcontractor;
 use App\Http\Resources\Subcontractor\SubcontAllListItemResource;
 use App\Http\Resources\Subcontractor\SubcontListItemResource;
 use App\Models\Subcontractor\SubcontItem;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 use Illuminate\Support\Facades\Auth;
 
 class SubcontGetListItem
@@ -62,7 +62,7 @@ class SubcontGetListItem
     public function adminGetAllItemUser($bp_code)
     {
         // Check if user exist
-        $user = PartnerLocal::findOrFail($bp_code, 'bp_code');
+        $user = BusinessPartner::findOrFail($bp_code, 'bp_code');
 
         if (! $user) {
             return response()->json([

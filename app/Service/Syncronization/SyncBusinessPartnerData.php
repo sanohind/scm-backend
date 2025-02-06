@@ -2,21 +2,26 @@
 
 namespace App\Service\Syncronization;
 
-use App\Models\Partner;
-use App\Models\PartnerLocal;
+
+use App\Models\Users\BusinessPartner;
+use App\Models\Users\BusinessPartnerErp;
 
 class SyncBusinessPartnerData
 {
-    public function syncBussinessPartner()
+    /**
+     * Sync data Business Partner erp and local
+     * @return void
+     */
+    public function syncBusinessPartner()
     {
         // get data
-        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'LIKE', '%Supplier%')
+        $sqlsrvDataPartner = BusinessPartnerErp::where('bp_role_desc', 'LIKE', '%Supplier%')
             ->where('contry', 'IDN')
             ->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {
-            PartnerLocal::updateOrCreate(
+            BusinessPartner::updateOrCreate(
                 // find the bp_code
                 ['bp_code' => $data->bp_code],
                 //update data

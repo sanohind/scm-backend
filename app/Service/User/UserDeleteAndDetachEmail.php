@@ -3,7 +3,7 @@
 namespace App\Service\User;
 
 use App\Models\Users\Email;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 
 class UserDeleteAndDetachEmail
 {
@@ -15,7 +15,7 @@ class UserDeleteAndDetachEmail
     {
         try {
             // get partner
-            $partner = PartnerLocal::find($bp_code);
+            $partner = BusinessPartner::find($bp_code);
 
             // get current email based on bp_code
             $currentEmail = $this->userGetEmail->getEmail($bp_code)->toArray();

@@ -11,19 +11,19 @@ use App\Models\PO_Detail;
 use App\Models\PO_Detail_ERP;
 use App\Models\PO_Header;
 use App\Models\PO_Header_ERP;
-use App\Models\Users\Partner;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartnerErp;
+use App\Models\Users\BusinessPartner;
 
 class SyncOldController extends Controller
 {
     public function copyBusinessPartner()
     {
         // get all data from sql server
-        $sqlsrvData = Partner::All();
+        $sqlsrvData = BusinessPartnerErp::All();
 
         // copy all data from sql server
         foreach ($sqlsrvData as $data) {
-            PartnerLocal::updateOrCreate([
+            BusinessPartner::updateOrCreate([
                 'bp_code' => $data->bp_code,
                 'bp_name' => $data->bp_name,
                 'bp_status_desc' => $data->bp_status_desc,

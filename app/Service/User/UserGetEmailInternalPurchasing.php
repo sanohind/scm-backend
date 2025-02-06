@@ -2,13 +2,13 @@
 
 namespace App\Service\User;
 
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 
 class UserGetEmailInternalPurchasing
 {
     public function getEmailPurchasing()
     {
-        $findEmail = PartnerLocal::find('SLDUMMY');
+        $findEmail = BusinessPartner::find('SLDUMMY');
         // dd($findEmail);
         $getEmail = $findEmail->email()->pluck('email');
 

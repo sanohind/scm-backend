@@ -23,7 +23,7 @@ class SyncController
         try {
             set_time_limit(0);
             // sync data
-            $this->syncBusinessPartnerData->syncBussinessPartner(); // Business Partner
+            $this->syncBusinessPartnerData->syncBusinessPartner(); // Business Partner
 
             $this->syncSubcontItemData->syncSubcontItem(); // Subcont Item
 

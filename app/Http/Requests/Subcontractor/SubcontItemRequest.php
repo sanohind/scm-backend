@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Subcontractor;
 
 use App\Models\Subcontractor\SubcontItem;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
@@ -73,7 +73,7 @@ class SubcontItemRequest extends FormRequest
         $errorMessage = [];
 
         foreach ($getRequest as $key => $item) {
-            $checkBpCode = PartnerLocal::where('bp_code', $item['bp_code'])
+            $checkBpCode = BusinessPartner::where('bp_code', $item['bp_code'])
                 ->exists();
 
             if ($checkBpCode == false) {

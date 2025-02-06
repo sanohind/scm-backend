@@ -2,8 +2,8 @@
 
 namespace App\Jobs\User;
 
-use App\Models\Users\Partner;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartnerErp;
+use App\Models\Users\BusinessPartner;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -25,11 +25,11 @@ class PartnerJob implements ShouldQueue
     public function handle(): void
     {
         // get all data from sql server
-        $sqlsrvData = Partner::All();
+        $sqlsrvData = BusinessPartnerErp::All();
 
         // copy all data from sql server
         foreach ($sqlsrvData as $data) {
-            PartnerLocal::updateOrCreate([
+            BusinessPartner::updateOrCreate([
                 'bp_code' => $data->bp_code,
                 'bp_name' => $data->bp_name,
                 'bp_status_desc' => $data->bp_status_desc,

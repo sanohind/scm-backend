@@ -2,7 +2,7 @@
 
 namespace App\Models\PurchaseOrder;
 
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -51,7 +51,7 @@ class PoHeader extends Model
     // bussines_partner relationship
     public function partner(): BelongsTo
     {
-        return $this->belongsTo(PartnerLocal::class, 'supplier_code', 'bp_code');
+        return $this->belongsTo(BusinessPartner::class, 'supplier_code', 'bp_code');
     }
 
     public function user(): BelongsTo

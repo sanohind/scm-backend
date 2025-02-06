@@ -2,7 +2,7 @@
 
 namespace App\Models\PerformanceReport;
 
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +33,6 @@ class PerformanceReport extends Model
     // Relationship
     public function listingreport(): BelongsTo
     {
-        return $this->belongsTo(PartnerLocal::class, 'bp_code', 'bp_code');
+        return $this->belongsTo(BusinessPartner::class, 'bp_code', 'bp_code');
     }
 }

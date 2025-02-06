@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Users\User;
 use Illuminate\Http\Request;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
@@ -462,7 +462,7 @@ class DashboardController
     // function to get subcont activity admin
     public function adminSubcontGraphic(string $bp_code)
     {
-        $checkBpCode = PartnerLocal::where('bp_code', $bp_code)->exists();
+        $checkBpCode = BusinessPartner::where('bp_code', $bp_code)->exists();
 
         if ($checkBpCode == false) {
             // Response

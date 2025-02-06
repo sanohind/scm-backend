@@ -11,8 +11,8 @@ use App\Models\PurchaseOrder\PoDetail;
 use App\Models\PurchaseOrder\PoDetailErp;
 use App\Models\PurchaseOrder\PoHeader;
 use App\Models\PurchaseOrder\PoHeaderErp;
-use App\Models\Users\Partner;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartnerErp;
+use App\Models\Users\BusinessPartner;
 use Illuminate\Http\Request;
 
 class SyncManualController extends Controller
@@ -67,13 +67,13 @@ class SyncManualController extends Controller
 
         */
         // get data
-        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'LIKE', '%Supplier%')
+        $sqlsrvDataPartner = BusinessPartnerErp::where('bp_role_desc', 'LIKE', '%Supplier%')
             ->where('contry', 'IDN')
             ->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {
-            PartnerLocal::updateOrCreate(
+            BusinessPartner::updateOrCreate(
                 // find the bp_code
                 ['bp_code' => $data->bp_code],
                 //update data

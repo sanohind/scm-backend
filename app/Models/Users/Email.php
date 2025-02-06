@@ -24,7 +24,7 @@ class Email extends Model
      */
     public function partner(): BelongsToMany
     {
-        return $this->belongsToMany(PartnerLocal::class, 'business_partner_email', 'email_id',
+        return $this->belongsToMany(BusinessPartner::class, 'business_partner_email', 'email_id',
             'partner_id')->withTimestamps();
     }
 }

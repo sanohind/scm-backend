@@ -34,6 +34,6 @@ class User extends Authenticatable
     // Relationship
     public function partner(): BelongsTo
     {
-        return $this->belongsTo(PartnerLocal::class, 'bp_code', 'bp_code');
+        return $this->belongsTo(BusinessPartner::class, 'bp_code', 'bp_code');
     }
 }

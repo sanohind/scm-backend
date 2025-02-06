@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\V1\Subcontractor\SubcontReceiveController;
 use App\Http\Controllers\Api\V1\Syncronization\SyncController;
 use App\Http\Controllers\Api\V1\Syncronization\SyncManualController;
 use App\Http\Controllers\Api\V1\User\AuthController;
-use App\Http\Controllers\Api\V1\User\PartnerController;
+use App\Http\Controllers\Api\V1\User\BusinessPartnerController;
 use App\Http\Controllers\Api\V1\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,7 +51,7 @@ Route::get('/copyDnDetail', [SyncController::class, 'copyDnDetail']);
 Route::middleware(['auth:sanctum', 'userRole:1'])->prefix('super-admin')->group(function () {
 
     // Route for show list of user
-    Route::get('partner/list', [PartnerController::class, 'index']);
+    Route::get('partner/list', [BusinessPartnerController::class, 'GetBusinessPartner']);
 
     // Route for show online user
     Route::get('dashboard', [DashboardController::class, 'dashboard']);
@@ -69,13 +69,13 @@ Route::middleware(['auth:sanctum', 'userRole:1'])->prefix('super-admin')->group(
      * Route For User
      */
     // Route for get record data
-    Route::get('user/index', [UserController::class, 'index']);
+    Route::get('user/index', [UserController::class, 'getUser']);
     // Route for get email user
-    Route::get('user/email/{bp_code}', [UserController::class, 'userEmail']);
+    Route::get('user/email/{bp_code}', [UserController::class, 'getBusinessPartnerEmail']);
     // Route for create user
-    Route::post('user/store', [UserController::class, 'store']);
+    Route::post('user/store', [UserController::class, 'createUser']);
     // Route for edit user form
-    Route::get('user/edit/{user}', [UserController::class, 'edit']);
+    Route::get('user/edit/{user}', [UserController::class, 'getUserDetail']);
     // Route for update user data
     Route::put('user/update/{user}', [UserController::class, 'update']);
     // Route for update status user
@@ -93,7 +93,7 @@ Route::middleware(['auth:sanctum', 'userRole:2'])->prefix('admin-purchasing')->g
     Route::get('sync', [SyncManualController::class, 'syncManual']);
 
     // Route get partner list
-    Route::get('partner/list', [PartnerController::class, 'index']);
+    Route::get('partner/list', [BusinessPartnerController::class, 'GetBusinessPartner']);
 
     /**
      *  Route for Purchase Order
@@ -141,7 +141,7 @@ Route::middleware(['auth:sanctum', 'userRole:3'])->prefix('admin-warehouse')->gr
     Route::get('sync', [SyncManualController::class, 'syncManual']);
 
     // Route get partner data
-    Route::get('partner/list', [PartnerController::class, 'index']);
+    Route::get('partner/list', [BusinessPartnerController::class, 'GetBusinessPartner']);
 
     /**
      * Route for Delivery Note
@@ -168,7 +168,7 @@ Route::middleware(['auth:sanctum', 'userRole:3'])->prefix('admin-warehouse')->gr
 // Route Admin Subcont
 Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->group(function () {
     // Route for get partner list
-    Route::get('partner/list', [PartnerController::class, 'index']);
+    Route::get('partner/list', [BusinessPartnerController::class, 'GetBusinessPartner']);
     // Route for dashboard admin
     Route::get('dashboard/performance-subcont/{bp_code}', [DashboardController::class, 'adminSubcontGraphic']);
 
@@ -463,7 +463,7 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
     Route::get('sync', [SyncManualController::class, 'syncManual']);
 
     // Route get partner list
-    Route::get('partner/list', [PartnerController::class, 'index']);
+    Route::get('partner/list', [BusinessPartnerController::class, 'GetBusinessPartner']);
 
     // Route For Calender Events
     Route::get('event', [DashboardController::class, 'calenderEvents']);

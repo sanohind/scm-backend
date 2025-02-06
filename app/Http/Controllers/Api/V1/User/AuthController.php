@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
+use App\Http\Requests\User\LoginUserRequest;
 use App\Models\Users\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,35 +10,21 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController
 {
-    // Login function
-    public function login(Request $request)
+    /**
+     * Create Authentication token
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function login(LoginUserRequest $request)
     {
-        // Define validation rules
-        $rules = [
-            'username' => 'required',
-            'password' => 'required',
-        ];
-
-        // Validator instance
-        $validator = Validator::make($request->all(), $rules);
-
-        // Check validation fails
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Login validation error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         // Find the user by username
         $user = User::where('username', $request->username)->first();
 
         // Validate user existence and password with
         if (! Auth::attempt($request->only(['username', 'password']))) {
             return response()->json([
-                'success' => false,
-                'message' => 'Username or Password Invalid',
+                'status' => false,
+                'message' => 'Invalid username or password. Please try again.',
             ], 401);
         }
 
@@ -49,7 +36,7 @@ class AuthController
             Auth::logout();
 
             return response()->json([
-                'success' => false,
+                'status' => false,
                 'message' => 'Account is inactive',
             ], 403);
         }
@@ -68,6 +55,11 @@ class AuthController
         ]);
     }
 
+    /**
+     * Revoke authenthication token via soft delete
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function logout(Request $request)
     {
         // Revoke token
@@ -75,13 +67,8 @@ class AuthController
 
         // logout success respond
         return response()->json([
-            'success' => true,
+            'status' => true,
             'message' => 'User successfully logged out',
         ], 200);
     }
 }
-/**
- * Note:
- * 1. Last used token masih null belum ada history lognya
- * 2. expires at token masih null belum ada timeoutnya
- */

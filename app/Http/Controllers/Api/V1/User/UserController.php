@@ -22,143 +22,107 @@ class UserController
         protected UserUpdateUser $userUpdateUser,
         protected UserGetEmail $userGetEmail,
         protected UserCreateAndAttachEmail $userCreateAndAttachEmail,
-    ) {}
+    ) {
+    }
 
-    // View list data user
-    public function index()
+    /**
+     * Get all user data
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function getUser()
     {
-        //get data api to view
-        // Using eager loading request data to database for efficiency data
-        //in case calling data relation
-        $data_user = User::orderby('user_id', 'asc')->with('partner')->get();
+        // Get user data
+        $dataUser = User::orderby('user_id', 'asc')
+            ->with('partner')
+            ->get();
 
+        // Response
         return response()->json([
-            'success' => true,
-            'message' => 'Display List User Successfully',
-            'data' => UserResource::collection($data_user),
-        ]);
+            'status' => true,
+            'message' => 'Display User Data Successfully',
+            'data' => UserResource::collection($dataUser),
+        ], 200);
     }
 
-    public function userEmail($bp_code)
+    /**
+     * Get list Business Partner Email
+     * @param mixed $bpCode
+     */
+    public function getBusinessPartnerEmail($bpCode)
     {
-        try {
-            $result = $this->userGetEmail->getEmail($bp_code);
-        } catch (\Exception $ex) {
-            return response()->json([
-                'status' => false,
-                'error' => $ex->getMessage().$ex->getFile().$ex->getLine(),
-            ], 500);
-        }
+        // Get Business Partner Email
+        $this->userGetEmail->getEmail($bpCode);
 
-        return $result;
+        // Response
+        return response()->json([
+            'status' => true,
+            'message' => 'Display Business Partner Email Successfully',
+        ], 200);
     }
 
-    // Store data user to database
-    public function store(StoreUserRequest $request)
+    /**
+     * Create/store new User
+     * @param \App\Http\Requests\User\StoreUserRequest $request
+     */
+    public function createUser(StoreUserRequest $request)
     {
-        try {
-            $result = $this->userCreateUser->createUser($request->validated());
-        } catch (\Exception $ex) {
-            return response()->json([
-                'status' => false,
-                'error' => $ex->getMessage().$ex->getFile().$ex->getLine(),
-            ], 500);
-        }
+        // Create new user
+        $this->userCreateUser->createUser($request->validated());
 
-        return $result;
+        // Response
+        return response()->json([
+            'status' => true,
+            'message' => 'Create User Successfully',
+        ], 200);
     }
 
-    //Show edit form user
-    public function edit($user)
+    /**
+     * Get User detail data
+     * @param mixed $user
+     * @return UserDetailResource
+     */
+    public function getUserDetail($user)
     {
-        // Find user
+        // Get User detail
         $data_edit = User::findOrFail($user);
 
+        // Return
         return new UserDetailResource($data_edit);
     }
 
-    public function update(UpdateUserRequest $request, $user)
+    /**
+     * Update user data
+     * @param \App\Http\Requests\User\UpdateUserRequest $request
+     * @param mixed $user
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function updateUser(UpdateUserRequest $request, $user)
     {
         try {
             $result = $this->userUpdateUser->updateUser($request->validated(), $user);
         } catch (\Exception $ex) {
             return response()->json([
                 'status' => false,
-                'error' => $ex->getMessage().$ex->getFile().$ex->getLine(),
+                'error' => $ex->getMessage() . $ex->getFile() . $ex->getLine(),
             ], 500);
         }
 
         return $result;
     }
 
-    public function update2(Request $request, $user)
-    {
-        // Find user
-        $data_edit = User::findOrFail($user);
-
-        // Fail find user
-        if (! $data_edit) {
-            return response()->json([
-                'success' => false,
-                'errors' => 'User not found',
-            ], 404);
-        }
-
-        // Data input rules
-        $rules = [
-            'bp_code' => 'required|string|max:25',
-            'name' => 'required|string|max:25',
-            'role' => 'required|string|max:25',
-            'password' => 'nullable|string|min:8',
-            'username' => 'nullable|string|unique:user,username|max:25', // username must unique
-            'email' => 'required|email|max:255|unique:user,email,'.$data_edit->user_id.',user_id', // email must be unique
-        ];
-
-        // Validator instance
-        $validator = Validator::make($request->all(), $rules);
-
-        // Check validation fails
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Update validation error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        // Update the user with validated data
-        $validatedData = $validator->validated();
-
-        // Process the username if it was provided
-        if (empty($validatedData['username'])) {
-            unset($validatedData['username']); // Remove username if not provided
-        }
-
-        // Hash the password if it was provided
-        if (! empty($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
-        } else {
-            unset($validatedData['password']); // Remove password if not provided
-        }
-
-        // Update the user instance
-        $data_edit->update($validatedData);
-
-        // Return value
-        return response()->json([
-            'success' => true,
-            'message' => 'Data User "'.$data_edit->username.'" Successfully Updated',
-            'data' => new UserResource($data_edit),
-        ]);
-    }
-
+    /**
+     * Update status User active/inactive
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $user
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function updateStatus(Request $request, $user)
     {
         // Find user
         $data_edit = User::findOrFail($user);
 
         // Fail find user
-        if (! $user) {
+        if (!$user) {
             return response()->json([
                 'success' => false,
                 'errors' => 'User Not Found',
@@ -191,11 +155,15 @@ class UserController
         // Return value
         return response()->json([
             'success' => true,
-            'message' => 'Data User "'.$data_edit->username.'" Successfully Updated',
+            'message' => 'Data User "' . $data_edit->username . '" Successfully Updated',
             'data' => new UserResource($data_edit),
         ]);
     }
 
+    /**
+     * Move main email user from table user to table email
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function moveEmail()
     {
         $data = User::whereNotNull('email')->select('bp_code', 'email')->get();
@@ -209,6 +177,11 @@ class UserController
         ]);
     }
 
+    /**
+     * Delete User
+     * @param mixed $id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function deleteUser($id)
     {
         $getUser = User::findOrFail($id);

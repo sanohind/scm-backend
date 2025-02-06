@@ -3,7 +3,7 @@
 namespace App\Http\Resources\DeliveryNote;
 
 use App\Models\DeliveryNote\DnHeader;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -81,7 +81,7 @@ class DnLabelAllResource extends JsonResource
         // query get supplier_code/bp_code
         $getBpCode = DnHeader::where('no_dn', $this->no_dn)->value('supplier_code');
         // query get adr_line_1
-        $getAdrLine1 = PartnerLocal::where('bp_code', $getBpCode)->value('adr_line_1');
+        $getAdrLine1 = BusinessPartner::where('bp_code', $getBpCode)->value('adr_line_1');
 
         return $getAdrLine1;
     }

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartner;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class PartnerSeeder extends Seeder
      */
     public function run(): void
     {
-        PartnerLocal::create([
+        BusinessPartner::create([
             'bp_code' => 'APFEY',
             'bp_name' => Str::random(10),
             'bp_status_desc' => Str::random(10),

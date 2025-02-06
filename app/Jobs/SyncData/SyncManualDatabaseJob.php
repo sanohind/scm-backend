@@ -10,8 +10,8 @@ use App\Models\PO_Detail;
 use App\Models\PO_Detail_ERP;
 use App\Models\PO_Header;
 use App\Models\PO_Header_ERP;
-use App\Models\Users\Partner;
-use App\Models\Users\PartnerLocal;
+use App\Models\Users\BusinessPartnerErp;
+use App\Models\Users\BusinessPartner;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -51,13 +51,13 @@ class SyncManualDatabaseJob implements ShouldQueue
 
         */
         // get data
-        $sqlsrvDataPartner = Partner::where('bp_role_desc', 'LIKE', '%Supplier%')
+        $sqlsrvDataPartner = BusinessPartnerErp::where('bp_role_desc', 'LIKE', '%Supplier%')
             ->where('contry', 'IDN')
             ->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {
-            PartnerLocal::updateOrCreate(
+            BusinessPartner::updateOrCreate(
                 // find the bp_code
                 ['bp_code' => $data->bp_code],
                 //update data
