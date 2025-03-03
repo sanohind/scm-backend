@@ -10,19 +10,18 @@ use Symfony\Component\HttpFoundation\Response;
 class UserRole
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * Check Role User
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
+     * @param mixed $isRole
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle(Request $request, Closure $next, $isRole): Response
     {
-        // Explode the roles into an array if passed as a comma-separated string
-        $roles = explode(',', $isRole);
-
-        // authenticating user login
         $user = Auth::user();
 
-        // check the authentication
+        $roles = explode(',', $isRole);
+
         if (! in_array($user->role, $roles)) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
