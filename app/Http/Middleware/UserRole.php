@@ -3,12 +3,20 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Trait\ResponseApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserRole
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     */
+    use ResponseApi;
+
     /**
      * Check Role User
      * @param \Illuminate\Http\Request $request
@@ -23,7 +31,7 @@ class UserRole
         $roles = explode(',', $isRole);
 
         if (! in_array($user->role, $roles)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return $this->returnResponseApi(false, 'Forbidden', null, 403);
         }
 
         return $next($request);
