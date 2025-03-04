@@ -32,15 +32,14 @@ class PoHeaderController
      */
     public function __construct(
         protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing
-    ) {
-    }
+    ) {}
 
     /**
      * Get list po based on user
      * @param mixed $bpCode
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function index($bpCode = null)
+    public function getListPoUser($bpCode = null)
     {
         if ($this->permissibleRole('5', '6')) {
             $user = Auth::user()->bp_code;
@@ -48,7 +47,7 @@ class PoHeaderController
             $user = $bpCode;
         }
 
-        if (! isset($user)) {
+        if (!isset($user)) {
             return $this->returnCustomResponseApi('error', 'User Not Found', null, 404);
         }
 
@@ -84,7 +83,7 @@ class PoHeaderController
      * @param mixed $poNo
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function update(PoUpdateRequest $request, $poNo)
+    public function updateResponse(PoUpdateRequest $request, $poNo)
     {
         $request->validated();
 
@@ -108,19 +107,24 @@ class PoHeaderController
                 ]);
                 break;
             default:
-            return $this->returnResponseApi(false, 'Response Column Not Valid', null, 404);
+                return $this->returnResponseApi(false, 'Response Column Not Valid', null, 404);
         }
 
         try {
             $emailPurchasing = $this->userGetEmailInternalPurchasing->getEmailPurchasing();
 
             foreach ($emailPurchasing as $email) {
-                Mail::to($email)->send(new PoResponseInternal( $poHeader));
+                Mail::to($email)->send(new PoResponseInternal($poHeader));
             }
         } catch (\Throwable $th) {
             Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
 
-            return $this->returnCustomResponseApi('email error', 'Purchase order confirm process successfully, but notification email to PT Sanoh Indonesia error', null, 200);
+            return $this->returnCustomResponseApi(
+                'email error',
+                'Purchase order confirm process successfully, but notification email to PT Sanoh Indonesia error',
+                null,
+                200
+            );
         }
 
         return $this->returnCustomResponseApi('success', 'PO Edited Successfully', new PoHeaderResource($poHeader), 200);

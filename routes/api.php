@@ -109,7 +109,7 @@ Route::middleware(['auth:sanctum', 'userRole:2'])->prefix('admin-purchasing')->g
      * @param  $sp_code  / supplier_code is bp_code
      */
     // Routefor get record po with specific user
-    Route::get('po/index/{bp_code}', [PoHeaderController::class, 'index']);
+    Route::get('po/index/{bp_code}', [PoHeaderController::class, 'getListPoUser']);
     // Route for show PO Detail list
     Route::get('po/detail/{po_no}', [PoDetailController::class, 'index']);
     // Route for print PO
@@ -245,11 +245,11 @@ Route::middleware(['auth:sanctum', 'userRole:5'])->prefix('supplier-marketing')-
      *  Route for Purchase Order
      */
     // Route for show list PO Header
-    Route::get('po/index', [PoHeaderController::class, 'index']);
+    Route::get('po/index', [PoHeaderController::class, 'getListPoUser']);
     // Route for show list PO Detail
     Route::get('po/detail/{po_no}', [PoDetailController::class, 'index']);
     // Route for update list PO Header
-    Route::put('po/update/{po_no}', [PoHeaderController::class, 'update']);
+    Route::put('po/update/{po_no}', [PoHeaderController::class, 'updateResponse']);
     // route view PO history
     Route::get('po/history', [HistoryController::class, 'poHeaderHistory']);
     // route view print PO file
@@ -313,11 +313,11 @@ Route::middleware(['auth:sanctum', 'userRole:6'])->prefix('supplier-subcont-mark
      */
 
     // Route for show list PO Header
-    Route::get('po/index', [PoHeaderController::class, 'index']);
+    Route::get('po/index', [PoHeaderController::class, 'getListPoUser']);
     // Route for show list PO Detail
     Route::get('po/detail/{po_no}', [PoDetailController::class, 'index']);
     // Route for update list PO Header
-    Route::put('po/update/{po_no}', [PoHeaderController::class, 'update']);
+    Route::put('po/update/{po_no}', [PoHeaderController::class, 'updateResponse']);
     // Route for PO history
     Route::get('po/history', [HistoryController::class, 'poHeaderHistory']);
     // Route for print PO
@@ -482,11 +482,11 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
      * @param  $sp_code  / supplier_code is bp_code
      */
     // Routefor get record po with specific user
-    Route::get('po/index/{bp_code}', [PoHeaderController::class, 'index']);
+    Route::get('po/index/{bp_code}', [PoHeaderController::class, 'getListPoUser']);
     // Route for show PO Detail list
     Route::get('po/detail/{po_no}', [PoDetailController::class, 'index']);
     // Route for update list PO Header
-    Route::put('po/update/{po_no}', [PoHeaderController::class, 'update']);
+    Route::put('po/update/{po_no}', [PoHeaderController::class, 'updateResponse']);
     // Route for print PO
     Route::get('po/print/{po_no}', [PrintController::class, 'poHeaderView']);
     // Route for show PO history list
