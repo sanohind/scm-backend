@@ -2,69 +2,78 @@
 
 namespace App\Http\Controllers\Api\V1\DeliveryNote;
 
+use App\Trait\ResponseApi;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\DeliveryNote\DnHeaderResource;
-use App\Models\DeliveryNote\DnHeader;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DeliveryNote\DnHeader;
+use App\Http\Resources\DeliveryNote\DnHeaderResource;
 
 class DnHeaderController extends Controller
 {
-    public function index()
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     */
+    use ResponseApi;
+
+    /**
+     * Get list dn header user
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function getListDnHeaderUser()
     {
-        $sp_code = Auth::user()->bp_code;
+        $bpCode = Auth::user()->bp_code;
 
-        // dd($sp_code);
-
-        // Eager load the 'podetail' relationship
-        $data_po = DnHeader::with('poHeader', 'dnDetail')
+        $dnHeaderData = DnHeader::with('poHeader', 'dnDetail')
             ->orderBy('plan_delivery_date', 'desc')
-            ->where('supplier_code', $sp_code)
+            ->where('supplier_code', $bpCode)
             ->whereNotIn(
-                'status_desc', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed'])
+                'status_desc',
+                ['Closed', 'closed', 'close', 'Confirmed', 'confirmed']
+            )
             ->whereHas('poHeader', function ($query) {
-
                 $query->whereNotIn('po_status', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed']);
             })
-
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Display List DN Header Successfully',
-            'data' => DnHeaderResource::collection($data_po),
-        ], 200);
+        return $this->returnCustomResponseApi(
+            'success',
+            'Display List DN Header Successfully',
+            DnHeaderResource::collection($dnHeaderData),
+            200
+        );
     }
 
-    public function indexWarehouse($sp_code)
+    /**
+     * Get list selected supplier dn header
+     * @param mixed $bpCode
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function getListDnHeaderSelected($bpCode)
     {
-        //get data api to view
-        // Using eager loading request data to database for efficiency data
-        $data_dnheader = DnHeader::with('poHeader', 'dnDetail')
+        $dnHeaderData = DnHeader::with('poHeader', 'dnDetail')
+            ->where('supplier_code', $bpCode)
             ->whereNotIn('status_desc', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed'])
             ->orderBy('plan_delivery_date', 'desc')
-            ->where('supplier_code', $sp_code)
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Display List DN Header Successfully',
-            'data' => DnHeaderResource::collection($data_dnheader),
-        ], 200);
+        return $this->returnResponseApi(
+            true,
+            'Display List DN Header Successfully',
+            DnHeaderResource::collection($dnHeaderData),
+            200
+        );
     }
 
-    //test
-    // View list data DNHeader
+    /**
+     * Get all dn header
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function indexAll()
     {
-        //get data api to view
-        // Using eager loading request data to database for efficiency data
-        //in case calling data relation
-        $data_dnheader = DnHeader::with('poHeader')->get();
+        $dnHeaderData = DnHeader::with('poHeader')->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Display List DN Header Successfully',
-            'data' => DnHeaderResource::collection($data_dnheader),
-        ], 200);
+        return $this->returnResponseApi(true,'Display List DN Header Successfully',DnHeaderResource::collection($dnHeaderData),200);
     }
 }
