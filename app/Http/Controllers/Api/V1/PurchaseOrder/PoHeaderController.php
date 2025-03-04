@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Api\V1\PurchaseOrder;
 
 use App\Http\Requests\PurchaseOrder\PoUpdateRequest;
-use App\Trait\AuthorizationRole;
-use Carbon\Carbon;
-use App\Trait\ResponseApi;
-use Illuminate\Http\Request;
-use App\Mail\PoResponseInternal;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use App\Models\PurchaseOrder\PoHeader;
-use Illuminate\Support\Facades\Validator;
-use App\Service\User\UserGetEmailInternalPurchasing;
 use App\Http\Resources\PurchaseOrder\PoHeaderResource;
+use App\Mail\PoResponseInternal;
+use App\Models\PurchaseOrder\PoHeader;
+use App\Service\User\UserGetEmailInternalPurchasing;
+use App\Trait\AuthorizationRole;
+use App\Trait\ResponseApi;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PoHeaderController
 {
@@ -24,11 +22,10 @@ class PoHeaderController
      * 1. ResponseApi = Response api should use ResponseApi trait template
      * 2. AuthorizationRole = for checking permissible user role
      */
-    use ResponseApi, AuthorizationRole;
+    use AuthorizationRole, ResponseApi;
 
     /**
      * List of service used
-     * @param \App\Service\User\UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing
      */
     public function __construct(
         protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing
@@ -36,7 +33,8 @@ class PoHeaderController
 
     /**
      * Get list po based on user
-     * @param mixed $bpCode
+     *
+     * @param  mixed  $bpCode
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function getListPoUser($bpCode = null)
@@ -47,7 +45,7 @@ class PoHeaderController
             $user = $bpCode;
         }
 
-        if (!isset($user)) {
+        if (! isset($user)) {
             return $this->returnCustomResponseApi('error', 'User Not Found', null, 404);
         }
 
@@ -65,6 +63,7 @@ class PoHeaderController
 
     /**
      * Get All Po Header
+     *
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function indexAll()
@@ -79,8 +78,8 @@ class PoHeaderController
 
     /**
      * Update status response
-     * @param \App\Http\Requests\PurchaseOrder\PoUpdateRequest $request
-     * @param mixed $poNo
+     *
+     * @param  mixed  $poNo
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function updateResponse(PoUpdateRequest $request, $poNo)
@@ -88,7 +87,7 @@ class PoHeaderController
         $request->validated();
 
         $poHeader = PoHeader::with('poDetail')->find($poNo);
-        if (!$poHeader) {
+        if (! $poHeader) {
             return $this->returnCustomResponseApi('error', 'PO Header Not Found', null, 404);
         }
 
