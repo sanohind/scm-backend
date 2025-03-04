@@ -17,6 +17,11 @@ class PoDetailController extends Controller
      */
     use ResponseApi;
 
+    /**
+     * Get list detail of po
+     * @param mixed $po_no
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function getListDetailPo($po_no)
     {
         $poDetailData = PoDetail::with('poHeader')
@@ -36,7 +41,10 @@ class PoDetailController extends Controller
         );
     }
 
-    // Test function to get all data
+    /**
+     * Get all po detail
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function indexAll()
     {
         $poDetailData = PoDetail::with('poHeader')->get();
