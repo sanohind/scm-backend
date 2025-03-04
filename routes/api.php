@@ -111,7 +111,7 @@ Route::middleware(['auth:sanctum', 'userRole:2'])->prefix('admin-purchasing')->g
     // Routefor get record po with specific user
     Route::get('po/index/{bp_code}', [PoHeaderController::class, 'getListPoUser']);
     // Route for show PO Detail list
-    Route::get('po/detail/{po_no}', [PoDetailController::class, 'index']);
+    Route::get('po/detail/{po_no}', [PoDetailController::class, 'getListDetailPo']);
     // Route for print PO
     Route::get('po/print/{po_no}', [PrintController::class, 'poHeaderView']);
     // Route for show PO history list
@@ -247,7 +247,7 @@ Route::middleware(['auth:sanctum', 'userRole:5'])->prefix('supplier-marketing')-
     // Route for show list PO Header
     Route::get('po/index', [PoHeaderController::class, 'getListPoUser']);
     // Route for show list PO Detail
-    Route::get('po/detail/{po_no}', [PoDetailController::class, 'index']);
+    Route::get('po/detail/{po_no}', [PoDetailController::class, 'getListDetailPo']);
     // Route for update list PO Header
     Route::put('po/update/{po_no}', [PoHeaderController::class, 'updateResponse']);
     // route view PO history
@@ -315,7 +315,7 @@ Route::middleware(['auth:sanctum', 'userRole:6'])->prefix('supplier-subcont-mark
     // Route for show list PO Header
     Route::get('po/index', [PoHeaderController::class, 'getListPoUser']);
     // Route for show list PO Detail
-    Route::get('po/detail/{po_no}', [PoDetailController::class, 'index']);
+    Route::get('po/detail/{po_no}', [PoDetailController::class, 'getListDetailPo']);
     // Route for update list PO Header
     Route::put('po/update/{po_no}', [PoHeaderController::class, 'updateResponse']);
     // Route for PO history
@@ -484,7 +484,7 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
     // Routefor get record po with specific user
     Route::get('po/index/{bp_code}', [PoHeaderController::class, 'getListPoUser']);
     // Route for show PO Detail list
-    Route::get('po/detail/{po_no}', [PoDetailController::class, 'index']);
+    Route::get('po/detail/{po_no}', [PoDetailController::class, 'getListDetailPo']);
     // Route for update list PO Header
     Route::put('po/update/{po_no}', [PoHeaderController::class, 'updateResponse']);
     // Route for print PO

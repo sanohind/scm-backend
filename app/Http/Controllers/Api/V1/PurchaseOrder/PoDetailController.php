@@ -2,70 +2,54 @@
 
 namespace App\Http\Controllers\Api\V1\PurchaseOrder;
 
+use App\Http\Resources\PurchaseOrder\PoDetailListResource;
+use App\Trait\ResponseApi;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PurchaseOrder\PoDetailResource;
 use App\Models\PurchaseOrder\PoDetail;
+use App\Http\Resources\PurchaseOrder\PoDetailResource;
 
 class PoDetailController extends Controller
 {
-    // To get PO Detail data based supplier_code
-    public function index($po_no)
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     */
+    use ResponseApi;
+
+    public function getListDetailPo($po_no)
     {
-        // Eager load the 'poHeader' relationship
-        $data_podetail = PoDetail::where('po_no', $po_no)
-            ->with('poHeader')
+        $poDetailData = PoDetail::with('poHeader')
+            ->where('po_no', $po_no)
             ->orderBy('planned_receipt_date', 'asc')
             ->get();
 
-        // Check if PO Header available
-        if (! $data_podetail) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'PO Number Not Found',
-            ], 404);
+        if (!$poDetailData) {
+            return $this->returnCustomResponseApi('error', 'PO Detail Not Found', null, 404);
         }
 
-        // Check if data empty
-        if ($data_podetail->isEmpty()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'PO details not found / empty',
-                'data' => [],
-            ], 200);
-        }
-
-        // If data isn't empty
-        return response()->json([
-            'success' => true,
-            'message' => 'Display List PO Detail Successfully',
-            'data' => [
-                'po_no' => $po_no,
-                'planned_receipt_date' => $data_podetail->first()->poHeader->planned_receipt_date,
-                'note' => ($data_podetail->first()->poHeader->reference_2 == null) ? $data_podetail->first()->poHeader->reference_1 : $data_podetail->first()->poHeader->reference_2,
-                'detail' => PoDetailResource::collection($data_podetail)],
-        ], 200);
+        return $this->returnResponseApi(
+            true,
+            'Display List PO Detail Successfully',
+            new PoDetailListResource($poDetailData),
+            200
+        );
     }
 
     // Test function to get all data
     public function indexAll()
     {
-        // Eager load the 'poHeader' relationship
-        $data_podetail = PoDetail::with('poHeader')->get();
+        $poDetailData = PoDetail::with('poHeader')->get();
 
-        // Check if data empty
-        if ($data_podetail->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'PO details not found',
-                'data' => [],
-            ], 200);
+        if ($poDetailData->isEmpty()) {
+            return $this->returnResponseApi(false, 'PO details not found', null, 404);
         }
 
-        // If data isn't empty
-        return response()->json([
-            'success' => true,
-            'message' => 'Display List PO Detail Successfully',
-            'data' => PoDetailResource::collection($data_podetail),
-        ], 200);
+        return $this->returnResponseApi(
+            true,
+            'Display List PO Detail Successfully',
+            PoDetailResource::collection($poDetailData),
+            200
+        );
     }
 }
