@@ -36,20 +36,20 @@ class PoHeaderController
     }
 
     /**
-     * Get list PO Header user
-     * @param \Illuminate\Http\Request $request
+     * Get list po based on user
+     * @param mixed $bpCode
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index($bpCode = null)
     {
         if ($this->permissibleRole('5', '6')) {
             $user = Auth::user()->bp_code;
         } elseif ($this->permissibleRole('2', '9')) {
-            $user = $request->bp_code;
+            $user = $bpCode;
         }
 
         if (! isset($user)) {
-            return $this->returnCustomFailedResponseApi('error', 'User Not Found', null, 404);
+            return $this->returnCustomResponseApi('error', 'User Not Found', null, 404);
         }
 
         $poData = PoHeader::with('poDetail')
@@ -75,17 +75,22 @@ class PoHeaderController
             return $this->returnResponseApi(true, 'PO Header data not found / empty / all PO data is Closed', null, 200);
         }
 
-        return $this->returnCustomSuccessResponseApi('success', 'Success Display List PO Header', PoHeaderResource::collection($poData), 200);
+        return $this->returnCustomResponseApi('success', 'Success Display List PO Header', PoHeaderResource::collection($poData), 200);
     }
 
-
+    /**
+     * Update status response
+     * @param \App\Http\Requests\PurchaseOrder\PoUpdateRequest $request
+     * @param mixed $poNo
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function update(PoUpdateRequest $request, $poNo)
     {
         $request->validated();
 
         $poHeader = PoHeader::with('poDetail')->find($poNo);
         if (!$poHeader) {
-            return $this->returnCustomFailedResponseApi('error', 'PO Header Not Found', null, 404);
+            return $this->returnCustomResponseApi('error', 'PO Header Not Found', null, 404);
         }
 
         switch ($request->response) {
@@ -115,9 +120,9 @@ class PoHeaderController
         } catch (\Throwable $th) {
             Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
 
-            return $this->returnCustomFailedResponseApi('email error', 'Purchase order confirm process successfully, but notification email to PT Sanoh Indonesia error', null, 200);
+            return $this->returnCustomResponseApi('email error', 'Purchase order confirm process successfully, but notification email to PT Sanoh Indonesia error', null, 200);
         }
 
-        return $this->returnCustomSuccessResponseApi('success', 'PO Edited Successfully', new PoHeaderResource($poHeader), 200);
+        return $this->returnCustomResponseApi('success', 'PO Edited Successfully', new PoHeaderResource($poHeader), 200);
     }
 }
