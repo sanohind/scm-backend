@@ -41,7 +41,7 @@ class AuthController
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return $this->returnResponseApi(true, 'Login Successful.', new UserLoginResource($user, $token), 200);
+        return (new UserLoginResource($user, $token))->response()->setStatusCode(200);
     }
 
     /**
