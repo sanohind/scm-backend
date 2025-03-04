@@ -2,182 +2,122 @@
 
 namespace App\Http\Controllers\Api\V1\PurchaseOrder;
 
-use App\Http\Resources\PurchaseOrder\PoHeaderResource;
-use App\Mail\PoResponseInternal;
-use App\Models\PurchaseOrder\PoHeader;
-use App\Service\User\UserGetEmailInternalPurchasing;
+use App\Http\Requests\PurchaseOrder\PoUpdateRequest;
+use App\Trait\AuthorizationRole;
 use Carbon\Carbon;
+use App\Trait\ResponseApi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Mail\PoResponseInternal;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\PurchaseOrder\PoHeader;
 use Illuminate\Support\Facades\Validator;
+use App\Service\User\UserGetEmailInternalPurchasing;
+use App\Http\Resources\PurchaseOrder\PoHeaderResource;
 
 class PoHeaderController
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     * 2. AuthorizationRole = for checking permissible user role
+     */
+    use ResponseApi, AuthorizationRole;
+
+    /**
+     * List of service used
+     * @param \App\Service\User\UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing
+     */
     public function __construct(
         protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing
-    ) {}
+    ) {
+    }
 
-    // To get PO Header data based supplier_code
+    /**
+     * Get list PO Header user
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
-        // Validation check user role
-        $check = Auth::user()->role;
-
-        if ($check == 5 || $check == 6) { // user
+        if ($this->permissibleRole('5', '6')) {
             $user = Auth::user()->bp_code;
-        } elseif ($check == 2 || $check == 9) {
+        } elseif ($this->permissibleRole('2', '9')) {
             $user = $request->bp_code;
         }
 
-        // Eager load the 'poDetail' relationship
-        $data_po = PoHeader::where('supplier_code', $user) // only return po when status "In Process"
-            ->orderBy('po_date', 'desc')
+        if (! isset($user)) {
+            return $this->returnCustomFailedResponseApi('error', 'User Not Found', null, 404);
+        }
+
+        $poData = PoHeader::with('poDetail')
+            ->where('supplier_code', $user)
             ->whereIn('po_status', ['In Process', 'in process'])
-            ->with('poDetail')->get();
-
-        // Check if user available
-        if (! $data_po) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'User Not Found',
-            ], 404);
+            ->orderBy('po_date', 'desc')
+            ->get();
+        if ($poData->isEmpty()) {
+            return $this->returnResponseApi(true, 'PO Header data not found / empty / all PO data is Closed', null, 200);
         }
 
-        // Check if data empty
-        if ($data_po->isEmpty()) {
-            return response()->json([
-                'status' => true,
-                'message' => 'PO Header data not found / empty / all PO data is Closed',
-                'data' => [],
-            ], 200);
-        }
-
-        // If data isn't empty
-        return response()->json([
-            'status' => true,
-            'message' => 'Success Display List PO Header',
-            'data' => PoHeaderResource::collection($data_po),
-        ], 200);
+        return $this->returnResponseApi(true, 'Success Display List PO Header', PoHeaderResource::collection($poData), 200);
     }
 
-    // Test to get all po header data
+    /**
+     * Get All Po Header
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function indexAll()
     {
-        // Eager load the 'podetail' relationship
-        $data_po = PoHeader::with('poDetail')->get();
+        $poData = PoHeader::with('poDetail')->get();
+        if ($poData->isEmpty()) {
+            return $this->returnResponseApi(true, 'PO Header data not found / empty / all PO data is Closed', null, 200);
+        }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Display List PO Header Successfully',
-            'data' => PoHeaderResource::collection($data_po),
-        ], 200);
+        return $this->returnCustomSuccessResponseApi('success', 'Success Display List PO Header', PoHeaderResource::collection($poData), 200);
     }
 
-    // For update response column in po header
-    public function update(Request $request, $po_no)
+
+    public function update(PoUpdateRequest $request, $poNo)
     {
-        $po_header = PoHeader::with('poDetail')->find($po_no);
+        $request->validated();
 
-        // Check if PO header not found
-        if (! $po_header) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'PO Header Not Found',
-            ], 404);
+        $poHeader = PoHeader::with('poDetail')->find($poNo);
+        if (!$poHeader) {
+            return $this->returnCustomFailedResponseApi('error', 'PO Header Not Found', null, 404);
         }
 
-        // Rules data request
-        $rules = [
-            'response' => 'required|string|max:25',
-        ];
-
-        // Rules based on response value
         switch ($request->response) {
-            // Value Accepted
             case 'Accepted':
-                // No rules return
+                $poHeader->update([
+                    'response' => $request->response,
+                    'accept_at' => Carbon::now()->format('Y-m-d H:i'),
+                ]);
                 break;
-
-                // Value Declined
             case 'Declined':
-                // dd($request->input('reason'));
-                $rules['reason'] = 'required|string|max:255';
+                $poHeader->update([
+                    'response' => $request->response,
+                    'reason' => $request->reason,
+                    'decline_at' => Carbon::now()->format('Y-m-d H:i'),
+                ]);
                 break;
-
             default:
-                return response()->json([
-                    'status' => false,
-                    'error' => 'Invalid response value.',
-                ], 400);
+            return $this->returnResponseApi(false, 'Response Column Not Valid', null, 404);
         }
 
-        // Message if data request error or invalid
-        $messages = [
-            'response.required' => 'The response field is required.',
-            'response.string' => 'The response must be a string.',
-            'response.max' => 'The response cannot be longer than 25 characters.',
-            'reason.required' => 'The reason field is required.',
-            'reason.string' => 'The reason must be a string.',
-            'reason.max' => 'The reason cannot be longer than 255 characters.',
-        ];
-
-        // Validator to check the rules isn't violated
-        $validator = Validator::make($request->all(), $rules, $messages);
-
-        // Check if validator fail
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validate Fail',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        // Update coloumn based of value requested
-        // If Accepted
-        if ($request->response == 'Accepted') {
-            $po_header->update([
-                'response' => $request->input('response'),
-                'accept_at' => Carbon::now()->format('Y-m-d H:i'),
-            ]);
-        }
-        // If Decline
-        elseif ($request->response == 'Declined') {
-            // dd($request->input('reason'));
-            $po_header->update([
-                'response' => $request->input('response'),
-                'reason' => $request->input('reason'),
-                'decline_at' => Carbon::now()->format('Y-m-d H:i'),
-            ]);
-        }
-
-        // Email Notification
         try {
-            // Variable for get email purchasing
             $emailPurchasing = $this->userGetEmailInternalPurchasing->getEmailPurchasing();
 
-            // Mail response to internal
             foreach ($emailPurchasing as $email) {
-                Mail::to($email)->send(new PoResponseInternal(po_header: $po_header));
+                Mail::to($email)->send(new PoResponseInternal( $poHeader));
             }
         } catch (\Throwable $th) {
-            // Log report
             Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
 
-            // Return response
-            return response()->json([
-                'status' => 'email error',
-                'message' => 'Purchase order confirm process successfully, but notification email to PT Sanoh Indonesia error',
-            ], 200);
+            return $this->returnCustomFailedResponseApi('email error', 'Purchase order confirm process successfully, but notification email to PT Sanoh Indonesia error', null, 200);
         }
 
-        // Return respond
-        return response()->json([
-            'status' => 'success',
-            'message' => 'PO Edited Successfully',
-            'data' => new PoHeaderResource($po_header),
-        ], 200);
+        return $this->returnCustomSuccessResponseApi('success', 'PO Edited Successfully', new PoHeaderResource($poHeader), 200);
     }
 }
