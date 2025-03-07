@@ -21,7 +21,7 @@ class DnHeaderController extends Controller
      * Get list dn header user
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getListDnHeaderUser()
+    public function getListDnUser()
     {
         $bpCode = Auth::user()->bp_code;
 

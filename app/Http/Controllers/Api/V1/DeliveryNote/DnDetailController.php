@@ -2,91 +2,81 @@
 
 namespace App\Http\Controllers\Api\V1\DeliveryNote;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\DeliveryNote\UpdateDeliveryNoteRequest;
-use App\Http\Resources\DeliveryNote\DnDetailResource;
-use App\Models\DeliveryNote\DnDetail;
-use App\Models\DeliveryNote\DnHeader;
-use App\Service\DeliveryNote\DeliveryNoteUpdateTransaction;
+use App\Http\Resources\DeliveryNote\DnDetailListResource;
 use Carbon\Carbon;
+use App\Trait\ResponseApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Models\DeliveryNote\DnDetail;
+use App\Models\DeliveryNote\DnHeader;
+use App\Http\Resources\DeliveryNote\DnDetailResource;
+use App\Service\DeliveryNote\DeliveryNoteUpdateTransaction;
+use App\Http\Requests\DeliveryNote\UpdateDeliveryNoteRequest;
 
 class DnDetailController extends Controller
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     */
+    use ResponseApi;
+
     public function __construct(
         protected DeliveryNoteUpdateTransaction $deliveryNoteUpdateTransaction,
     ) {}
 
-    // View list data DNDetail
-    public function index($no_dn)
+    /**
+     * Get list of detail DN based on no_dn
+     * @param mixed $no_dn
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function getListDetailDnUser($no_dn)
     {
-        $data_dndetail = DnDetail::with('dnOutstanding')
+        $dnDetailData = DnDetail::with('dnOutstanding')
             ->where('no_dn', $no_dn)
-            ->orderBy('plan_delivery_date', 'asc')
+            ->orderBy('plan_delivery_date', direction: 'asc')
             ->orderBy('dn_line', 'asc')
             ->get();
-
-        if ($data_dndetail->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'DN details not found',
-            ], 404);
+        if ($dnDetailData->isEmpty()) {
+            return $this->returnResponseApi(false, 'DN detail not found', null, 404);
         }
 
-        $dnHeader = $data_dndetail->first()->dnHeader;
-
+        $dnHeader = $dnDetailData->first()->dnHeader;
         if (! $dnHeader) {
-            return response()->json([
-                'success' => false,
-                'message' => 'DN Header not found',
-            ], 404);
+            return $this->returnResponseApi(false, 'DN Header not found', null, 404);
         }
 
-        $dateString = date('Y-m-d', strtotime($dnHeader->plan_delivery_date));
-        $timeString = date('H:i', strtotime($dnHeader->plan_delivery_time));
-        $concat = "$dateString $timeString";
+        $date = Carbon::parse($dnHeader->plan_delivery_date)->format('Y-m-d');
+        $time = Carbon::parse($dnHeader->plan_delivery_time)->format('H:i');
+        $dateTime = "$date $time";
 
-        // Reassign dn_line values sequentially starting from 1
-        $data_dndetail->each(function ($item, $key) {
-            $item->dn_line = $key + 1;
-        });
-
-        // Query get unique outstanding timestamps grouped by wave
-        $confirmations = [];
-        $uniqueTimestamps = [];
-
-        foreach ($data_dndetail as $dnDetail) {
+        // Logic to get value confirm_at based on wave/sequence
+        $confirmation = [];
+        $uniqueTimestamp = [];
+        foreach ($dnDetailData as $dnDetail) {
             if ($dnDetail->dnOutstanding) {
-                // Group by wave
                 $groupedWave = $dnDetail->dnOutstanding->groupBy('wave');
-
                 foreach ($groupedWave as $wave => $group) {
-                    // Use date and time for the first item in the group
                     $firstItem = $group->first();
-                    $timestamp = $firstItem->add_outstanding_date.' '.$firstItem->add_outstanding_time;
 
-                    // Add to confirm_at only if it's not a duplicate
-                    if (! in_array($timestamp, $uniqueTimestamps)) {
-                        $uniqueTimestamps[] = $timestamp;
-                        $confirmations['confirm_'.($wave + 1).'_at'] = $timestamp;
+                    $timestamp = "$firstItem->add_outstanding_date $firstItem->add_outstanding_time";
+
+                    // Prevent duplication timestamp
+                    if (! in_array($timestamp, $uniqueTimestamp)) {
+                        $uniqueTimestamp[] = $timestamp;
+                        $confirmation['confirm_'.($wave + 1).'_at'] = $timestamp;
                     }
                 }
             }
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Display List DN Detail Successfully',
-            'data' => [
-                'no_dn' => $no_dn,
-                'po_no' => $dnHeader->po_no,
-                'plan_delivery_date' => $concat,
-                'confirm_update_at' => $dnHeader->confirm_update_at,
-                'confirm_at' => $confirmations,
-                'detail' => DnDetailResource::collection($data_dndetail),
-            ],
-        ], 200);
+        return $this->returnResponseApi(
+            true,
+            'Display List DN Detail Successfully',
+            new DnDetailListResource($dnHeader, $dnDetailData, $dateTime, $confirmation),
+            200
+        );
     }
 
     //test

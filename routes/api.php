@@ -157,7 +157,7 @@ Route::middleware(['auth:sanctum', 'userRole:3'])->prefix('admin-warehouse')->gr
     // Route for get record DN with specific user
     Route::get('dn/index/{sp_code}', [DnHeaderController::class, 'getListDnHeaderSelected']);
     // Route for show list DN Detail
-    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'index']);
+    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'getListDetailDnUser']);
     // Route for print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
@@ -214,7 +214,7 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
     // Route for get record DN with specific user
     Route::get('dn/index/{sp_code}', [DnHeaderController::class, 'getListDnHeaderSelected']);
     // Route for show list DN Detail
-    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'index']);
+    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'getListDetailDnUser']);
     // Route for print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
@@ -259,9 +259,9 @@ Route::middleware(['auth:sanctum', 'userRole:5'])->prefix('supplier-marketing')-
      *  Route for Delivery Note
      */
     // Route for show list DN Header
-    Route::get('dn/index', [DnHeaderController::class, 'getListDnHeaderUser']);
+    Route::get('dn/index', [DnHeaderController::class, 'getListDnUser']);
     // Route for show list DN Detail
-    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'index']);
+    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'getListDetailDnUser']);
     // Route for edit list DN Detail
     Route::get('dn/edit/{dn_detail_no}', [DnDetailController::class, 'edit']);
     // Route for update list DN Detail
@@ -327,9 +327,9 @@ Route::middleware(['auth:sanctum', 'userRole:6'])->prefix('supplier-subcont-mark
      *  Route for Delivery Note
      */
     // Route for show list DN Header
-    Route::get('dn/index', [DnHeaderController::class, 'getListDnHeaderUser']);
+    Route::get('dn/index', [DnHeaderController::class, 'getListDnUser']);
     // Route for show list DN Detail
-    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'index']);
+    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'getListDetailDnUser']);
     // Route for edit list DN Detail
     Route::get('dn/edit/{dn_detail_no}', [DnDetailController::class, 'edit']);
     // Route for update list DN Detail
@@ -393,9 +393,9 @@ Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')-
      * Route for Delivery Note
      */
     // Route for get record DN with specific user
-    Route::get('dn/index', [DnHeaderController::class, 'getListDnHeaderUser']);
+    Route::get('dn/index', [DnHeaderController::class, 'getListDnUser']);
     // Route for show list DN Detail
-    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'index']);
+    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'getListDetailDnUser']);
     // Route for update list DN Detail
     Route::put('dn/update', [DnDetailController::class, 'update']);
     // Route for edit list DN Detail
@@ -443,9 +443,9 @@ Route::middleware(['auth:sanctum', 'userRole:8'])->prefix('supplier-subcont')->g
      *  Route for Delivery Note
      */
     // Route for show list DN Header
-    Route::get('dn/index', [DnHeaderController::class, 'getListDnHeaderUser']);
+    Route::get('dn/index', [DnHeaderController::class, 'getListDnUser']);
     // Route for show list DN Detail
-    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'index']);
+    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'getListDetailDnUser']);
     // Route for edit list DN Detail
     Route::get('dn/edit/{dn_detail_no}', [DnDetailController::class, 'edit']);
     // Route for update list DN Detail
@@ -498,7 +498,7 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
     // Route for show list DN Header
     Route::get('dn/index/{sp_code}', [DnHeaderController::class, 'getListDnHeaderSelected']);
     // Route for show list DN Detail
-    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'index']);
+    Route::get('dn/detail/{no_dn}', [DnDetailController::class, 'getListDetailDnUser']);
     // Route for edit list DN Detail
     Route::get('dn/edit/{dn_detail_no}', [DnDetailController::class, 'edit']);
     // Route for update list DN Detail
