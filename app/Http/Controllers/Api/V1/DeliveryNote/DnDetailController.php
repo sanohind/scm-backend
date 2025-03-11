@@ -25,7 +25,8 @@ class DnDetailController extends Controller
 
     public function __construct(
         protected DeliveryNoteUpdateTransaction $deliveryNoteUpdateTransaction,
-    ) {}
+    ) {
+    }
 
     /**
      * Get list of detail DN based on no_dn
@@ -44,7 +45,7 @@ class DnDetailController extends Controller
         }
 
         $dnHeader = $dnDetailData->first()->dnHeader;
-        if (! $dnHeader) {
+        if (!$dnHeader) {
             return $this->returnResponseApi(false, 'DN Header not found', null, 404);
         }
 
@@ -64,9 +65,9 @@ class DnDetailController extends Controller
                     $timestamp = "$firstItem->add_outstanding_date $firstItem->add_outstanding_time";
 
                     // Prevent duplication timestamp
-                    if (! in_array($timestamp, $uniqueTimestamp)) {
+                    if (!in_array($timestamp, $uniqueTimestamp)) {
                         $uniqueTimestamp[] = $timestamp;
-                        $confirmation['confirm_'.($wave + 1).'_at'] = $timestamp;
+                        $confirmation['confirm_' . ($wave + 1) . '_at'] = $timestamp;
                     }
                 }
             }
@@ -74,7 +75,12 @@ class DnDetailController extends Controller
         return $this->returnResponseApi(
             true,
             'Display List DN Detail Successfully',
-            new DnDetailListResource($dnHeader, $dnDetailData, $dateTime, $confirmation),
+            new DnDetailListResource(
+                $dnHeader,
+                $dnDetailData,
+                $dateTime,
+                $confirmation
+            ),
             200
         );
     }
@@ -100,12 +106,11 @@ class DnDetailController extends Controller
     }
 
     // Show edit form DNDetail
-    public function edit($dn_detail_no)
+    public function edit($dnDetailNo)
     {
-        // Find the record by id
-        $data_edit = DnDetail::with('dnOutstanding')->findOrFail($dn_detail_no);
+        $data = DnDetail::with('dnOutstanding')->findOrFail($dnDetailNo);
 
-        return new DnDetailResource($data_edit);
+        return new DnDetailResource($data);
     }
 
     // Update data to database
@@ -116,7 +121,7 @@ class DnDetailController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'error' => $th->getMessage().' (On line '.$th->getLine().')',
+                'error' => $th->getMessage() . ' (On line ' . $th->getLine() . ')',
             ], 500);
         }
 
