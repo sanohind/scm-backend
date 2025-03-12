@@ -28,7 +28,7 @@ class PerformanceReportResource extends JsonResource
     private function chopStr()
     {
         $string = $this->file;
-        $chopFile = Str::chopStart($string, '/storage/listing_report/');
+        $chopFile = Str::chopStart($string, 'Documents/Performance/');
 
         return $chopFile;
     }

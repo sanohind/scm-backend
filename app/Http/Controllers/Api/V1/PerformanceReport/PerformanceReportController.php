@@ -2,16 +2,28 @@
 
 namespace App\Http\Controllers\Api\V1\PerformanceReport;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\PerformanceReport\PerformanceReportResource;
-use App\Models\PerformanceReport\PerformanceReport;
+use App\Trait\ResponseApi;
 use Carbon\Carbon;
+use App\Trait\StoreFile;
+use Dom\Document;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\PerformanceReport\PerformanceReport;
+use App\Http\Requests\PerformanceReport\StorePerformanceRequest;
+use App\Http\Resources\PerformanceReport\PerformanceReportResource;
 
 class PerformanceReportController extends Controller
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     * 2. StoreFile = Save file to server storage
+     */
+    use ResponseApi, StoreFile;
+
     // View list data Listing Report
     public function index(Request $bp_code)
     {
@@ -19,12 +31,9 @@ class PerformanceReportController extends Controller
         if ($check == 5 || $check == 6 || $check == 7 || $check == 6 || $check == 8) {
             $bp_code = Auth::user()->bp_code;
         } elseif ($check == 2 || $check == 3 || $check == 4 || $check == 9) {
-            // dd($request);
             $bp_code = $bp_code->bp_code;
         }
-        //get data api to view
-        // Using eager loading request data to database for efficiency data
-        //in case calling data relation
+
         $data_listingreport = PerformanceReport::with('listingreport')
             ->where('bp_code', $bp_code)
             ->orderBy('date', 'desc')
@@ -39,9 +48,6 @@ class PerformanceReportController extends Controller
 
     public function indexAll()
     {
-        //get data api to view
-        // Using eager loading request data to database for efficiency data
-        //in case calling data relation
         $data_listingreport = PerformanceReport::with('listingreport')->get();
 
         return response()->json([
@@ -51,59 +57,62 @@ class PerformanceReportController extends Controller
         ], 200);
     }
 
-    // Store data user to database
-    public function store(Request $request)
+    /**
+     * Store Performance Report
+     * @param \App\Http\Requests\PerformanceReport\StorePerformanceRequest $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function store(StorePerformanceRequest $request)
     {
-        //validate the request data
-        $request->validate([
-            'bp_code' => 'required|string|max:25',
-            'date' => 'required|date',
-            'file' => 'required|mimes:pdf|max:5000',
-        ], [
-            'file.max' => 'The uploaded file exceeds the maximum allowed size of 5 MB.',
-            'file.mimes' => 'The uploaded file must be a PDF.',
-        ]);
+        $request->validated();
 
-        // Change file name and file path to storage
-        $file = $request->file('file');
-        $fileName = time().'_'.$file->getClientOriginalName();
-        $filePath = $file->storeAs('public/listing_report', $fileName);
+        if ($request->hasFile('file')) {
+            $filePath = $this->saveFile($request->file('file'), 'Performance', 'Documents', 'Performance', 'local');
+        } else {
+            $filePath = "Upload File Is Mandatory !!!";
+        }
 
-        //upload_at value declaration
-        $time = Carbon::now();
+        $time = Carbon::now()->timezone("Asia/Jakarta");
 
-        // Create data
-        $data_create = PerformanceReport::updateOrCreate(
+        $store = PerformanceReport::updateOrCreate(
             [
-                'date' => $request->input('date'),
+                'date' => Carbon::parse($request->date)->format('Y-m-d'),
+                'bp_code' => $request->bp_code,
             ],
             [
-                'bp_code' => $request->input('bp_code'),
-                'file' => Storage::url($filePath),
+                'file' => $filePath,
                 'upload_at' => $time,
             ]
         );
 
-        // Return value
-        return response()->json([
-            'status' => true,
-            'message' => 'Add Performance Report Successfully '.$data_create->file,
-            'data' => new PerformanceReportResource($data_create),
-        ], 201);
+        return $this->returnResponseApi(
+            true,
+            'Add Performance Report Successfully',
+            new PerformanceReportResource($store),
+            201
+        );
     }
 
-    // Get file by filename
+    /**
+     * Download Performance report
+     * @param mixed $filename
+     * @return mixed|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function getFile($filename)
     {
-        $filePath = 'public/listing_report/'.$filename;
-
-        // Check if the file exists in the storage
-        if (Storage::exists($filePath)) {
-            // Return the file as a download
-            return Storage::download($filePath);
+        $file = PerformanceReport::select('file')->where('file', 'like', "%{$filename}%")->first();
+        if (!$file) {
+            return $this->returnResponseApi(false, 'Performance Report Not Found', '', 404);
         }
 
-        // If the file doesn't exist, return a 404 response
-        return response()->json(['message' => 'File not found'], 404);
+        try {
+            $filePath = Storage::disk('local')->path($file->file);
+        } catch (\Throwable $th) {
+            return $this->returnResponseApi(false, 'There is No File', '', 404);
+        }
+
+        $fileName = str_replace(' ', '_', Carbon::now()->format('Ymd') . '_' . $file->project_name);
+
+        return response()->download($filePath, $fileName);
     }
 }

@@ -15,15 +15,15 @@ class PerformanceReport extends Model
     protected $connection = 'mysql';
 
     // Table name
-    protected $table = 'listing_report';
+    protected $table = 'performance_report';
 
-    protected $primaryKey = 'po_listing_no';
+    protected $primaryKey = 'performance_no';
 
     public $timestamps = false;
 
     // Column
     protected $fillable = [
-        'po_listing_no',
+        'performance_no',
         'bp_code',
         'date',
         'file',

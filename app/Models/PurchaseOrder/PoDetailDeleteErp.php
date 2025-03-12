@@ -8,5 +8,5 @@ class PoDetailDeleteErp extends Model
 {
     protected $connection = 'sqlsrv';
 
-    protected $table = 'po_header_deleted';
+    protected $table = 'po_detail_deleted';
 }
