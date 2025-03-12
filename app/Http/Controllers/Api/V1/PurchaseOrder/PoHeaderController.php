@@ -29,7 +29,8 @@ class PoHeaderController
      */
     public function __construct(
         protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing
-    ) {}
+    ) {
+    }
 
     /**
      * Get list po based on user
@@ -45,7 +46,7 @@ class PoHeaderController
             $user = $bpCode;
         }
 
-        if (! isset($user)) {
+        if (!isset($user)) {
             return $this->returnCustomResponseApi('error', 'User Not Found', null, 404);
         }
 
@@ -87,7 +88,7 @@ class PoHeaderController
         $request->validated();
 
         $poHeader = PoHeader::with('poDetail')->find($poNo);
-        if (! $poHeader) {
+        if (!$poHeader) {
             return $this->returnCustomResponseApi('error', 'PO Header Not Found', null, 404);
         }
 
@@ -116,16 +117,25 @@ class PoHeaderController
                 Mail::to($email)->send(new PoResponseInternal($poHeader));
             }
         } catch (\Throwable $th) {
-            Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
+            Log::warning(
+                "Failed to send email to PT Sanoh Indonesia Internal.
+                        Please check the server configuration / ENV. Error: $th"
+            );
 
             return $this->returnCustomResponseApi(
                 'email error',
-                'Purchase order confirm process successfully, but notification email to PT Sanoh Indonesia error',
+                'Purchase order confirm process successfully,
+                        but notification email to PT Sanoh Indonesia error',
                 null,
                 200
             );
         }
 
-        return $this->returnCustomResponseApi('success', 'PO Edited Successfully', new PoHeaderResource($poHeader), 200);
+        return $this->returnCustomResponseApi(
+            'success',
+            'PO Edited Successfully',
+            new PoHeaderResource($poHeader),
+            200
+        );
     }
 }
