@@ -15,7 +15,7 @@ trait StoreFile
      */
     public function saveFile($file, string $prefix, string $fileType, string $folder, string $disk = 'local')
     {
-        $fileName = uniqid($prefix.'_').'_'.Carbon::now()->format('Ymd_his').'_'.str_replace(' ', '_', $file->getClientOriginalName());
+        $fileName = Carbon::now()->format('Ymd_his').'_'.str_replace(' ', '_', $file->getClientOriginalName());
 
         // Save file
         $filePath = Storage::disk($disk)->putFileAs("$fileType/$folder", $file, $fileName);
