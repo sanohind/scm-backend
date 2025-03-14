@@ -57,10 +57,10 @@ trait ResponseApi
      * @param mixed $addheader
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function returnCustomResponseApi(bool|string $statusMessage = true, ?string $message = null, $data = null, ?int $statusCode = null, ?array $addheader = null)
+    public function returnCustomResponseApi(bool|string $statusMessage = true, ?string $message = null, $data = null, ?int $statusCode = null, ?array $addheader = null, string $statusMessageKey = 'status' )
     {
         $response = [
-            'status' => $statusMessage,
+            $statusMessageKey => $statusMessage,
             'message' => $message,
             'data' => ($data == '' || $data == null) ? [] : $data,
         ];

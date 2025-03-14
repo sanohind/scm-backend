@@ -58,11 +58,13 @@ class DnHeaderController extends Controller
             ->orderBy('plan_delivery_date', 'desc')
             ->get();
 
-        return $this->returnResponseApi(
+        return $this->returnCustomResponseApi(
             true,
             'Display List DN Header Successfully',
             DnHeaderResource::collection($dnHeaderData),
-            200
+            200,
+            null,
+            'success'
         );
     }
 
