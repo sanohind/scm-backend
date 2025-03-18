@@ -76,7 +76,8 @@ class ForecastController
         // Change file name and file path to storage
         $file = $request->file('file');
         $fileName = time().'_'.$file->getClientOriginalName();
-        $filePath = $file->storeAs('public/forecast', $fileName);
+        Storage::disk('public')->putFileAs('forecast', $file, $fileName);
+        $filePath = "public/forecast/$fileName";
 
         // Upload time value declaration
         $time = Carbon::now();
@@ -113,12 +114,12 @@ class ForecastController
     // Get file by filename
     public function getFile($filename)
     {
-        $filePath = "public/forecast/$filename";
-
+        $filePath = "forecast/$filename";
+        // dd(Storage::disk('public')->exists($filePath));
         // Check if the file exists in the storage
-        if (Storage::exists($filePath)) {
+        if (Storage::disk('public')->exists($filePath)) {
             // Return the file as a download
-            return Storage::download($filePath);
+            return Storage::disk('public')->download($filePath);
         }
 
         // If the file doesn't exist, return a 404 response
