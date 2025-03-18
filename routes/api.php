@@ -478,8 +478,7 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
 
     /**
      *  Route for Purchase Order
-     *
-     * @param  $sp_code  / supplier_code is bp_code
+
      */
     // Routefor get record po with specific user
     Route::get('po/index/{bp_code}', [PoHeaderController::class, 'getListPoUser']);
@@ -509,6 +508,8 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
     // route view print DN label/ kanban
     Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
+    Route::get('dn-label/print/outstanding/{outstanding}/{no_dn}', [PrintController::class, 'labelOutstanding']);
+    Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
 
     /**
      * Route for Performance Report
