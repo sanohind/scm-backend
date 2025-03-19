@@ -27,8 +27,15 @@ class AuthController
     {
         $request->validated();
 
-        if (! Auth::attempt($request->only(['username', 'password']))) {
-            return $this->returnResponseApi(false, 'Invalid username or password. Please try again.', null, 403);
+        if (!Auth::attempt($request->only(['username', 'password']))) {
+            return $this->returnCustomResponseApi(
+                false,
+                'Invalid username or password. Please try again.',
+                null,
+                403,
+                null,
+                'success'
+            );
         }
 
         $user = Auth::user();
