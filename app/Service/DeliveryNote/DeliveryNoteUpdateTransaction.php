@@ -25,6 +25,12 @@ class DeliveryNoteUpdateTransaction
 
     public function __construct(protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing) {}
 
+    /**
+     * Control the update qty dn flow and mailing to internal when update proses done
+     * @param string $noDn
+     * @param array $data
+     * @return string
+     */
     public function updateQuantity(string $noDn, array $data)
     {
         $message = '';

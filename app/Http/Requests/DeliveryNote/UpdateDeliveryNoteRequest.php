@@ -54,7 +54,7 @@ class UpdateDeliveryNoteRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Request Validation is Invalid, Please Fill Input Field with Valid Data',
                 'errors' => $validator->errors(),
             ], 422)
         );
