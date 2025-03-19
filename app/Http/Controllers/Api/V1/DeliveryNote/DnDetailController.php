@@ -110,21 +110,20 @@ class DnDetailController extends Controller
     {
         $data = DnDetail::with('dnOutstanding')->findOrFail($dnDetailNo);
 
-        return new DnDetailResource($data);
+        return $this->returnResponseApi(true, 'Get DN Edit Successfully', new DnDetailResource($data), 200);
     }
 
     // Update data to database
     public function update(UpdateDeliveryNoteRequest $request)
     {
         try {
-            $result = $this->deliveryNoteUpdateTransaction->updateQuantity($request->validated());
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'error' => $th->getMessage() . ' (On line ' . $th->getLine() . ')',
-            ], 500);
-        }
+            $request->validated();
 
-        return $result;
+            $result = $this->deliveryNoteUpdateTransaction->updateQuantity($request->no_dn, $request->updates);
+
+            return $this->returnResponseApi(true, $result, null, 200);
+        } catch (\Throwable $th) {
+            return $this->returnResponseApi(false, $th->getMessage() . ' (On line ' . $th->getLine() . ')', null, 500);
+        }
     }
 }
