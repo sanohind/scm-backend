@@ -34,24 +34,28 @@ class EmailNotificationSupplierController
      */
     public function mail()
     {
-        $user = User::where('role', 5)->get(['bp_code', 'email']);
-        foreach ($user as $data) {
+        $bpCode = User::where('role', 5)->pluck('bp_code');
+        // dd($bpCode);
+
+        try {
+        foreach ($bpCode as $data) {
+            // dd($data);
             $poHeader = PoHeader::with('user')
-                ->where('supplier_code', $data->bp_code)
+                ->where('supplier_code', $data)
                 ->whereIn('po_status', ['Open'])
                 ->get();
 
             $dnHeader = DnHeader::with('partner')
-                ->where('supplier_code', $data->bp_code)
+                ->where('supplier_code', $data)
                 ->whereIn('status_desc', ['Open'])
                 ->get();
-        }
 
-        try {
-            $email = $this->userGetEmail->getEmail($data->bp_code);
+            $email = $this->userGetEmail->getEmail($data);
+
             foreach ($email as $data) {
                 Mail::to($data)->send(new PoResponseSupplier($poHeader, $dnHeader));
             }
+        }
         } catch (\Throwable $th) {
             return $this->returnResponseApi(
                 false,
