@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\Email\MailPoNotificationJob;
+use App\Jobs\EmailNotificationDaily;
 use App\Jobs\SyncData\SyncDatabaseJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Artisan;
 Schedule::job(new SyncDatabaseJob)->twiceDaily(8, 18);
 
 // Mail to supplier
-Schedule::job(new MailPoNotificationJob)->dailyAt('10:00');
+Schedule::job(new EmailNotificationDaily())->dailyAt('10:00');
 
 //test
 Artisan::command('inspire', function () {

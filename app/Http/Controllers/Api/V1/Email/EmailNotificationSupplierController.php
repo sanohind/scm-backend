@@ -8,6 +8,7 @@ use App\Mail\PoResponseSupplier;
 use App\Service\User\UserGetEmail;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DeliveryNote\DnHeader;
+use App\Models\Users\BusinessPartner;
 use App\Models\PurchaseOrder\PoHeader;
 
 class EmailNotificationSupplierController
@@ -49,7 +50,8 @@ class EmailNotificationSupplierController
                 ->whereIn('status_desc', ['Open'])
                 ->get();
 
-            $email = $this->userGetEmail->getEmail($data);
+            $getEmail = BusinessPartner::find($data);
+            $email = $getEmail->email()->pluck('email');
 
             foreach ($email as $data) {
                 Mail::to($data)->send(new PoResponseSupplier($poHeader, $dnHeader));
