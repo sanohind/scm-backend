@@ -49,7 +49,7 @@ class EmailNotificationSupplierController
 
         try {
             $email = $this->userGetEmail->getEmail($data->bp_code);
-
+            \Log::info($email);
             foreach ($email as $data) {
                 Mail::to($data)->send(new PoResponseSupplier($poHeader, $dnHeader));
             }
