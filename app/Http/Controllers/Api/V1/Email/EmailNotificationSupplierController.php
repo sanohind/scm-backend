@@ -30,14 +30,13 @@ class EmailNotificationSupplierController
 
     /**
      * Mail to all user role supplier email
-     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function mail()
     {
         $bpCode = User::where('role', 5)->pluck('bp_code');
         // dd($bpCode);
 
-        try {
+        // try {
         foreach ($bpCode as $data) {
             // dd($data);
             $poHeader = PoHeader::with('user')
@@ -56,15 +55,15 @@ class EmailNotificationSupplierController
                 Mail::to($data)->send(new PoResponseSupplier($poHeader, $dnHeader));
             }
         }
-        } catch (\Throwable $th) {
-            return $this->returnResponseApi(
-                false,
-                'Email Data Not Found & Only get user role 5. Message :' . $th->getMessage() . ' (On line ' . $th->getLine() . ')',
-                null,
-                500
-            );
-        }
+        // } catch (\Throwable $th) {
+        //     return $this->returnResponseApi(
+        //         false,
+        //         'Email Data Not Found & Only get user role 5. Message :' . $th->getMessage() . ' (On line ' . $th->getLine() . ')',
+        //         null,
+        //         500
+        //     );
+        // }
 
-        return $this->returnResponseApi(true, 'mail notification successfuly', null, 200);
+        // return $this->returnResponseApi(true, 'mail notification successfuly', null, 200);
     }
 }
