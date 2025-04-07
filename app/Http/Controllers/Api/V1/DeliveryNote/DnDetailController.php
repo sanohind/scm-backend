@@ -24,9 +24,7 @@ class DnDetailController extends Controller
     use ResponseApi;
 
     public function __construct(
-        protected DeliveryNoteUpdateTransaction $deliveryNoteUpdateTransaction,
-    ) {
-    }
+        protected DeliveryNoteUpdateTransaction $deliveryNoteUpdateTransaction,) {}
 
     /**
      * Get list of detail DN based on no_dn
@@ -85,46 +83,47 @@ class DnDetailController extends Controller
         );
     }
 
-    //test
+    /**
+     * Get all dn detail data
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function indexAll()
     {
-        // Fetch PO details based on the provided po_no
         $data_podetail = DnDetail::with('dnHeader')->get();
-
         if ($data_podetail->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'PO Detail Not Found',
-            ], 404);
+            return $this->returnCustomResponseApi(false, 'PO Detail Not Found', null, 404, null, 'success');
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Display List PO Detail Successfully',
-            'data' => DnDetailResource::collection($data_podetail),
-        ], 200);
+        return $this->returnCustomResponseApi(true, 'Display List PO Detail Successfully', DnDetailResource::collection($data_podetail), 200, null, 'success');
     }
 
-    // Show edit form DNDetail
+    /**
+     * Get data dn detail for edit
+     * @param mixed $dnDetailNo
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function edit($dnDetailNo)
     {
         $data = DnDetail::with('dnOutstanding')->findOrFail($dnDetailNo);
 
-        return new DnDetailResource($data);
+        return $this->returnResponseApi(true, 'Get DN Edit Successfully', new DnDetailResource($data), 200);
     }
 
-    // Update data to database
+    /**
+     * Update dn detail quantity confirm
+     * @param \App\Http\Requests\DeliveryNote\UpdateDeliveryNoteRequest $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function update(UpdateDeliveryNoteRequest $request)
     {
         try {
-            $result = $this->deliveryNoteUpdateTransaction->updateQuantity($request->validated());
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => false,
-                'error' => $th->getMessage() . ' (On line ' . $th->getLine() . ')',
-            ], 500);
-        }
+            $request->validated();
 
-        return $result;
+            $result = $this->deliveryNoteUpdateTransaction->updateQuantity($request->no_dn, $request->updates);
+
+            return $this->returnResponseApi(true, $result, null, 200);
+        } catch (\Throwable $th) {
+            return $this->returnResponseApi(false, $th->getMessage() . ' (On line ' . $th->getLine() . ')', null, 500);
+        }
     }
 }

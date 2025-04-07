@@ -2,41 +2,48 @@
 
 namespace App\Service\DeliveryNote;
 
-use App\Mail\DnDetailAndOutstandingNotificationInternal;
-use App\Models\DeliveryNote\DnDetail;
-use App\Models\DeliveryNote\DnDetailOutstanding;
-use App\Models\DeliveryNote\DnHeader;
-use App\Service\User\UserGetEmailInternalPurchasing;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
+use App\Trait\ResponseApi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\DeliveryNote\DnDetail;
+use App\Models\DeliveryNote\DnHeader;
+use App\Models\DeliveryNote\DnDetailOutstanding;
+use App\Service\User\UserGetEmailInternalPurchasing;
+use App\Mail\DnDetailAndOutstandingNotificationInternal;
 
 class DeliveryNoteUpdateTransaction
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     */
+    use ResponseApi;
+
     public function __construct(protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing) {}
 
-    public function updateQuantity($data)
+    /**
+     * Control the update qty dn flow and mailing to internal when update proses done
+     * @param string $noDn
+     * @param array $data
+     * @return string
+     */
+    public function updateQuantity(string $noDn, array $data)
     {
+        $message = '';
 
-        $return = DB::transaction(function () use ($data) {
+        $update = DB::transaction(function () use($noDn, $data)
+        {
             // Update confirmation to the latest date
-            $updateConfirmationDate = $this->confirmUpdateAt($data['no_dn']);
+            $updateConfirmationDate = $this->confirmUpdateAt($noDn);
 
             // Cheking the update confirmation date and then
-            if ($updateConfirmationDate == false) {
-                $updateQuantityConfirm = $this->updateQuantityFirstConfirm($data);
+            $result = ($updateConfirmationDate == 'first') ? $this->updateQtyFirst($data) : $this->updateQtyOutstanding($noDn, $data);
 
-                return ($updateQuantityConfirm == true) ? 1 : throw new \Exception('Error Processing Quantity Confirm', 500);
-
-            } elseif ($updateConfirmationDate == true) {
-                $updateQuantityOutstanding = $this->updateOutstanding($data);
-
-                return ($updateQuantityOutstanding == true) ? 2 : throw new \Exception('Error Processing Outstanding', 500);
-            } else {
-                throw new \Exception('Error processing confirm update at', 500);
-            }
+            return $result;
         });
 
         // Variable for get email purchasing & get data user
@@ -45,129 +52,123 @@ class DeliveryNoteUpdateTransaction
         $emailData = collect([
             'supplier_code' => Auth::user()->bp_code,
             'supplier_name' => Auth::user()->partner->adr_line_1 ?? Auth::user()->partner->bp_name,
-            'no_dn' => $data['no_dn'],
+            'no_dn' => $noDn,
         ]);
 
         // Return response to user
-        switch ($return) {
+        switch ($update) {
             case '1':
-                // Mail to internal
+                // Sending Mail to internal (purchasing)
                 try {
                     foreach ($emailPurchasing as $email) {
                         Mail::to($email)->send(new DnDetailAndOutstandingNotificationInternal($emailData));
                     }
+
+                    $message = 'Quantity Confirm Successfully';
                 } catch (\Throwable $th) {
-                    // Log report
                     Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
-
-                    // Return response
-                    return response()->json([
-                        'status' => 'email error',
-                        'message' => 'Quantity confirm process successfully, but notification email to PT Sanoh Indonesia error',
-                    ], 200);
                 }
-
-                // Return response
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Quantity confirm process successfully',
-                ], 200);
+            break;
 
             case '2':
                 try {
-                    // Mail to internal
+                    // Sending Mail to internal (purchasing)
                     foreach ($emailPurchasing as $email) {
                         Mail::to($email)->send(new DnDetailAndOutstandingNotificationInternal($emailData));
                     }
+
+                    $message = 'Quantity Confirm Outstanding Successfully';
                 } catch (\Throwable $th) {
-                    // Log report
                     Log::warning("Failed to send email to PT Sanoh Indonesia Internal. Please check the server configuration / ENV. Error: $th");
-
-                    // Return response
-                    return response()->json([
-                        'status' => 'email error',
-                        'message' => 'Quantity confirm process successfully, but notification email to PT Sanoh Indonesia error',
-                    ], 200);
                 }
-
-                // Return response
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Add Outstanding Successfully',
-                ], 200);
-
-            default:
-                throw new \Exception('Error Returning Response', 500);
+            break;
         }
+
+        return $message;
     }
 
-    private function confirmUpdateAt($data)
+    /**
+     * Check confirmation submit first or outstanding
+     * @param string $noDn
+     * @return mixed|string|\Illuminate\Http\JsonResponse
+     */
+    private function confirmUpdateAt(string $noDn)
     {
-        // Update DnHeader with current timestamp
-        $header = DnHeader::where('no_dn', $data)->first();
+        $result = '';
 
-        if ($header->confirm_update_at == null) {
-            $time = Carbon::now()->format('Y-m-d H:i:s'); // Correct datetime format
-            $header->update([
-                'confirm_update_at' => $time,
-            ]);
+        $dnData = DnHeader::where('no_dn', $noDn)->first();
+        if (! $dnData) {
+           return $this->returnResponseApi(false, "DN Header Not Found (e:1)", null, 404);
 
-            return false;
         }
 
-        if ($header->confirm_update_at != null) {
-            return true;
+        if ($dnData->confirm_update_at == null) {
+            // First submit
+            $time = Carbon::now()->format('Y-m-d H:i:s');
+
+            $dnData->update(['confirm_update_at' => $time]);
+
+            $result = 'first';
+        }else {
+            // Outstanding submit
+            $result = 'outstanding';
         }
+
+        return $result;
     }
 
-    private function updateQuantityFirstConfirm($data): bool
+    /**
+     * Update qty dn detail first submit
+     * @param array $data
+     * @return int|mixed|\Illuminate\Http\JsonResponse
+     */
+    private function updateQtyFirst(array $data)
     {
-        // Update DnDetail records
-        foreach ($data['updates'] as $d) {
+        foreach ($data as $d) {
             $record = DnDetail::where('dn_detail_no', $d['dn_detail_no'])->first();
+            if (!$record) {
+                return $this->returnResponseApi(false, "DN Detail Not Found For: {$d['dn_detail_no']}", null, 404);
+            }
 
-            if ($record) {
-                if ($d['qty_confirm'] <= $record->dn_qty) {
-                    $record->update([
-                        'qty_confirm' => $d['qty_confirm'],
-                    ]);
-                } else {
-                    throw new \Exception('Quantity Confirm exceeds Quantity Requested', 422);
-                }
+            if ($d['qty_confirm'] <= $record->dn_qty) {
+                $record->update([
+                    'qty_confirm' => $d['qty_confirm'],
+                ]);
             } else {
-                // Handle the case where the record is not found
-                return response()->json(['error' => 'DN Detail Not Found For: '.$d['dn_detail_no']], 404);
+                throw $this->returnResponseApi(false, 'Quantity Confirm exceeds Quantity Requested', null, 422);
             }
         }
 
-        return true;
+        return 1;
     }
 
-    private function updateOutstanding($data): bool
+    /**
+     * Update qty dn detail outstanding submit
+     * @param string $noDN
+     * @param array $data
+     * @return int|mixed|\Illuminate\Http\JsonResponse
+     */
+    private function updateQtyOutstanding(string $noDN, array $data)
     {
-        foreach ($data['updates'] as $d) {
-            $dnDetailRecord = DnDetail::where('dn_detail_no', $d['dn_detail_no'])->first();
-
-            if (! $dnDetailRecord) {
-                throw new \Exception('DN Detail Not Found For: '.$d['dn_detail_no'], 404);
+        foreach ($data as $d) {
+            $record = DnDetail::where('dn_detail_no', $d['dn_detail_no'])->first();
+            if (! $record) {
+                return $this->returnResponseApi(false, "DN Detail Not Found For: {$d['dn_detail_no']}", null, 404);
             }
 
             // Check if qty_confirm exceeds dn_qty
-            if (($d['qty_confirm'] + $dnDetailRecord->qty_confirm) > $dnDetailRecord->dn_qty) {
-                throw new \Exception('Quantity Confirm exceeds Quantity Requested', 422);
+            if (($d['qty_confirm'] + $record->qty_confirm) > $record->dn_qty) {
+                return $this->returnResponseApi(false, 'Quantity Confirm exceeds Quantity Requested', null, 422);
             }
 
             // Calculate the wave number
-            $lastOutstanding = DnDetailOutstanding::select('wave')
-                ->where('dn_detail_no', $d['dn_detail_no'])
+            $lastOutstanding = DnDetailOutstanding::where('dn_detail_no', $d['dn_detail_no'])
                 ->orderBy('wave', 'desc')
-                ->first();
-
+                ->first('wave');
             $wave = ($lastOutstanding ? $lastOutstanding->wave : 0) + 1;
 
-            // Create data
             DnDetailOutstanding::create([
-                'no_dn' => $data['no_dn'],
+                'no_dn' => $noDN,
                 'dn_detail_no' => $d['dn_detail_no'],
                 'qty_outstanding' => $d['qty_confirm'],
                 'add_outstanding_date' => Carbon::now()->format('Y-m-d'),
@@ -175,23 +176,19 @@ class DeliveryNoteUpdateTransaction
                 'wave' => $wave,
             ]);
 
-            // increment qty_confirm data from table dn_detail
-            // $dnDetailRecord->increment("qty_confirm", $d['qty_confirm']);
-
             // Sum Qty confirm and outstanding
-            $getAllQtyOutstanding = DnDetailOutstanding::where('no_dn', $data['no_dn'])
+            $getAllQtyOutstanding = DnDetailOutstanding::where('no_dn', $noDN)
                 ->where('dn_detail_no', $d['dn_detail_no'])
-                ->sum('qty_outstanding'); // get all the outstanding based on no_dn and dn_detail_no then sum all
-            $qtyConfirm = $dnDetailRecord->qty_confirm; // get data qty_confirm from dn_detail
-
-            $totalSum = $getAllQtyOutstanding + $qtyConfirm;
+                ->sum('qty_outstanding');
+            $qtyConfirm = $record->qty_confirm;
 
             // Check if the total qty_confirm has reached dn_qty
-            if ($totalSum > $dnDetailRecord->dn_qty) {
-                throw new \Exception('All quantities have been confirmed. No more outstanding transactions allowed.', 422);
+            $totalSum = $getAllQtyOutstanding + $qtyConfirm;
+            if ($totalSum > $record->dn_qty) {
+                return $this->returnResponseApi(false, 'All quantities have been confirmed. No more outstanding transactions allowed.', null,  422);
             }
         }
 
-        return true;
+        return 2;
     }
 }
