@@ -4,12 +4,13 @@ namespace App\Jobs;
 
 use App\Models\Users\User;
 use App\Mail\PoResponseSupplier;
+use App\Service\User\UserGetEmail;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DeliveryNote\DnHeader;
+use App\Models\Users\BusinessPartner;
 use App\Models\PurchaseOrder\PoHeader;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Service\User\UserGetEmail;
 
 class EmailNotificationDaily implements ShouldQueue
 {
@@ -18,8 +19,7 @@ class EmailNotificationDaily implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(
-    )
+    public function __construct()
     {
         //
     }
@@ -27,7 +27,7 @@ class EmailNotificationDaily implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(UserGetEmail $userGetEmail): void
     {
         $bpCode = User::where('role', 5)->pluck('bp_code');
 
@@ -43,10 +43,12 @@ class EmailNotificationDaily implements ShouldQueue
                 ->whereIn('status_desc', ['Open'])
                 ->get();
 
-            $email = $this->userGetEmail->getEmail($data);
+            // Use the service class instead of duplicating logic
+            $email = $userGetEmail->getEmail($data);
+            \Log::info($email);
 
-            foreach ($email as $data) {
-                Mail::to($data)->send(new PoResponseSupplier($poHeader, $dnHeader));
+            foreach ($email as $emailaddr) {
+                Mail::to($emailaddr)->send(new PoResponseSupplier($poHeader, $dnHeader));
             }
         }
     }

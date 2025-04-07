@@ -2,15 +2,17 @@
 
 namespace App\Jobs\Email;
 
-use App\Mail\PoResponseSupplier;
 use App\Models\PO_Header;
 use App\Models\Users\User;
+use App\Mail\PoResponseSupplier;
+use Illuminate\Support\Facades\Mail;
+use App\Models\DeliveryNote\DnHeader;
+use App\Models\PurchaseOrder\PoHeader;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
 
 class MailPoNotificationJob implements ShouldQueue
 {
@@ -30,28 +32,22 @@ class MailPoNotificationJob implements ShouldQueue
     public function handle(): void
     {
         // Get data User
-        $user = User::where('role', 1)->get(['bp_code', 'email']);
+        $user = User::where('role', 5)->get(['bp_code', 'email']);
 
         // Get PO open based of bp_code
         foreach ($user as $data) {
 
-            $po_header = PO_Header::with('user')
+            $poHeader = PoHeader::with('user')
                 ->where('supplier_code', $data->bp_code)
                 ->whereIn('po_status', ['Sent', 'Open'])
                 ->get();
 
-            // Store/format the return value of po_header into collection map function
-            $collection = $po_header->map(function ($data) {
-                $user = $data->user;
+            $dnHeader = DnHeader::with('partner')
+                ->where('supplier_code', $data)
+                ->whereIn('status_desc', ['Open'])
+                ->get();
 
-                return [
-                    'bp_code' => $user ? $user->bp_code : 'User Data Not Found',
-                    'email' => $user ? $user->email : 'Data Email Data Not Found',
-                    'po_no' => $data->po_no,
-                ];
-            });
-
-            Mail::to($data->email)->send(new PoResponseSupplier(po_header: $collection));
+            Mail::to($data->email)->send(new PoResponseSupplier(po_header: $poHeader, dn_header: $dnHeader));
         }
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Artisan;
 Schedule::job(new SyncDatabaseJob)->twiceDaily(8, 18);
 
 // Mail to supplier
-Schedule::job(new EmailNotificationDaily())->dailyAt('10:00');
+Schedule::job(new EmailNotificationDaily())->dailyAt('15:15');
 
 //test
 Artisan::command('inspire', function () {
