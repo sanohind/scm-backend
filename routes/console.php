@@ -1,18 +1,11 @@
 <?php
 
-use App\Jobs\Email\MailPoNotificationJob;
-use App\Jobs\EmailNotificationDaily;
+use App\Jobs\Email\EmailNotificationDailyJob;
 use App\Jobs\SyncData\SyncDatabaseJob;
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
 
 // Synchronize Database Job
-Schedule::job(new SyncDatabaseJob)->twiceDaily(8, 18);
+Schedule::job(new SyncDatabaseJob)->twiceDaily(8, 18)->withoutOverlapping();
 
 // Mail to supplier
-Schedule::job(new EmailNotificationDaily())->dailyAt('15:15');
-
-//test
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
+Schedule::job(new EmailNotificationDailyJob())->dailyAt('07:00')->withoutOverlapping();
+Schedule::job(new EmailNotificationDailyJob())->dailyAt('15:30')->withoutOverlapping();

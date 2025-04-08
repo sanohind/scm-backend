@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Email;
 
 use App\Models\Users\User;
 use App\Mail\PoResponseSupplier;
 use App\Service\User\UserGetEmail;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Support\Facades\Mail;
 use App\Models\DeliveryNote\DnHeader;
-use App\Models\Users\BusinessPartner;
 use App\Models\PurchaseOrder\PoHeader;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EmailNotificationDaily implements ShouldQueue
+class EmailNotificationDailyJob implements ShouldQueue, ShouldBeUnique
 {
     use Queueable;
 
