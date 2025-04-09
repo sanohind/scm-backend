@@ -12,6 +12,7 @@ class SyncPurchaseOrderData
 {
     /**
      * Sync Purchase Order Header and Detail
+     *
      * @return array
      */
     public function syncPurchaseOrder(bool $fullSync = false)
@@ -28,7 +29,7 @@ class SyncPurchaseOrderData
             $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_year', [$oneYearsBefore, $actualYear])
                 ->where('po_type_desc', 'PO LOCAL')
                 ->get();
-        } else if ($fullSync == false) {
+        } elseif ($fullSync == false) {
             // Get Purchase Order from range two month ago till now on this year
             $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_period', [$twoMonthBefore, $actualPeriod])
                 ->where('po_year', $actualYear)
@@ -99,6 +100,7 @@ class SyncPurchaseOrderData
                 );
             }
         }
+
         // Return array Purchase Order number
         return $poNumber;
     }
