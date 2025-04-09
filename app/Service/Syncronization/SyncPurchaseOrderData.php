@@ -24,12 +24,12 @@ class SyncPurchaseOrderData
         $twoMonthBefore = Carbon::now()->subMonths(2)->month;
 
         if ($fullSync == true) {
-            // Get Purchase Order with range two year before till now
+            // Get Purchase Order from range two year ago till now
             $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_year', [$oneYearsBefore, $actualYear])
                 ->where('po_type_desc', 'PO LOCAL')
                 ->get();
         } else if ($fullSync == false) {
-            // Get Purchase Order with range two month before till now in this year
+            // Get Purchase Order from range two month ago till now on this year
             $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_period', [$twoMonthBefore, $actualPeriod])
                 ->where('po_year', $actualYear)
                 ->where('po_type_desc', 'PO LOCAL')
