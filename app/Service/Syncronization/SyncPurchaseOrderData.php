@@ -14,18 +14,27 @@ class SyncPurchaseOrderData
      * Sync Purchase Order Header and Detail
      * @return array
      */
-    public function syncPurchaseOrder()
+    public function syncPurchaseOrder(bool $fullSync = false)
     {
         // Po Header
         // Initialize year and period
         $actualYear = Carbon::now()->year;
         $actualPeriod = Carbon::now()->month;
+        $oneYearsBefore = Carbon::now()->subYears(2)->year;
+        $twoMonthBefore = Carbon::now()->subMonths(2)->month;
 
-        // Get Purchase Order from ERP
-        $sqlsrvDataPoHeader = PoHeaderErp::where('po_period', $actualPeriod)
-            ->where('po_year', $actualYear)
-            ->where('po_type_desc', 'PO LOCAL')
-            ->get();
+        if ($fullSync == true) {
+            // Get Purchase Order with range two year before till now
+            $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_year', [$oneYearsBefore, $actualYear])
+                ->where('po_type_desc', 'PO LOCAL')
+                ->get();
+        } else if ($fullSync == false) {
+            // Get Purchase Order with range two month before till now in this year
+            $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_period', [$twoMonthBefore, $actualPeriod])
+                ->where('po_year', $actualYear)
+                ->where('po_type_desc', 'PO LOCAL')
+                ->get();
+        }
 
         // copy all data from sql server
         $poNumber = [];

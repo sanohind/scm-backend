@@ -8,6 +8,7 @@ use App\Service\Syncronization\SyncDeliveryNoteData;
 use App\Service\Syncronization\SyncPurchaseOrderData;
 use App\Service\Syncronization\SyncSubcontItemData;
 use App\Trait\ErrorLog;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -39,7 +40,11 @@ class SyncDatabaseJob implements ShouldQueue
 
             $syncSubcontItemData->syncSubcontItem();
 
-            $poNumber = $syncPurchaseOrderData->syncPurchaseOrder();
+            if (Carbon::now()->format('H:i') >= '00:00' && Carbon::now()->format('H:i') <= '00:10') {
+                $poNumber = $syncPurchaseOrderData->syncPurchaseOrder(true);
+            } else {
+                $poNumber = $syncPurchaseOrderData->syncPurchaseOrder();
+            }
 
             $syncDeliveryNoteData->syncDeliveryNote($poNumber);
 
