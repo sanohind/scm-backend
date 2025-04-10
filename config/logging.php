@@ -133,6 +133,12 @@ return [
             'path' => storage_path('logs/sync.log'),
         ],
 
+        'mail' => [
+            'driver' => 'single',
+            'level' => 'debug',
+            'path' => storage_path('logs/mail.log'),
+        ],
+
         'logic' => [
             'driver' => 'single',
             'level' => 'debug',

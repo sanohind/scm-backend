@@ -46,8 +46,16 @@ trait ErrorLog{
         Log::channel('sync')->critical(json_encode($message, JSON_PRETTY_PRINT));
     }
 
-    public function emailError()
+    public function mailError(string $message, string $errorMessage, string $errorFile, string $errorLine, $jobId)
     {
+        $message = [
+            'Message' => $message,
+            'Error' => $errorMessage,
+            'File' => $errorFile,
+            'Line' => $errorLine,
+            'Job ID' => $jobId,
+        ];
 
+        Log::channel('mail')->critical(json_encode($message, JSON_PRETTY_PRINT));
     }
 }
