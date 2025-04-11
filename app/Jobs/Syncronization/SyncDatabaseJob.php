@@ -2,20 +2,16 @@
 
 namespace App\Jobs\Syncronization;
 
-use App\Service\Syncronization\SyncBusinessPartnerData;
-use App\Service\Syncronization\SyncDeleteData;
-use App\Service\Syncronization\SyncDeliveryNoteData;
-use App\Service\Syncronization\SyncPurchaseOrderData;
-use App\Service\Syncronization\SyncSubcontItemData;
+use Throwable;
 use App\Trait\ErrorLog;
-use Carbon\Carbon;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SyncDatabaseJob implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue, ErrorLog;
+    use ErrorLog, InteractsWithQueue, Queueable;
 
     /**
      * Create a new job instance.
@@ -29,36 +25,12 @@ class SyncDatabaseJob implements ShouldQueue
      * Execute the job.
      */
     public function handle(
-        SyncBusinessPartnerData $syncBusinessPartnerData,
-        SyncPurchaseOrderData $syncPurchaseOrderData,
-        SyncDeliveryNoteData $syncDeliveryNoteData,
-        SyncSubcontItemData $syncSubcontItemData,
-        SyncDeleteData $syncDeleteData
     ): void {
-        try {
-            $syncBusinessPartnerData->syncBusinessPartner();
-
-            $syncSubcontItemData->syncSubcontItem();
-
-            if (Carbon::now()->format('H:i') >= '00:00' && Carbon::now()->format('H:i') <= '00:10') {
-                $poNumber = $syncPurchaseOrderData->syncPurchaseOrder(true);
-            } else {
-                $poNumber = $syncPurchaseOrderData->syncPurchaseOrder();
-            }
-
-            $syncDeliveryNoteData->syncDeliveryNote($poNumber);
-
-            $syncDeleteData->deletePo();
-
-            $syncDeleteData->deleteDn();
-        } catch (\Throwable $th) {
-            $this->syncError(
-                'Cheking Data Failed',
-                $th->getMessage(),
-                $th->getFile(),
-                $th->getLine(),
-                $this->job->getJobId()
-            );
-        }
+        Bus::chain([
+            new SyncBusinessPartnerJob,
+            new SyncSubcontItemJob,
+            new SyncPurchaseOrderJob,
+            new SyncDeliveryNoteJob,
+        ])->dispatch();
     }
 }
