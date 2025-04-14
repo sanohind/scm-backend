@@ -4,7 +4,7 @@ use App\Jobs\Email\EmailNotificationDailyJob;
 use App\Jobs\Syncronization\SyncDatabaseJob;
 
 // Synchronize Database Job
-Schedule::job(new SyncDatabaseJob())->everyTenMinutes()->withoutOverlapping(10);
+Schedule::job(new SyncDatabaseJob())->everyThirtyMinutes()->withoutOverlapping(10);
 
 // Mail to supplier
 Schedule::job(new EmailNotificationDailyJob())->dailyAt('08:00')->withoutOverlapping();
