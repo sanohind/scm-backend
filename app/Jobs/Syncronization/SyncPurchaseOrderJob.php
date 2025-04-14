@@ -2,17 +2,16 @@
 
 namespace App\Jobs\Syncronization;
 
-use Carbon\Carbon;
-use App\Trait\ErrorLog;
 use App\Models\PurchaseOrder\PoDetail;
-use App\Models\PurchaseOrder\PoHeader;
-use Illuminate\Queue\InteractsWithQueue;
 use App\Models\PurchaseOrder\PoDetailErp;
+use App\Models\PurchaseOrder\PoHeader;
 use App\Models\PurchaseOrder\PoHeaderErp;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Service\Syncronization\SyncDeleteData;
-use App\Service\Syncronization\SyncPurchaseOrderData;
+use App\Trait\ErrorLog;
+use Carbon\Carbon;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 use Log;
 
 class SyncPurchaseOrderJob implements ShouldQueue
