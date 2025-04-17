@@ -10,11 +10,17 @@ use App\Models\PurchaseOrder\PoDetail;
 use App\Models\PurchaseOrder\PoDetailDeleteErp;
 use App\Models\PurchaseOrder\PoHeader;
 use App\Models\PurchaseOrder\PoHeaderDeleteErp;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+use App\Trait\ErrorLog;
 
 class SyncDeleteData
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ErrorLog = Monitoring debug and error on process
+     */
+    use ErrorLog;
+
     /**
      * Delete Purchase Order if in ERP was deleted
      * @return void
@@ -27,7 +33,7 @@ class SyncDeleteData
             $getPoHeader = PoHeaderDeleteErp::select('po_no', 'supplier_code')->get();
 
             // Conditioning and query delete po_header
-            if (! empty($getPoHeader)) {
+            if (!empty($getPoHeader)) {
                 foreach ($getPoHeader as $data) {
                     PoHeader::where('po_no', $data['po_no'])
                         ->where('supplier_code', $data['supplier_code'])
@@ -36,7 +42,12 @@ class SyncDeleteData
             }
 
         } catch (\Throwable $th) {
-            Log::debug("$th");
+            $this->syncError(
+                'Delete Po Header Failed',
+                $th->getMessage(),
+                $th->getFile(),
+                $th->getLine(),
+            );
         }
 
         // Purchase Order Detail
@@ -45,7 +56,7 @@ class SyncDeleteData
             $getPoDetail = PoDetailDeleteErp::select('po_no', 'po_line', 'po_sequence')->get();
 
             // Conditioning and query delete po_detail
-            if (! empty($getPoDetail)) {
+            if (!empty($getPoDetail)) {
                 foreach ($getPoDetail as $data) {
                     PoDetail::where('po_no', $data['po_no'])
                         ->where('po_line', $data['po_line'])
@@ -54,11 +65,13 @@ class SyncDeleteData
                 }
             }
         } catch (\Throwable $th) {
-            //throw $th;
-            Log::debug("$th");
+            $this->syncError(
+                'Delete Po Detail Failed',
+                $th->getMessage(),
+                $th->getFile(),
+                $th->getLine(),
+            );
         }
-
-        // return "Delete Purchase Order Successful";
     }
 
     /**
@@ -70,45 +83,45 @@ class SyncDeleteData
         // Delivery Note Header
         try {
             // Query get deleted dn_header from ERP
-            $getDnHeader = DnHeaderDeleteErp::select('dn_no', 'plan_delivery_date', 'supplier_code')->get();
+            $getDnHeader = DnHeaderDeleteErp::select('dn_no', 'supplier_code')->get();
 
             // Conditioning and query delete dn_header
-            if (! empty($getDnHeader)) {
+            if (!empty($getDnHeader)) {
                 foreach ($getDnHeader as $data) {
-                    // format date & time
-                    $formatPlanDeliveryDate = Carbon::parse($data['plan_delivery_date'])->format('Y-m-d');
-                    $formatPlanDeliverytime = Carbon::parse($data['plan_delivery_date'])->format('H:i:s');
                     DnHeader::where('no_dn', $data['dn_no'])
-                        ->where('plan_delivery_date', $formatPlanDeliveryDate)
-                        ->where('plan_delivery_time', $formatPlanDeliverytime)
                         ->where('supplier_code', $data['supplier_code'])
                         ->delete();
                 }
             }
         } catch (\Throwable $th) {
-            Log::debug("$th");
+            $this->syncError(
+                'Delete DN Header Failed',
+                $th->getMessage(),
+                $th->getFile(),
+                $th->getLine(),
+            );
         }
 
         // Delivery Note Detail
         try {
             // Query get deleted dn_detail from ERP
-            $getDnDetail = DnDetailDeleteErp::select('dn_no', 'dn_line', 'order_origin', 'no_order', 'order_set', 'order_line', 'order_seq')->get();
+            $getDnDetail = DnDetailDeleteErp::select('dn_no', 'dn_line')->get();
 
             // Conditioning and query delete dn_detail
-            if (! empty($getDnDetail)) {
+            if (!empty($getDnDetail)) {
                 foreach ($getDnDetail as $data) {
                     DnDetail::where('no_dn', $data['dn_no'])
                         ->where('dn_line', $data['dn_line'])
-                        ->where('order_origin', $data['order_origin'])
-                        ->where('no_order', $data['no_order'])
-                        ->where('order_set', $data['order_set'])
-                        ->where('order_line', $data['order_line'])
-                        ->where('order_seq', $data['order_seq'])
                         ->delete();
                 }
             }
         } catch (\Throwable $th) {
-            Log::debug("$th");
+            $this->syncError(
+                'Delete DN Detail Failed',
+                $th->getMessage(),
+                $th->getFile(),
+                $th->getLine(),
+            );
         }
     }
 }

@@ -33,7 +33,7 @@ trait ErrorLog{
         return $reqid;
     }
 
-    public function syncError(string $message, string $errorMessage, string $errorFile, string $errorLine, $jobId)
+    public function syncError(string $message, string $errorMessage, string $errorFile, string $errorLine, $jobId = null)
     {
         $message = [
             'Message' => $message,
@@ -46,7 +46,7 @@ trait ErrorLog{
         Log::channel('sync')->critical(json_encode($message, JSON_PRETTY_PRINT));
     }
 
-    public function mailError(string $message, string $errorMessage, string $errorFile, string $errorLine, $jobId)
+    public function mailError(string $message, string $errorMessage, string $errorFile, string $errorLine, $jobId = null)
     {
         $message = [
             'Message' => $message,
