@@ -32,6 +32,7 @@ class BusinessPartnerController
     {
         $users = BusinessPartner::select('bp_code', 'bp_name', 'adr_line_1')
             ->where('bp_code', 'like', 'SL%')
+            ->where('bp_code', 'like', 'SI%')
             ->get();
 
         return response()->json([

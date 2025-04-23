@@ -8,6 +8,7 @@ use App\Models\DeliveryNote\DnDetail;
 use App\Models\DeliveryNote\DnHeader;
 use App\Models\DeliveryNote\DnDetailErp;
 use App\Models\DeliveryNote\DnHeaderErp;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Models\PurchaseOrder\PoHeaderErp;
 use Illuminate\Foundation\Queue\Queueable;
@@ -32,23 +33,20 @@ class SyncDeliveryNoteJob implements ShouldQueue
     public function handle(SyncDeleteData $syncDeleteData): void
     {
         try {
-            // Initialize year and period
-            $actualYear = Carbon::now()->year;
+            // Initialize variable
             $actualPeriod = Carbon::now()->month;
-            $oneYearsBefore = Carbon::now()->subYears(2)->year;
-            $twoMonthBefore = Carbon::now()->subMonths(2)->month;
+            $threeMontBefore = Carbon::now()->subMonths(3)->month; // Change subMonths value if you want to sync within range 3 month (Only Running at 00:00 - 00:10)
+            $oneMonthBefore = Carbon::now()->subMonths(1)->month; // Change subMonths value if you want to sync within range 1 month (Running every ten minute)
 
-            if (Carbon::now()->format('H:i') >= '00:00' && Carbon::now()->format('H:i') <= '00:10') {
-                // Get Purchase Order from range two year ago till now
-                $poNumber = PoHeaderErp::whereBetween('po_year', [$oneYearsBefore, $actualYear])
-                    ->where('po_type_desc', 'PO LOCAL')
-                    ->pluck('po_no')->toArray();
+            if (Carbon::now()->format('h:i') >= '00:00' && Carbon::now()->format('h:i') <= '00:10') {
+                // Get Purchase Order from range 3 month ago till now
+                $poNumber = PoHeaderErp::whereBetween('po_period', [$threeMontBefore, $actualPeriod])
+                    ->get();
+                \Log::info("Running Sync DN 00:00 ");
             } else {
-                // Get Purchase Order from range two month ago till now on this year
-                $poNumber = PoHeaderErp::whereBetween('po_period', [$twoMonthBefore, $actualPeriod])
-                    ->where('po_year', $actualYear)
-                    ->where('po_type_desc', 'PO LOCAL')
-                    ->pluck('po_no')->toArray();
+                // Get Purchase Order from range 1 month ago till now on this year
+                $poNumber = PoHeaderErp::whereBetween('po_period', [$oneMonthBefore, $actualPeriod])
+                    ->get();
             }
 
             // Delivery Note Header

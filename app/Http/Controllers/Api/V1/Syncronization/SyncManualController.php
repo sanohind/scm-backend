@@ -18,30 +18,6 @@ use Illuminate\Http\Request;
 class SyncManualController extends Controller
 {
     // Sync database based of request user (Manual)
-    // with job
-    // function syncManual(Request $request)
-    // {
-
-    //     // validate data
-    //     $request->validate([
-    //         'month' => 'required',
-    //         'year' => 'required'
-    //     ]);
-
-    //     // Declare variable month and year for passing to job
-    //     $month = $request->input('month');
-    //     $year = $request->input('year');
-
-    //     // Dispatch job
-    //     SyncManualDatabaseJob::dispatch($month,$year);
-
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'Start Sync Data... '
-    //     ],200);
-    // }
-
-    // without job
     public function syncManual(Request $request)
     {
 
@@ -67,9 +43,7 @@ class SyncManualController extends Controller
 
         */
         // get data
-        $sqlsrvDataPartner = BusinessPartnerErp::where('bp_role_desc', 'LIKE', '%Supplier%')
-            ->where('contry', 'IDN')
-            ->get();
+        $sqlsrvDataPartner = BusinessPartnerErp::where('bp_role_desc', 'LIKE', '%Supplier%')->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {
@@ -101,14 +75,8 @@ class SyncManualController extends Controller
 
 
         */
-        //year and period
-        // $requestedYear = $this->year;
-        // $requestedMonth = $this->month;
-        // dd($requestedYear,$requestedMonth);
-
         $sqlsrvDataPoHeader = PoHeaderErp::where('po_period', $month)
             ->where('po_year', $year)
-            ->where('po_type_desc', 'PO LOCAL')
             ->get();
 
         // copy all data from sql server

@@ -15,9 +15,7 @@ class SyncBusinessPartnerData
     public function syncBusinessPartner()
     {
         // get data
-        $sqlsrvDataPartner = BusinessPartnerErp::where('bp_role_desc', 'LIKE', '%Supplier%')
-            ->where('contry', 'IDN')
-            ->get();
+        $sqlsrvDataPartner = BusinessPartnerErp::where('bp_role_desc', 'LIKE', '%Supplier%')->get();
 
         // copy all data from sql server
         foreach ($sqlsrvDataPartner as $data) {

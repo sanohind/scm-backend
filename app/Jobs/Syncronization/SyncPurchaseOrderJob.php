@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
-use Log;
 
 class SyncPurchaseOrderJob implements ShouldQueue
 {
@@ -33,24 +32,19 @@ class SyncPurchaseOrderJob implements ShouldQueue
     {
         try {
             // Po Header
-            // Initialize year and period
-            $actualYear = Carbon::now()->year;
+            // Initialize variable
             $actualPeriod = Carbon::now()->month;
-            $oneYearsBefore = Carbon::now()->subYears(2)->year; // Change subYears value if you want to sync within range year (Only Running at 00:00 - 00:10)
-            $twoMonthBefore = Carbon::now()->subMonths(2)->month; // Change subMonths value if you want to sync within range month (Running every ten minute)
+            $threeMontBefore = Carbon::now()->subMonths(3)->month; // Change subMonths value if you want to sync within range 3 month (Only Running at 00:00 - 00:10)
+            $oneMonthBefore = Carbon::now()->subMonths(1)->month; // Change subMonths value if you want to sync within range 1 month (Running every ten minute)
 
             if (Carbon::now()->format('h:i') >= '00:00' && Carbon::now()->format('h:i') <= '00:10') {
-                // Get Purchase Order from range two year ago till now
-                $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_year', [$oneYearsBefore, $actualYear])
-                    ->where('po_type_desc', 'PO LOCAL')
+                // Get Purchase Order from range 3 month ago till now
+                $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_period', [$threeMontBefore, $actualPeriod])
                     ->get();
-
-                Log::channel('sync')->info('Sync PO from range two year ago till now');
+                    \Log::info("Running Sync PO 00:00 ");
             } else {
-                // Get Purchase Order from range two month ago till now on this year
-                $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_period', [$twoMonthBefore, $actualPeriod])
-                    ->where('po_year', $actualYear)
-                    ->where('po_type_desc', 'PO LOCAL')
+                // Get Purchase Order from range 1 month ago till now on this year
+                $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_period', [$oneMonthBefore, $actualPeriod])
                     ->get();
             }
 
