@@ -32,12 +32,12 @@ class BusinessPartnerController
     {
         $users = BusinessPartner::select('bp_code', 'bp_name', 'adr_line_1')
             ->where('bp_code', 'like', 'SL%')
-            ->where('bp_code', 'like', 'SI%')
+            ->orWhere('bp_code', 'like', 'SI%')
             ->get();
 
         return response()->json([
             'success' => true,
-            'message' => 'Display List DN Detail Successfully',
+            'message' => 'Display List  Successfully',
             'data' => PartnerResource::collection($users),
         ], 200);
     }
