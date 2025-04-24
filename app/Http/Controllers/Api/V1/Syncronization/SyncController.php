@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1\Syncronization;
 
-use App\Service\Syncronization\SyncBusinessPartnerData;
+use Carbon\Carbon;
+use App\Models\DeliveryNote\DnDetailErp;
+use App\Models\DeliveryNote\DnHeaderErp;
+use App\Models\PurchaseOrder\PoDetailErp;
+use App\Models\PurchaseOrder\PoHeaderErp;
 use App\Service\Syncronization\SyncDeleteData;
+use App\Service\Syncronization\SyncSubcontItemData;
 use App\Service\Syncronization\SyncDeliveryNoteData;
 use App\Service\Syncronization\SyncPurchaseOrderData;
-use App\Service\Syncronization\SyncSubcontItemData;
+use App\Service\Syncronization\SyncBusinessPartnerData;
 
 class SyncController
 {
@@ -16,7 +21,8 @@ class SyncController
         protected SyncDeliveryNoteData $syncDeliveryNoteData,
         protected SyncSubcontItemData $syncSubcontItemData,
         protected SyncDeleteData $syncDeleteData,
-    ) {}
+    ) {
+    }
 
     /**
      * Sync data from erp to data
@@ -39,8 +45,9 @@ class SyncController
             $this->syncSubcontItemData->syncSubcontItem(); // Subcont Item
 
             $purchaseOrder = $this->syncPurchaseOrderData->syncPurchaseOrder(); // Purchase Order *note: must return array
+            // $this->syncPurchaseOrderData->syncPurchaseOrder(); // Purchase Order *note: must return array
 
-            if (! empty($purchaseOrder)) {
+            if (!empty($purchaseOrder)) {
                 $this->syncDeliveryNoteData->syncDeliveryNote($purchaseOrder); // Delivery Note
 
                 // delete data
@@ -58,6 +65,54 @@ class SyncController
         // Response
         return response()->json([
             'message' => 'Sync Data Successfuly',
+        ]);
+    }
+
+    public function syncTest()
+    {
+        // Initialize variable
+        $actualPeriod = Carbon::now()->month;
+        $actualYear = Carbon::now()->year;
+        //$threeMontBefore = Carbon::now()->subMonths(3)->month; // Change subMonths value if you want to sync within range 3 month (Only Running at 00:00 - 00:10)
+        $oneMonthBefore = Carbon::now()->subMonths(1)->month; // Change subMonths value if you want to sync within range 1 month (Running every ten minute)
+
+        // Get Purchase Order from range 1 month ago till now on this year
+        $sqlsrvDataPoHeader = PoHeaderErp::whereBetween('po_period', [$oneMonthBefore, $actualPeriod])
+            ->where('po_year', $actualYear)
+            ->get();
+
+        $poNo = $sqlsrvDataPoHeader->pluck('po_no')->toArray();
+
+        $collect3 = collect();
+        foreach (array_chunk($poNo, 2000) as $chunk3) {
+            $result3 = PoDetailErp::whereIn('po_no', $chunk3)->get();
+            $collect3 = $collect3->merge($result3);
+        }
+
+        $collect1 = collect();
+        foreach (array_chunk($poNo, 2000) as $chunk) {
+            $result = DnHeaderErp::whereIn('po_no', $chunk)->get();
+            $collect1 = $collect1->merge($result);
+        }
+
+        $dnNo = $collect1->pluck('no_dn')->toArray();
+        $collect2 = collect();
+        foreach (array_chunk($dnNo, 2000) as $chunk2) {
+            $result2 = DnDetailErp::whereIn('no_dn', $chunk2)->get();
+            $collect2 = $collect2->merge($result2);
+        }
+
+        // Break the PO numbers into chunks of 2000 or less
+        // foreach (array_chunk($poNumber, 2000) as $chunk) {
+        //     $chunkResults = DnHeaderErp::whereIn('po_no', $chunk)->get();
+        //     $dnHeaders = $dnHeaders->merge($chunkResults); // Merge the results
+        // }
+        return response()->json([
+            'Date' => Carbon::now()->format('d-m-y h:i'),
+            'pohead' => count($poNo),
+            'podetail' => $collect3->count(),
+            'dnhead' => $collect1->count(),
+            'dndetail' => $collect2->count(),
         ]);
     }
 }

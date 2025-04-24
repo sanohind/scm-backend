@@ -41,6 +41,7 @@ Route::get('/dnqty/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
 // Route sync
 Route::get('/mail-notification', [EmailNotificationSupplierController::class, 'mail']);
 Route::get('/sync', [SyncController::class, 'sync']);
+Route::get('/sync2', [SyncController::class, 'syncTest']);
 Route::get('/copyBusinessPartner', [SyncController::class, 'copyBusinessPartner']);
 Route::get('/copyPoHeader', [SyncController::class, 'copyPoHeader']);
 Route::get('/copyPoDetail', [SyncController::class, 'copyPoDetail']);
