@@ -45,20 +45,15 @@ class SyncController
             $this->syncSubcontItemData->syncSubcontItem(); // Subcont Item
 
             $purchaseOrder = $this->syncPurchaseOrderData->syncPurchaseOrder(); // Purchase Order *note: must return array
-            // $this->syncPurchaseOrderData->syncPurchaseOrder(); // Purchase Order *note: must return array
 
             if (!empty($purchaseOrder)) {
                 $this->syncDeliveryNoteData->syncDeliveryNote($purchaseOrder); // Delivery Note
 
                 // delete data
-
                 $this->syncDeleteData->deletePo(); // Delete Purchase Order
-
                 $this->syncDeleteData->deleteDn(); // Delete Delivery Note
-
             }
         } catch (\Throwable $th) {
-            // throw $th;
             \Log::error("$th");
         }
 
@@ -68,12 +63,15 @@ class SyncController
         ]);
     }
 
+    /**
+     * Test to count how many record per sync
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function syncTest()
     {
         // Initialize variable
         $actualPeriod = Carbon::now()->month;
         $actualYear = Carbon::now()->year;
-        //$threeMontBefore = Carbon::now()->subMonths(3)->month; // Change subMonths value if you want to sync within range 3 month (Only Running at 00:00 - 00:10)
         $oneMonthBefore = Carbon::now()->subMonths(1)->month; // Change subMonths value if you want to sync within range 1 month (Running every ten minute)
 
         // Get Purchase Order from range 1 month ago till now on this year
@@ -102,11 +100,6 @@ class SyncController
             $collect2 = $collect2->merge($result2);
         }
 
-        // Break the PO numbers into chunks of 2000 or less
-        // foreach (array_chunk($poNumber, 2000) as $chunk) {
-        //     $chunkResults = DnHeaderErp::whereIn('po_no', $chunk)->get();
-        //     $dnHeaders = $dnHeaders->merge($chunkResults); // Merge the results
-        // }
         return response()->json([
             'Date' => Carbon::now()->format('d-m-y h:i'),
             'pohead' => count($poNo),
