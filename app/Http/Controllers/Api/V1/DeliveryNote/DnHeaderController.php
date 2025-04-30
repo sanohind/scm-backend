@@ -55,6 +55,9 @@ class DnHeaderController extends Controller
         $dnHeaderData = DnHeader::with('poHeader', 'dnDetail')
             ->where('supplier_code', $bpCode)
             ->whereNotIn('status_desc', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed'])
+            ->whereHas('poHeader', function ($query) {
+                $query->whereNotIn('po_status', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed']);
+            })
             ->orderBy('plan_delivery_date', 'desc')
             ->get();
 
