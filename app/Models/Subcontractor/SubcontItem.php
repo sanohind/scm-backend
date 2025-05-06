@@ -28,6 +28,8 @@ class SubcontItem extends Model
         'item_name',
         'item_old_name',
         'status',
+        'min_stock_incoming',
+        'min_stock_outgoing',
     ];
 
     // SubcontTransaction relation
