@@ -20,8 +20,8 @@ class SubcontAllListItemResource extends JsonResource
             'part_name' => $this->item_name,
             'old_part_name' => $this->item_old_name,
             'status' => $this->status,
-            'min_stock_incoming' => ($this->min_stock_incoming <= 0) ? null : $this->min_stock_incoming,
-            'min_stock_outgoing' => ($this->min_stock_outgoing <= 0) ? null : $this->min_stock_outgoing,
+            'min_stock_incoming' => is_null($this->min_stock_incoming) ? null : $this->min_stock_incoming,
+            'min_stock_outgoing' => is_null($this->min_stock_outgoing) ? null : $this->min_stock_outgoing,
         ];
     }
 }
