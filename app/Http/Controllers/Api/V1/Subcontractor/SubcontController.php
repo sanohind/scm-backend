@@ -215,7 +215,11 @@ class SubcontController
     {
         $request->validated();
 
-        $this->subcontCreateTransaction->updateTransactionSubcont($request->transaction_id, $request->qty_ok, $request->qty_ng);
+        $this->subcontCreateTransaction->updateTransactionSubcont(
+            $request->transaction_id,
+            is_null($request->qty_ok) ? 0 : $request->qty_ok,
+            is_null($request->qty_ng) ? 0 : $request->qty_ng,
+        );
 
         return response()->json([
             'status' => true,
