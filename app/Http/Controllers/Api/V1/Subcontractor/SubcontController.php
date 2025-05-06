@@ -2,23 +2,34 @@
 
 namespace App\Http\Controllers\Api\V1\Subcontractor;
 
-use App\Http\Requests\Subcontractor\SubcontImportStockItemRequest;
-use App\Http\Requests\Subcontractor\SubcontItemRequest;
-use App\Http\Requests\Subcontractor\SubcontItemUpdateRequest;
-use App\Http\Requests\Subcontractor\SubcontTransactionRequest;
-use App\Service\Subcontractor\SubcontCreateItem;
-use App\Service\Subcontractor\SubcontCreateTransaction;
-use App\Service\Subcontractor\SubcontDeleteItem;
+use App\Http\Requests\Subcontractor\SubcontUpdateTransactionRequest;
+use App\Trait\ResponseApi;
+use Illuminate\Http\Request;
+use App\Trait\AuthorizationRole;
 use App\Service\Subcontractor\SubcontGetItem;
+use App\Service\Subcontractor\SubcontCreateItem;
+use App\Service\Subcontractor\SubcontDeleteItem;
+use App\Service\Subcontractor\SubcontUpdateItem;
 use App\Service\Subcontractor\SubcontGetListItem;
 use App\Service\Subcontractor\SubcontGetListItemErp;
 use App\Service\Subcontractor\SubcontGetTransaction;
 use App\Service\Subcontractor\SubcontImportStockItem;
-use App\Service\Subcontractor\SubcontUpdateItem;
-use Illuminate\Http\Request;
+use App\Http\Requests\Subcontractor\SubcontItemRequest;
+use App\Service\Subcontractor\SubcontCreateTransaction;
+use App\Http\Requests\Subcontractor\SubcontItemUpdateRequest;
+use App\Http\Requests\Subcontractor\SubcontTransactionRequest;
+use App\Http\Requests\Subcontractor\SubcontImportStockItemRequest;
 
 class SubcontController
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     * 2. AuthorizationRole = for checking permissible user role
+     */
+    use AuthorizationRole, ResponseApi;
+
     public function __construct(
         protected SubcontGetItem $subcontGetItem,
         protected SubcontGetTransaction $subcontGetTransaction,
@@ -29,7 +40,8 @@ class SubcontController
         protected SubcontUpdateItem $subcontUpdateItem,
         protected SubcontDeleteItem $subcontDeleteItem,
         protected SubcontImportStockItem $subcontImportStockItem,
-    ) {}
+    ) {
+    }
 
     /**
      * To get item record user
@@ -80,7 +92,7 @@ class SubcontController
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'error' => $th->getMessage().' (On line '.$th->getLine().')',
+                'error' => $th->getMessage() . ' (On line ' . $th->getLine() . ')',
             ], 500);
         }
 
@@ -94,7 +106,7 @@ class SubcontController
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'error' => $th->getMessage().' (On line '.$th->getLine().')',
+                'error' => $th->getMessage() . ' (On line ' . $th->getLine() . ')',
             ], 500);
         }
 
@@ -113,7 +125,7 @@ class SubcontController
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'error' => $th->getMessage().' (On line '.$th->getLine().')',
+                'error' => $th->getMessage() . ' (On line ' . $th->getLine() . ')',
             ], 500);
         }
 
@@ -194,6 +206,23 @@ class SubcontController
 
     }
 
+    /**
+     * Update after post transaction subcont
+     * @param \App\Http\Requests\Subcontractor\SubcontUpdateTransactionRequest $request
+     * @return void
+     */
+    public function updateTransaction(SubcontUpdateTransactionRequest $request)
+    {
+        $request->validated();
+
+        $this->subcontCreateTransaction->updateTransactionSubcont($request->transaction_id, $request->qty_ok, $request->qty_ng);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Update Transaction Successful',
+        ], 200);
+    }
+
     public function importStockItems(SubcontImportStockItemRequest $request)
     {
         // validated request data
@@ -217,6 +246,5 @@ class SubcontController
             'status' => true,
             'message' => 'Import Stock Items Successfully',
         ], 200);
-
     }
 }
