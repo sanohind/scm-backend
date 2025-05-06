@@ -11,13 +11,15 @@ class SubcontUpdateItem
     {
         // Get record subcont item
         $itemRecord = SubcontItem::findOrFail($data['sub_item_id']);
-        // dd($data);
+
         $result = DB::transaction(function () use ($data, $itemRecord) {
             $itemRecord->update([
                 'item_code' => $data['part_number'] ?? $itemRecord->item_code,
                 'item_name' => $data['part_name'] ?? $itemRecord->item_name,
                 'item_old_name' => $data['old_part_name'] ?? $itemRecord->item_old_name,
                 'status' => $data['status'] ?? $itemRecord->status,
+                'min_stock_incoming' => $data['min_stock_incoming'] ?? $itemRecord->min_stock_incoming,
+                'min_stock_outgoing' => $data['min_stock_outgoing'] ?? $itemRecord->min_stock_outgoing,
             ]);
 
             if (! empty($itemRecord)) {

@@ -29,6 +29,8 @@ class SubcontItemUpdateRequest extends FormRequest
             'part_name' => 'string|max:255',
             'old_part_name' => 'string|max:255',
             'status' => 'string|in:1,0',
+            'min_stock_incoming' => 'integer|min:0',
+            'min_stock_outgoing' => 'integer|min:0',
         ];
     }
 
@@ -38,17 +40,29 @@ class SubcontItemUpdateRequest extends FormRequest
             // sub_item_id
             'sub_item_id.required' => 'The sub item ID is required.',
 
-            // item_code
-            'item_code.string' => 'The item code must be a valid string.',
-            'item_code.max' => 'The item code cannot be longer than 50 characters.',
+            // part_number
+            'part_number.string' => 'The part number must be a valid string.',
+            'part_number.max' => 'The part number cannot be longer than 50 characters.',
 
-            // item_name
-            'item_name.string' => 'The item name must be a valid string.',
-            'item_name.max' => 'The item name cannot be longer than 255 characters.',
+            // part_name
+            'part_name.string' => 'The part name must be a valid string.',
+            'part_name.max' => 'The part name cannot be longer than 255 characters.',
+
+            // old_part_name
+            'old_part_name.string' => 'The old part name must be a valid string.',
+            'old_part_name.max' => 'The old part name cannot be longer than 255 characters.',
 
             // status
             'status.string' => 'The status must be a valid string.',
             'status.in' => 'The status must be either 1 or 0.',
+
+            // min_stock_incoming
+            'min_stock_incoming.integer' => 'The minimum stock for incoming must be an integer.',
+            'min_stock_incoming.min' => 'The minimum stock for incoming must be at least 0.',
+
+            // min_stock_outgoing
+            'min_stock_outgoing.integer' => 'The minimum stock for outgoing must be an integer.',
+            'min_stock_outgoing.min' => 'The minimum stock for outgoing must be at least 0.',
         ];
     }
 
@@ -58,7 +72,7 @@ class SubcontItemUpdateRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Please Fill Input Field with Valid Data',
                 'errors' => $validator->errors(),
             ], 422)
         );
