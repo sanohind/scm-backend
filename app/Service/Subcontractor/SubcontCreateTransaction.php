@@ -148,8 +148,8 @@ class SubcontCreateTransaction
      */
     public function updateTransactionSubcont(
         string $subTransactionId,
-        int $qtyOk,
-        int $qtyNg,
+        int $qtyOk = 0,
+        int $qtyNg = 0,
     ) {
         $transactionData = SubcontTransaction::where('sub_transaction_id', $subTransactionId)->first();
         $stockData = SubcontStock::where('sub_item_id', $transactionData->sub_item_id)->first();
