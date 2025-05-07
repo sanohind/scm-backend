@@ -15,7 +15,7 @@ class SubcontTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role == 6 || 8 || 7 || 9;
+        return Auth::user()->role == 4 || 6 || 8 || 7 || 9;
     }
 
     /**
@@ -32,8 +32,8 @@ class SubcontTransactionRequest extends FormRequest
             'data.*.transaction_type' => 'required|string|in:Incoming,Outgoing,Process',
             'data.*.item_code' => 'required|string|max:50',
             'data.*.status' => 'required|string|in:Fresh,Replating',
-            'data.*.qty_ok' => 'integer|min:0',
-            'data.*.qty_ng' => 'integer|min:0',
+            'data.*.qty_ok' => 'integer',
+            'data.*.qty_ng' => 'integer',
         ];
 
         // Delivery Note rules
