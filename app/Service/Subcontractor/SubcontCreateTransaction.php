@@ -152,6 +152,20 @@ class SubcontCreateTransaction
         int $qtyNg = 0,
     ) {
         $transactionData = SubcontTransaction::where('sub_transaction_id', $subTransactionId)->first();
+        if ($transactionData->transaction_date) {
+            $transactionDate = Carbon::parse($transactionData->transaction_date);
+            $currentDate = Carbon::now();
+
+            if ($transactionDate->diffInDays($currentDate) > 7) {
+                throw new HttpResponseException(
+                    response()->json([
+                        'status' => false,
+                        'message' => 'The transaction record is older than 7 days and cannot be updated.',
+                    ], 403)
+                );
+            }
+        }
+
         $stockData = SubcontStock::where('sub_item_id', $transactionData->sub_item_id)->first();
 
         try {
@@ -171,7 +185,7 @@ class SubcontCreateTransaction
                             if ($qtyNg != 0) {
                                 $stockData->increment('ng_fresh_stock', $diffrenceQtyNg);
                             }
-                        } elseif ($transactionData->transaction_type == 'Outgoing') {
+                        } elseif ($transactionData->transaction_type == 'Process') {
                             $transactionType = 'Process';
 
                             if ($qtyOk != 0) {
@@ -195,7 +209,7 @@ class SubcontCreateTransaction
                             if ($qtyNg != 0) {
                                 $stockData->increment('ng_replating_stock', $diffrenceQtyNg);
                             }
-                        } elseif ($transactionData->transaction_type == 'Outgoing') {
+                        } elseif ($transactionData->transaction_type == 'Process') {
                             $transactionType = 'Process';
 
                             if ($qtyOk != 0) {
@@ -210,22 +224,23 @@ class SubcontCreateTransaction
                 }
 
                 // Create transaction update log
-                SubcontTransaction::create([
-                    'delivery_note' => "Edit-{$transactionData->delivery_note}",
-                    'sub_item_id' => $transactionData->sub_item_id,
-                    'transaction_type' => $transactionType,
-                    'transaction_date' => Carbon::now()->format('Y-m-d'),
-                    'transaction_time' => Carbon::now()->format('H:i:s'),
-                    'item_code' => $transactionData->item_code,
-                    'status' => $transactionData->status,
-                    'qty_ok' => ($qtyOk != 0) ? $diffrenceQtyOk : 0,
-                    'qty_ng' => ($qtyNg != 0) ? $diffrenceQtyNg : 0,
-                ]);
+                // SubcontTransaction::create([
+                //     'delivery_note' => "Edit-{$transactionData->delivery_note}",
+                //     'sub_item_id' => $transactionData->sub_item_id,
+                //     'transaction_type' => $transactionType,
+                //     'transaction_date' => Carbon::now()->format('Y-m-d'),
+                //     'transaction_time' => Carbon::now()->format('H:i:s'),
+                //     'item_code' => $transactionData->item_code,
+                //     'status' => $transactionData->status,
+                //     'qty_ok' => ($qtyOk != 0) ? $diffrenceQtyOk : 0,
+                //     'qty_ng' => ($qtyNg != 0) ? $diffrenceQtyNg : 0,
+                // ]);
 
                 // Update transaction record
                 $transactionData->update([
                     'qty_ok' => ($qtyOk != 0) ? $qtyOk : $transactionData->qty_ok,
                     'qty_ng' => ($qtyNg != 0) ? $qtyNg : $transactionData->qty_ng,
+                    'response' => "Edited"
                 ]);
 
             });
