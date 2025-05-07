@@ -3,6 +3,7 @@
 namespace App\Service\Subcontractor;
 
 use App\Http\Resources\Subcontractor\SubcontTransactionResource;
+use App\Models\Subcontractor\SubcontItem;
 use App\Models\Subcontractor\SubcontTransaction;
 use Illuminate\Support\Facades\Auth;
 
@@ -36,10 +37,11 @@ class SubcontGetTransaction
         $data = SubcontTransaction::whereHas('subItem', function ($q) use ($user) {
             $q->where('bp_code', $user);
         })
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->orderBy('transaction_date', 'desc')
-            ->orderBy('transaction_time', 'desc')
-            ->get();
+        ->whereBetween('transaction_date', [$start_date, $end_date])
+        ->orderBy('transaction_date', 'desc')
+        ->orderBy('transaction_time', 'desc')
+        ->get();
+
 
         // Check if data exist
         if ($data->isEmpty()) {

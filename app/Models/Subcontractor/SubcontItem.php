@@ -35,7 +35,7 @@ class SubcontItem extends Model
     // SubcontTransaction relation
     public function subTrans(): HasMany
     {
-        return $this->hasMany(SubcontTransaction::class, 'item_code', 'item_code');
+        return $this->hasMany(SubcontTransaction::class, 'sub_item_id', 'sub_item_id');
     }
 
     public function subStock(): HasOne

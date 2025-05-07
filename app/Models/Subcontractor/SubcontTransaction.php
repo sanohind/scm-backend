@@ -41,6 +41,6 @@ class SubcontTransaction extends Model
     // SubcontItem relation
     public function subItem(): BelongsTo
     {
-        return $this->belongsTo(SubcontItem::class, 'item_code', 'item_code');
+        return $this->belongsTo(SubcontItem::class, 'sub_item_id', 'sub_item_id');
     }
 }

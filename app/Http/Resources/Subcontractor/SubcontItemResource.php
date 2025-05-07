@@ -15,6 +15,7 @@ class SubcontItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'stock_id' => $this->sub_stock_id,
             'part_number' => $this->item_code,
             'part_name' => $this->item_name,
             'old_part_name' => $this->item_old_name ?? null,
