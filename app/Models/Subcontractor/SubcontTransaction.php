@@ -36,6 +36,7 @@ class SubcontTransaction extends Model
         'actual_qty_ok_receive',
         'actual_qty_ng_receive',
         'response',
+        'update_at',
     ];
 
     // SubcontItem relation

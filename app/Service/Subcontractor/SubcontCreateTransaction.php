@@ -170,13 +170,12 @@ class SubcontCreateTransaction
 
         try {
             DB::transaction(callback: function () use ($transactionData, $stockData, $qtyOk, $qtyNg) {
-                $diffrenceQtyNg = $transactionData->qty_ng - $qtyNg;
-                $diffrenceQtyOk = $transactionData->qty_ok - $qtyOk;
+                $diffrenceQtyOk = $qtyOk - $transactionData->qty_ok;
+                $diffrenceQtyNg = $qtyNg - $transactionData->qty_ng;
 
                 switch ($transactionData->status) {
                     case 'Fresh':
                         if ($transactionData->transaction_type == 'Incoming') {
-                            $transactionType = 'Incoming';
 
                             if ($qtyOk != 0) {
                                 $stockData->increment('incoming_fresh_stock', $diffrenceQtyOk);
@@ -186,7 +185,6 @@ class SubcontCreateTransaction
                                 $stockData->increment('ng_fresh_stock', $diffrenceQtyNg);
                             }
                         } elseif ($transactionData->transaction_type == 'Process') {
-                            $transactionType = 'Process';
 
                             if ($qtyOk != 0) {
                                 $stockData->increment('process_fresh_stock', $diffrenceQtyOk);
@@ -200,7 +198,6 @@ class SubcontCreateTransaction
 
                     case 'Replating':
                         if ($transactionData->transaction_type == 'Incoming') {
-                            $transactionType = 'Incoming';
 
                             if ($qtyOk != 0) {
                                 $stockData->increment('incoming_replating_stock', $diffrenceQtyOk);
@@ -210,7 +207,6 @@ class SubcontCreateTransaction
                                 $stockData->increment('ng_replating_stock', $diffrenceQtyNg);
                             }
                         } elseif ($transactionData->transaction_type == 'Process') {
-                            $transactionType = 'Process';
 
                             if ($qtyOk != 0) {
                                 $stockData->increment('process_replating_stock', $diffrenceQtyOk);
@@ -223,24 +219,12 @@ class SubcontCreateTransaction
                         break;
                 }
 
-                // Create transaction update log
-                // SubcontTransaction::create([
-                //     'delivery_note' => "Edit-{$transactionData->delivery_note}",
-                //     'sub_item_id' => $transactionData->sub_item_id,
-                //     'transaction_type' => $transactionType,
-                //     'transaction_date' => Carbon::now()->format('Y-m-d'),
-                //     'transaction_time' => Carbon::now()->format('H:i:s'),
-                //     'item_code' => $transactionData->item_code,
-                //     'status' => $transactionData->status,
-                //     'qty_ok' => ($qtyOk != 0) ? $diffrenceQtyOk : 0,
-                //     'qty_ng' => ($qtyNg != 0) ? $diffrenceQtyNg : 0,
-                // ]);
-
                 // Update transaction record
                 $transactionData->update([
                     'qty_ok' => ($qtyOk != 0) ? $qtyOk : $transactionData->qty_ok,
                     'qty_ng' => ($qtyNg != 0) ? $qtyNg : $transactionData->qty_ng,
-                    'response' => "Edited"
+                    'update_at' => Carbon::now(),
+                    'response' => 'Edited',
                 ]);
 
             });

@@ -31,6 +31,7 @@ class SubcontTransactionResource extends JsonResource
             'actual_qty_ng' => $this->actual_qty_ng_receive,
             'actual_qty_total' => ($this->actual_qty_ok_receive == 0 && $this->actual_qty_ng_receive == 0) ? null : ($this->actual_qty_ok_receive + $this->actual_qty_ng_receive),
             'response' => $this->transactionResponse(),
+            'update_at' => $this->update_at,
         ];
     }
 
@@ -105,6 +106,10 @@ class SubcontTransactionResource extends JsonResource
         }
 
         if ($transType == 'Process' && $response != null) {
+            return $response;
+        }
+
+        if ($response == 'Edited') {
             return $response;
         }
     }
