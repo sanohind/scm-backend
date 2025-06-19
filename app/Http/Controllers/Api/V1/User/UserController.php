@@ -2,20 +2,33 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
+use Auth;
+use App\Models\Users\User;
+use App\Trait\ResponseApi;
+use Illuminate\Http\Request;
+use App\Trait\AuthorizationRole;
+use App\Service\User\UserGetEmail;
+use App\Service\User\UserCreateUser;
+use App\Service\User\UserUpdateUser;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\User\UserResource;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
-use App\Http\Resources\User\UserDetailResource;
-use App\Http\Resources\User\UserResource;
-use App\Models\Users\User;
 use App\Service\User\UserCreateAndAttachEmail;
-use App\Service\User\UserCreateUser;
-use App\Service\User\UserGetEmail;
-use App\Service\User\UserUpdateUser;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\User\UserDetailResource;
+use App\Http\Requests\User\ChangePassUserRequest;
 
 class UserController
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     * 2. AuthorizationRole = for checking permissible user role
+     */
+    use AuthorizationRole, ResponseApi;
+
     /**
      * Call service class
      * @param \App\Service\User\UserCreateUser $userCreateUser
@@ -218,5 +231,21 @@ class UserController
             'status' => true,
             'message' => 'User deleted successfully',
         ]);
+    }
+
+    public function changePassword(ChangePassUserRequest $request)
+    {
+        $request->validated();
+
+        $user = User::where('user_id', Auth::user()->user_id)->first();
+        if (!$user) {
+            return $this->returnResponseApi(false, 'User Not Found', '', 404);
+        }
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return $this->returnResponseApi(true, 'Reset Password Success', null, 200);
+
     }
 }

@@ -92,6 +92,9 @@ Route::middleware(['auth:sanctum', 'userRole:1'])->prefix('super-admin')->group(
     // Route for delete user
     Route::delete('user/delete/{user}', [UserController::class, 'deleteUser']);
 
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
+
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
 });
@@ -140,6 +143,9 @@ Route::middleware(['auth:sanctum', 'userRole:2'])->prefix('admin-purchasing')->g
     // Route for delete forecast file
     Route::delete('forecast/delete/{forecast}', [ForecastController::class, 'destroy']);
 
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
+
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
 });
@@ -169,6 +175,9 @@ Route::middleware(['auth:sanctum', 'userRole:3'])->prefix('admin-warehouse')->gr
     Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
     // Route fo get DN history
     Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
@@ -230,6 +239,9 @@ Route::middleware(['auth:sanctum', 'userRole:4'])->prefix('admin-subcont')->grou
     Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
     // Route fo get DN history
     Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
+
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
@@ -297,6 +309,9 @@ Route::middleware(['auth:sanctum', 'userRole:5'])->prefix('supplier-marketing')-
     Route::get('forecast/index', [ForecastController::class, 'indexSupplier']);
     // Route for download Forecast
     Route::get('forecast/file/{filename}', [ForecastController::class, 'getFile']);
+
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
@@ -378,6 +393,9 @@ Route::middleware(['auth:sanctum', 'userRole:6'])->prefix('supplier-subcont-mark
     // Route for download Forecast
     Route::get('forecast/file/{filename}', [ForecastController::class, 'getFile']);
 
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
+
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
 });
@@ -415,6 +433,9 @@ Route::middleware(['auth:sanctum', 'userRole:7'])->prefix('supplier-warehouse')-
     Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
     // Route fo get DN history
     Route::get('dn/history', [HistoryController::class, 'dnHeaderHistory']);
+
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
@@ -465,6 +486,9 @@ Route::middleware(['auth:sanctum', 'userRole:8'])->prefix('supplier-subcont')->g
     Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
     Route::get('dn-label/print/outstanding/{outstanding}/{no_dn}', [PrintController::class, 'labelOutstanding']);
     Route::get('dn-label/print/qty-confirm/{no_dn}', [PrintController::class, 'labelQtyConfirm']);
+
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
@@ -571,6 +595,9 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
     Route::post('transaction/store', [SubcontController::class, 'createTransaction']);
     // Route for update transaction
     Route::post('transaction/edit', [SubcontController::class,'updateTransaction']);
+
+    // Feat reset password
+    Route::post('change-password', [UserController::class, 'changePassword']);
 
     //Logout route
     Route::post('logout', [AuthController::class, 'logout']);
