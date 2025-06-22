@@ -33,7 +33,7 @@ class SubcontUpdateTransactionRequest extends FormRequest
         return [
             "transaction_id" => 'required',
             "qty_ok" => 'sometimes',
-            "qty_ng" => 'sometimes,
+            "qty_ng" => 'sometimes',
         ];
     }
 
