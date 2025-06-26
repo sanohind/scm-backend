@@ -20,7 +20,7 @@ class ChangePassUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->permissibleRole(1,2,3,4,5,6,7,8);
+        return $this->permissibleRole(1,2,3,4,5,6,7,8,9);
     }
 
     /**
