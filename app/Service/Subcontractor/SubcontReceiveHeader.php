@@ -27,6 +27,7 @@ class SubcontReceiveHeader
 
         // Query Get Header
         $getHeader = SubcontTransaction::select('delivery_note', 'status', 'transaction_date', 'transaction_time', 'response')
+            ->has('subItem')
             ->whereIn('transaction_type', ['Outgoing', 'outgoing'])
             ->whereNull('response')
             ->where('bp_code', $bpCode)
