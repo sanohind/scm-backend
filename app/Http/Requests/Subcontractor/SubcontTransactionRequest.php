@@ -112,7 +112,8 @@ class SubcontTransactionRequest extends FormRequest
         $getRequest = $this->input('data');
 
         foreach ($getRequest as $i) {
-            $checkDn = SubcontTransaction::where('delivery_note', $i['delivery_note'])->exists();
+            // dd($i['delivery_note']);
+            $checkDn = SubcontTransaction::where('delivery_note', $i['delivery_note'])->whereNotNull('delivery_note')->exists();
 
             if ($checkDn == true) {
                 $validator->errors()->add(

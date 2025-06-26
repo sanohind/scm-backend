@@ -2,18 +2,26 @@
 
 namespace App\Service\Subcontractor;
 
+use Log;
+use Exception;
+use Carbon\Carbon;
+use App\Trait\ResponseApi;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Subcontractor\SubcontItem;
 use App\Models\Subcontractor\SubcontStock;
 use App\Models\Subcontractor\SubcontTransaction;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Log;
 
 class SubcontCreateTransaction
 {
+    /**
+     * -------TRAIT---------
+     * Mandatory:
+     * 1. ResponseApi = Response api should use ResponseApi trait template
+     */
+    use ResponseApi;
+
     /**
      * Create new transaction business logic for multiple items
      *
@@ -26,10 +34,8 @@ class SubcontCreateTransaction
     {
         // check user role
         $check = Auth::user()->role;
-
         if ($check == 6 || $check == 8) {
             $bp_code = Auth::user()->bp_code;
-            // dd($bp_code);
         } elseif ($check == 9) {
             $bp_code = $data['bp_code'];
         }
@@ -50,10 +56,10 @@ class SubcontCreateTransaction
                 );
             }
 
-            // Get sub_item_id for each item
-            $subItemId = SubcontItem::where('item_code', $dataTransaction['item_code'])
+            // Get subcont item data
+            $subItemData = SubcontItem::select('sub_item_id','item_name')->where('item_code', $dataTransaction['item_code'])
                 ->where('bp_code', $bp_code)
-                ->value('sub_item_id');
+                ->first();
 
             try {
                 // Generate unique delivery note if not provided
@@ -92,28 +98,30 @@ class SubcontCreateTransaction
             }
 
             // Start DB::transaction, Create transaction
-            DB::transaction(function () use ($dataTransaction, $subItemId) {
+            DB::transaction(function () use ($dataTransaction, $subItemData, $bp_code) {
                 // Create the transaction
                 SubcontTransaction::create([
+                    'bp_code' => $bp_code,
                     'delivery_note' => $dataTransaction['delivery_note'],
-                    'sub_item_id' => $subItemId,
+                    'sub_item_id' => $subItemData->sub_item_id,
                     'transaction_type' => $dataTransaction['transaction_type'],
                     'actual_transaction_date' => $dataTransaction['actual_transaction_date'],
                     'actual_transaction_time' => $dataTransaction['actual_transaction_time'],
                     'transaction_date' => Carbon::now()->format('Y-m-d'),
                     'transaction_time' => Carbon::now()->format('H:i:s'),
                     'item_code' => $dataTransaction['item_code'],
+                    'item_name' => $subItemData->item_name,
                     'status' => $dataTransaction['status'],
                     'qty_ok' => $dataTransaction['qty_ok'],
                     'qty_ng' => $dataTransaction['qty_ng'],
                 ]);
 
                 // Check stock record availability
-                $checkStockRecordAvaibility = $this->checkStockRecordAvailability($dataTransaction['item_code'], $subItemId);
+                $checkStockRecordAvaibility = $this->checkStockRecordAvailability($dataTransaction['item_code'], $subItemData->sub_item_id);
 
                 // Get stock
                 $stock = SubcontStock::with('subItem')
-                    ->where('sub_item_id', $subItemId)
+                    ->where('sub_item_id', $subItemData->sub_item_id)
                     ->where('item_code', $dataTransaction['item_code'])
                     ->first();
 
@@ -167,6 +175,10 @@ class SubcontCreateTransaction
         }
 
         $stockData = SubcontStock::where('sub_item_id', $transactionData->sub_item_id)->first();
+        if (empty($stockData)) {
+            return $this->returnResponseApi(false, 'Item has been deleted', null, 404);
+        }
+
 
         try {
             DB::transaction(callback: function () use ($transactionData, $stockData, $qtyOk, $qtyNg) {
@@ -261,8 +273,10 @@ class SubcontCreateTransaction
                 $getTrans = SubcontTransaction::where('sub_transaction_id', $subTransactionId)->first();
 
                 // Declare variable
+                $bpCode = $getTrans->bp_code ?? Auth::user()->bp_co0de;
                 $dnNo = $getTrans->delivery_note;
                 $itemCode = $getTrans->item_code;
+                $itemName = $getTrans->item_name;
                 $status = $getTrans->status;
                 $type = 'Process';
                 $diffrenceQtyOk = $getTrans->qty_ok - $actualQtyOk;
@@ -271,12 +285,14 @@ class SubcontCreateTransaction
                 if ($diffrenceQtyOk + $diffrenceQtyNg != 0) {
                     // Create the transaction
                     SubcontTransaction::create([
+                        'bp_code' => $bpCode,
                         'delivery_note' => "System-$dnNo",
                         'sub_item_id' => $subItemId,
                         'transaction_type' => $type,
                         'transaction_date' => Carbon::now()->format('Y-m-d'),
                         'transaction_time' => Carbon::now()->format('H:i:s'),
                         'item_code' => $itemCode,
+                        'item_name' => $itemName,
                         'status' => $status,
                         'qty_ok' => $diffrenceQtyOk,
                         'qty_ng' => $diffrenceQtyNg,

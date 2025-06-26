@@ -6,6 +6,7 @@ use App\Http\Resources\Subcontractor\SubcontTransactionResource;
 use App\Models\Subcontractor\SubcontItem;
 use App\Models\Subcontractor\SubcontTransaction;
 use Illuminate\Support\Facades\Auth;
+use Log;
 
 class SubcontGetTransaction
 {
@@ -20,13 +21,13 @@ class SubcontGetTransaction
         $check = Auth::user()->role;
 
         if ($check == 6 || $check == 8) {
-            $user = Auth::user()->bp_code;
+            $bpCode = Auth::user()->bp_code;
         } elseif ($check == 4 || $check == 9) {
-            $user = $bp_code;
+            $bpCode = $bp_code;
         }
 
         // Check if user exist
-        if (! $user) {
+        if (! $bpCode) {
             return response()->json([
                 'status' => false,
                 'message' => 'User Not Found',
@@ -34,15 +35,12 @@ class SubcontGetTransaction
         }
 
         // Get record of subcont transaction data
-        $data = SubcontTransaction::whereHas('subItem', function ($q) use ($user) {
-            $q->where('bp_code', $user);
-        })
+        $data = SubcontTransaction::with('subItem')->where('bp_code', $bpCode)
         ->whereBetween('transaction_date', [$start_date, $end_date])
         ->orderBy('transaction_date', 'desc')
         ->orderBy('transaction_time', 'desc')
         ->get();
-
-
+        
         // Check if data exist
         if ($data->isEmpty()) {
             // response when empty

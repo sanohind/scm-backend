@@ -17,8 +17,7 @@ class SubcontReviewDetailResource extends JsonResource
         return [
             'sub_transaction_id' => $this->sub_transaction_id,
             'sub_item_id' => $this->sub_item_id,
-            'part_name' => $this->subItem->item_name,
-            'old_part_name' => $this->subItem->item_old_name,
+            'part_name' => $this->item_name,
             'part_number' => $this->item_code,
             'qty_ok' => $this->qty_ok,
             'qty_ng' => $this->qty_ng,

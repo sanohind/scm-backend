@@ -8,13 +8,19 @@ use Illuminate\Support\Facades\Auth;
 
 class SubcontReceiveHeader
 {
+    /**
+     * Get all header subcont transaction review based on bp_code
+     * @param mixed $bp_code
+     * @throws \Exception
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function getHeader($bp_code)
     {
         // Check role
         $check = Auth::user()->role;
 
         if ($check == 4 || $check == 9) {
-            $user = $bp_code;
+            $bpCode = $bp_code;
         } else {
             throw new \Exception('User Unauthorized', 403);
         }
@@ -23,14 +29,11 @@ class SubcontReceiveHeader
         $getHeader = SubcontTransaction::select('delivery_note', 'status', 'transaction_date', 'transaction_time', 'response')
             ->whereIn('transaction_type', ['Outgoing', 'outgoing'])
             ->whereNull('response')
-            ->whereHas('subItem', function ($query) use ($user) {
-                $query->where('bp_code', $user);
-            })
+            ->where('bp_code', $bpCode)
             ->distinct()
             ->get();
 
         // return response
-
         return response()->json([
             'status' => true,
             'message' => 'Display List Subcont Review Header Successfully',

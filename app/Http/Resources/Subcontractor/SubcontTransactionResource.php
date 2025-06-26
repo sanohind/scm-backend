@@ -21,8 +21,7 @@ class SubcontTransactionResource extends JsonResource
             'transaction_type' => $this->transaction_type,
             'delivery_note' => $this->delivery_note,
             'part_number' => $this->item_code,
-            'part_name' => $this->subItem->item_name,
-            'old_part_name' => $this->subItem->item_old_name,
+            'part_name' => $this->item_name,
             'status' => $this->status,
             'qty_ok' => $this->qty_ok,
             'qty_ng' => $this->qty_ng,
@@ -32,6 +31,7 @@ class SubcontTransactionResource extends JsonResource
             'actual_qty_total' => ($this->actual_qty_ok_receive == 0 && $this->actual_qty_ng_receive == 0) ? null : ($this->actual_qty_ok_receive + $this->actual_qty_ng_receive),
             'response' => $this->transactionResponse(),
             'update_at' => $this->update_at,
+            'allow_edit' => $this->allowEdit(),
         ];
     }
 
@@ -111,6 +111,14 @@ class SubcontTransactionResource extends JsonResource
 
         if ($response == 'Edited') {
             return $response;
+        }
+    }
+
+    public function allowEdit() {
+        if (empty($this->subItem)) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

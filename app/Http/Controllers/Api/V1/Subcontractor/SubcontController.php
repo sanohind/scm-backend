@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Subcontractor;
 
 use App\Http\Requests\Subcontractor\SubcontUpdateTransactionRequest;
+use App\Models\Subcontractor\SubcontTransaction;
 use App\Trait\ResponseApi;
 use Illuminate\Http\Request;
 use App\Trait\AuthorizationRole;
@@ -19,6 +20,7 @@ use App\Service\Subcontractor\SubcontCreateTransaction;
 use App\Http\Requests\Subcontractor\SubcontItemUpdateRequest;
 use App\Http\Requests\Subcontractor\SubcontTransactionRequest;
 use App\Http\Requests\Subcontractor\SubcontImportStockItemRequest;
+use Log;
 
 class SubcontController
 {
@@ -250,5 +252,31 @@ class SubcontController
             'status' => true,
             'message' => 'Import Stock Items Successfully',
         ], 200);
+    }
+
+    public function patchOldRecord()
+    {
+        try {
+            $data = SubcontTransaction::with('subItem')->whereNull('bp_code')->get();
+
+            foreach ($data as $sub) {
+                SubcontTransaction::updateOrCreate(
+                [
+                    'sub_transaction_id' => $sub->sub_transaction_id,
+                ],
+                [
+                    'bp_code' => $sub->subItem->bp_code ?? null,
+                    'item_name' => $sub->subItem->item_name ?? null,
+                ]
+            );
+            }
+        } catch (\Throwable $th) {
+            Log::info('error get record');
+        }
+
+        return response()->json([
+            'message' => 'berhasil'
+        ]);
+
     }
 }

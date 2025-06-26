@@ -22,9 +22,11 @@ class SubcontTransaction extends Model
 
     protected $fillable = [
         'sub_transaction_id',
+        'bp_code',
         'delivery_note',
         'sub_item_id',
         'item_code',
+        'item_name',
         'transaction_type',
         'actual_transaction_date',
         'actual_transaction_time',

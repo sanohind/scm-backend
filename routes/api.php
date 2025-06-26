@@ -606,3 +606,4 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
 // route testing
 Route::get('/listingreporttest/file/{filename}', [PerformanceReportController::class, 'getFile']);
 Route::get('/forecasttest/file/{filename}', [ForecastController::class, 'getFile']);
+Route::get('/patch', [SubcontController::class, 'patchOldRecord']);
