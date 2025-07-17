@@ -142,23 +142,8 @@ class PrintController
             'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i'),
         ]);
 
-        // variable for store array
-        $label = [];
-
-        // initialize looping each dn_detail with relationship from dn_header
-        // foreach ($dn_header->dnDetail as $dn_detail) {
-        //     // Calculate no_of_kanban = dn_qty/dn_snp
-        //     $no_of_kanban = ceil($dn_detail->qty_confirm / $dn_detail->dn_snp);
-
-        //     // Generate label based of no_of_kanbana
-        //     for ($i = 0; $i < $no_of_kanban; $i++) {
-        //         $label[] = new DnLabelResource($dn_detail);
-        //     }
-
-        //     // if
-        // }
-
         // Iterate over each dn_detail
+        $label = [];
         foreach ($dn_header->dnDetail as $dn_detail) {
             $qty_confirm = $dn_detail->qty_confirm;
             $dn_snp = $dn_detail->dn_snp;

@@ -93,6 +93,7 @@ class SyncDeliveryNoteJob implements ShouldQueue
                         'supplier_item_no' => $data['supplier_item_no'],
                         'item_desc_a' => $data['item_desc_a'],
                         'item_desc_b' => $data['item_desc_b'],
+                        'item_customer' => $data['item_cutomer'],
                         'lot_number' => $data['lot_number'],
                         'dn_qty' => $data['dn_qty'],
                         'receipt_qty' => $data['receipt_qty'],

@@ -35,6 +35,7 @@ class DnDetail extends Model
         'supplier_item_no',
         'item_desc_a',
         'item_desc_b',
+        'item_customer',
         'lot_number',
         'dn_qty',
         'receipt_qty',

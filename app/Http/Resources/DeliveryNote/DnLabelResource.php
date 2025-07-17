@@ -21,12 +21,9 @@ class DnLabelResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            // 'dn_label_no' => $this->dn_label_no,
             'lot_number' => $this->lot_number,
             'qr_number' => $this->qrNumber(),
             'po_number' => $this->dnHeader->po_no,
-            // 'dn_number' => $this->no_dn,
-            // 'model' => $this->no_dn,
             'customer_name' => $this->getAdrLine1(),
             'supplier_name' => $this->dnHeader->supplier_name, // Updated supplier_name
             'part_number' => $this->part_no,
@@ -54,15 +51,16 @@ class DnLabelResource extends JsonResource
     // concat qrNumber
     private function qrNumber()
     {
-        $part_number = $this->part_no;
-        $qty = $this->currentQuantity;
-        $lot = $this->lot_number;
-        $poLine = $this->order_line;
-        $seq = $this->order_seq;
-        $dnNo = $this->no_dn;
-        $dnLine = $this->dn_line;
+        $part_number = $this->part_no ?? '';
+        $qty = $this->currentQuantity ?? '';
+        $lot = $this->lot_number ?? '';
+        $poLine = $this->order_line ?? '';
+        $seq = $this->order_seq ?? '';
+        $dnNo = $this->no_dn ?? '';
+        $dnLine = $this->dn_line ?? '';
+        $customer = $this->item_customer ?? '';
 
-        $concat = "$part_number;$qty;$lot;$poLine;$seq;$dnNo;$dnLine";
+        $concat = "$part_number;$qty;$lot;$poLine;$customer;$seq;$dnNo;$dnLine";
 
         return $concat;
     }
@@ -71,14 +69,8 @@ class DnLabelResource extends JsonResource
     private function deliveryDate()
     {
         $plan_delivery_date = Carbon::parse($this->plan_delivery_date);
-        // $plan_delivery_time = Carbon::parse($this->plan_delivery_time);
-
-        // $formattedTime = $plan_delivery_time->format('H:i');
         $formattedDate = $plan_delivery_date->format('d M Y');
 
-        // $concat = $formattedDate.' '.$formattedTime;
-
-        // return $concat;
         return $formattedDate;
     }
 
@@ -86,14 +78,8 @@ class DnLabelResource extends JsonResource
     private function printedDate()
     {
         $printed_date = Carbon::now();
-        // $plan_delivery_time = Carbon::parse($this->plan_delivery_time);
-
-        // $formattedTime = $plan_delivery_time->format('H:i');
         $formattedDate = $printed_date->format('dmy H:i');
 
-        // $concat = $formattedDate.' '.$formattedTime;
-
-        // return $concat;
         return $formattedDate;
     }
 

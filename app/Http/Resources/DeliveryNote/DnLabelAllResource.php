@@ -13,12 +13,9 @@ class DnLabelAllResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            // 'dn_label_no' => $this->dn_label_no,
             'lot_number' => $this->lot_number,
             'qr_number' => $this->qrNumber(),
             'po_number' => $this->dnHeader->po_no,
-            // 'dn_number' => $this->no_dn,
-            // 'model' => $this->no_dn,
             'customer_name' => $this->getAdrLine1(),
             'supplier_name' => $this->dnHeader->supplier_name, // Updated supplier_name
             'part_number' => $this->part_no,
@@ -39,8 +36,9 @@ class DnLabelAllResource extends JsonResource
         $seq = $this->order_seq;
         $dnNo = $this->no_dn;
         $dnLine = $this->dn_line;
+        $customer = $this->item_customer ?? '';
 
-        $concat = "$part_number;$qty;$lot;$poLine;$seq;$dnNo;$dnLine";
+        $concat = "$part_number;$qty;$lot;$poLine;$customer;$seq;$dnNo;$dnLine";
 
         return $concat;
     }
