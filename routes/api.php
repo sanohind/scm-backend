@@ -1,26 +1,35 @@
 <?php
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Route;
+use App\Jobs\Syncronization\SyncDatabaseJob;
+use App\Http\Controllers\Api\V1\PrintController;
+use App\Http\Controllers\Api\V1\HistoryController;
 use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\User\AuthController;
+use App\Http\Controllers\Api\V1\User\UserController;
+use App\Http\Controllers\Api\V1\Forecast\ForecastController;
+use App\Http\Controllers\Api\V1\Syncronization\SyncController;
+use App\Http\Controllers\Api\V1\User\BusinessPartnerController;
 use App\Http\Controllers\Api\V1\DeliveryNote\DnDetailController;
 use App\Http\Controllers\Api\V1\DeliveryNote\DnHeaderController;
-use App\Http\Controllers\Api\V1\Email\EmailNotificationSupplierController;
-use App\Http\Controllers\Api\V1\Forecast\ForecastController;
-use App\Http\Controllers\Api\V1\HistoryController;
-use App\Http\Controllers\Api\V1\PerformanceReport\PerformanceReportController;
-use App\Http\Controllers\Api\V1\PrintController;
+use App\Http\Controllers\Api\V1\Subcontractor\SubcontController;
 use App\Http\Controllers\Api\V1\PurchaseOrder\PoDetailController;
 use App\Http\Controllers\Api\V1\PurchaseOrder\PoHeaderController;
-use App\Http\Controllers\Api\V1\Subcontractor\SubcontController;
-use App\Http\Controllers\Api\V1\Subcontractor\SubcontReceiveController;
-use App\Http\Controllers\Api\V1\Syncronization\SyncController;
 use App\Http\Controllers\Api\V1\Syncronization\SyncManualController;
-use App\Http\Controllers\Api\V1\User\AuthController;
-use App\Http\Controllers\Api\V1\User\BusinessPartnerController;
-use App\Http\Controllers\Api\V1\User\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\Subcontractor\SubcontReceiveController;
+use App\Http\Controllers\Api\V1\Email\EmailNotificationSupplierController;
+use App\Http\Controllers\Api\V1\PerformanceReport\PerformanceReportController;
 
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
+
+//
+Route::get('/testsync', function () {
+    dispatch(new SyncDatabaseJob);
+    // return 'berhasil';
+    return Carbon::today();
+});
 
 // move email
 Route::get('/move', [UserController::class, 'moveEmail']);

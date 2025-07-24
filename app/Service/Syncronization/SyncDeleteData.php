@@ -11,6 +11,7 @@ use App\Models\PurchaseOrder\PoDetailDeleteErp;
 use App\Models\PurchaseOrder\PoHeader;
 use App\Models\PurchaseOrder\PoHeaderDeleteErp;
 use App\Trait\ErrorLog;
+use Carbon\Carbon;
 
 class SyncDeleteData
 {
@@ -25,13 +26,15 @@ class SyncDeleteData
      * Delete Purchase Order if in ERP was deleted
      * @return void
      */
+    public function __construct(public $today = null) {
+        $this->today = $today ?? Carbon::today();
+    }
     public function deletePo()
     {
         // Purchase Order Header
         try {
             // Query get deleted po_header from ERP
-            $getPoHeader = PoHeaderDeleteErp::select('po_no', 'supplier_code')->get();
-
+            $getPoHeader = PoHeaderDeleteErp::select('po_no', 'supplier_code')->whereDate('deleted_at', $this->today)->get();
             // Conditioning and query delete po_header
             if (!empty($getPoHeader)) {
                 foreach ($getPoHeader as $data) {
@@ -53,7 +56,7 @@ class SyncDeleteData
         // Purchase Order Detail
         try {
             // Query get deleted po_detail from ERP
-            $getPoDetail = PoDetailDeleteErp::select('po_no', 'po_line', 'po_sequence')->get();
+            $getPoDetail = PoDetailDeleteErp::select('po_no', 'po_line', 'po_sequence')->whereDate('deleted_at', $this->today)->get();
 
             // Conditioning and query delete po_detail
             if (!empty($getPoDetail)) {
@@ -83,7 +86,7 @@ class SyncDeleteData
         // Delivery Note Header
         try {
             // Query get deleted dn_header from ERP
-            $getDnHeader = DnHeaderDeleteErp::select('dn_no', 'supplier_code')->get();
+            $getDnHeader = DnHeaderDeleteErp::select('dn_no', 'supplier_code')->whereDate('deleted_at', $this->today)->get();
 
             // Conditioning and query delete dn_header
             if (!empty($getDnHeader)) {
@@ -105,8 +108,7 @@ class SyncDeleteData
         // Delivery Note Detail
         try {
             // Query get deleted dn_detail from ERP
-            $getDnDetail = DnDetailDeleteErp::select('dn_no', 'dn_line')->get();
-
+            $getDnDetail = DnDetailDeleteErp::select('dn_no', 'dn_line')->whereDate('deleted_at', $this->today)->get();
             // Conditioning and query delete dn_detail
             if (!empty($getDnDetail)) {
                 foreach ($getDnDetail as $data) {
