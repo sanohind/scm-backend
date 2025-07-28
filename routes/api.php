@@ -3,6 +3,10 @@
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use App\Jobs\Syncronization\SyncDatabaseJob;
+use App\Models\DeliveryNote\DnDetailDeleteErp;
+use App\Models\DeliveryNote\DnHeaderDeleteErp;
+use App\Models\PurchaseOrder\PoDetailDeleteErp;
+use App\Models\PurchaseOrder\PoHeaderDeleteErp;
 use App\Http\Controllers\Api\V1\PrintController;
 use App\Http\Controllers\Api\V1\HistoryController;
 use App\Http\Controllers\Api\V1\DashboardController;
@@ -24,11 +28,20 @@ use App\Http\Controllers\Api\V1\PerformanceReport\PerformanceReportController;
 // Route Login
 Route::post('/login', [AuthController::class, 'login']);
 
-//
+// test sync
 Route::get('/testsync', function () {
     dispatch(new SyncDatabaseJob);
-    // return 'berhasil';
-    return Carbon::today();
+    $getPoHeader = PoHeaderDeleteErp::select('po_no', 'supplier_code')->whereDate('deleted_at', Carbon::today())->count();
+    $getPoDetail = PoDetailDeleteErp::select('po_no', 'po_line', 'po_sequence')->whereDate('deleted_at', Carbon::today())->count();
+    $getDnHeader = DnHeaderDeleteErp::select('dn_no', 'supplier_code')->whereDate('deleted_at', Carbon::today())->count();
+    $getDnDetail = DnDetailDeleteErp::select('dn_no', 'dn_line')->whereDate('deleted_at', Carbon::today())->count();
+
+    return response()->json([
+        'po_head_delete' => $getPoHeader,
+        'po_detail_delete' => $getPoDetail,
+        'dn_head_delete' => $getDnHeader,
+        'dn_detail_delete' => $getDnDetail,
+    ]);
 });
 
 // move email
