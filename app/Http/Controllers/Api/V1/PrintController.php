@@ -2,30 +2,37 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Resources\DeliveryNote\DnHeaderQtyConfirmViewResource;
-use App\Http\Resources\DeliveryNote\DnHeaderQtyOutstandingViewResource;
-use App\Http\Resources\DeliveryNote\DnHeaderViewResource;
-use App\Http\Resources\DeliveryNote\DnLabelAllResource;
-use App\Http\Resources\DeliveryNote\DnLabelResource;
-use App\Http\Resources\PurchaseOrder\PoHeaderViewResource;
-use App\Models\DeliveryNote\DnDetailOutstanding;
+use Carbon\Carbon;
+use App\Trait\PrintingLog;
 use App\Models\DeliveryNote\DnHeader;
 use App\Models\PurchaseOrder\PoHeader;
-use Carbon\Carbon;
+use App\Models\DeliveryNote\DnDetailOutstanding;
+use App\Http\Resources\DeliveryNote\DnLabelResource;
+use App\Http\Resources\DeliveryNote\DnLabelAllResource;
+use App\Http\Resources\DeliveryNote\DnHeaderViewResource;
+use App\Http\Resources\PurchaseOrder\PoHeaderViewResource;
+use App\Http\Resources\DeliveryNote\DnHeaderQtyConfirmViewResource;
+use App\Http\Resources\DeliveryNote\DnHeaderQtyOutstandingViewResource;
 
 class PrintController
 {
+    use PrintingLog;
+
     // this controller is for get the data that needed for print report
     public function poHeaderView($po_no)
     {
         //get data api to view
         $data_po = PoHeader::with('poDetail')->where('po_no', $po_no)->get();
+        $update = PoHeader::where('po_no', $po_no)->first();
+        if ($update->po_printed_at == null) {
+            $update->update([
+                'po_printed_at' => Carbon::now()->format('Y-m-d H:i'),
+            ]);
 
-        // print_at
-        $data_update = PoHeader::where('po_no', $po_no)->first();
-        $data_update->update([
-            'po_printed_at' => Carbon::now()->format('Y-m-d H:i'),
-        ]);
+            $this->printLog('PO', $po_no);
+        } else {
+            $this->printLog('PO', $po_no);
+        }
 
         return response()->json([
             'success' => true,
@@ -39,12 +46,16 @@ class PrintController
     {
         //get data api to view
         $data_dn = DnHeader::with('dnDetail', 'partner')->where('no_dn', $no_dn)->get();
+        $update = DnHeader::where('no_dn', $no_dn)->first();
+        if ($update->dn_printed_at == null) {
+            $update->update([
+                'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
+            ]);
 
-        // print_at
-        $data_update = DnHeader::where('no_dn', $no_dn)->first();
-        $data_update->update([
-            'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
-        ]);
+            $this->printLog('DN', $no_dn);
+        } else {
+            $this->printLog('DN', $no_dn);
+        }
 
         return response()->json([
             'success' => true,
@@ -58,12 +69,16 @@ class PrintController
     {
         //get data api to view
         $data_dn = DnHeader::with('dnDetail', 'partner')->where('no_dn', $no_dn)->get();
+        $update = DnHeader::where('no_dn', $no_dn)->first();
+        if ($update->dn_printed_at == null) {
+            $update->update([
+                'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
+            ]);
 
-        // print_at
-        $data_update = DnHeader::where('no_dn', $no_dn)->first();
-        $data_update->update([
-            'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
-        ]);
+            $this->printLog('DN', $no_dn);
+        } else {
+            $this->printLog('DN', $no_dn);
+        }
 
         return response()->json([
             'success' => true,
@@ -76,19 +91,29 @@ class PrintController
     public function dnHeaderViewOutstanding($outstanding, $no_dn)
     {
         //get data api to view
-        $data_dn = DnHeader::with(['dnDetail' => function ($query) use ($outstanding) {
-            $query->with(['dnOutstanding' => function ($q) use ($outstanding) {
-                $q->where('wave', $outstanding);
-            }]);
-        }, 'partner'])
+        $data_dn = DnHeader::with([
+            'dnDetail' => function ($query) use ($outstanding) {
+                $query->with([
+                    'dnOutstanding' => function ($q) use ($outstanding) {
+                        $q->where('wave', $outstanding);
+                    }
+                ]);
+            },
+            'partner'
+        ])
             ->where('no_dn', $no_dn)
             ->get();
 
         // print_at
-        $data_update = DnHeader::where('no_dn', $no_dn)->first();
-        $data_update->update([
-            'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
-        ]);
+        $update = DnHeader::where('no_dn', $no_dn)->first();
+        if ($update->dn_printed_at) {
+            $update->update([
+                'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
+            ]);
+            $this->printLog('DN', $no_dn);
+        } else {
+            $this->printLog('DN', $no_dn);
+        }
 
         return response()->json([
             'success' => true,
@@ -103,11 +128,6 @@ class PrintController
         // get data
         $dn_header = DnHeader::with('dnDetail')->where('no_dn', $no_dn)->first();
 
-        // print_at
-        $data_update = DnHeader::where('no_dn', $no_dn)->first();
-        $data_update->update([
-            'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i'),
-        ]);
 
         // variable for store array
         $label = [];
@@ -123,6 +143,17 @@ class PrintController
             }
         }
 
+        // print_at
+        $update = DnHeader::where('no_dn', $no_dn)->first();
+        if ($update->dn_printed_at) {
+            $update->update([
+                'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
+            ]);
+            $this->printLog('DN', $no_dn, 'Label');
+        } else {
+            $this->printLog('DN', $no_dn, 'Label');
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Labels generated successfully',
@@ -136,12 +167,6 @@ class PrintController
         // get data
         $dn_header = DnHeader::with('dnDetail')->where('no_dn', $no_dn)->first();
 
-        // print_at
-        $data_update = DnHeader::where('no_dn', $no_dn)->first();
-        $data_update->update([
-            'dn_label_printed_at' => Carbon::now()->format('Y-m-d H:i'),
-        ]);
-
         // Iterate over each dn_detail
         $label = [];
         foreach ($dn_header->dnDetail as $dn_detail) {
@@ -154,6 +179,17 @@ class PrintController
                 $label[] = new DnLabelResource($dn_detail, $currentQuantity);
                 $qty_confirm -= $currentQuantity;
             }
+        }
+
+        // print_at
+        $update = DnHeader::where('no_dn', $no_dn)->first();
+        if ($update->dn_printed_at) {
+            $update->update([
+                'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
+            ]);
+            $this->printLog('DN', $no_dn, 'Label');
+        } else {
+            $this->printLog('DN', $no_dn, 'Label');
         }
 
         return response()->json([
@@ -189,6 +225,17 @@ class PrintController
                 $label[] = new DnLabelResource($dnDetail, $currentQuantity);
                 $qty_outstanding -= $currentQuantity;
             }
+        }
+
+        // print_at
+        $update = DnHeader::where('no_dn', $no_dn)->first();
+        if ($update->dn_printed_at) {
+            $update->update([
+                'dn_printed_at' => Carbon::now()->format('Y-m-d H:i'),
+            ]);
+            $this->printLog('DN', $no_dn, 'Label');
+        } else {
+            $this->printLog('DN', $no_dn, 'Label');
         }
 
         return response()->json([

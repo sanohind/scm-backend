@@ -544,6 +544,7 @@ Route::middleware(['auth:sanctum', 'userRole:9'])->prefix('super-user')->group(f
     Route::get('dn/history/{bp_code}', [HistoryController::class, 'dnHeaderHistory']);
     // route view print DN file
     Route::get('dn/print/{no_dn}', [PrintController::class, 'dnHeaderView']);
+    Route::get('dn/print/qty-confirm/{no_dn}', [PrintController::class, 'dnHeaderViewQtyConfirm']);
     // route view print DN label/ kanban
     Route::get('dn-label/print/{no_dn}', [PrintController::class, 'labelAllView']);
     Route::get('dn-label/print/outstanding/{outstanding}/{no_dn}', [PrintController::class, 'labelOutstanding']);

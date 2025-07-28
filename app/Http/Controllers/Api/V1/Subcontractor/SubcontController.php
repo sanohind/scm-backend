@@ -211,7 +211,7 @@ class SubcontController
     /**
      * Update after post transaction subcont
      * @param \App\Http\Requests\Subcontractor\SubcontUpdateTransactionRequest $request
-     * @return void
+     * @return 
      */
     public function updateTransaction(SubcontUpdateTransactionRequest $request)
     {
