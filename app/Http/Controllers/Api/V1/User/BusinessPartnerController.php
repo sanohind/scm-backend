@@ -9,6 +9,7 @@ use App\Models\Users\BusinessPartner;
 use App\Service\User\UserCreateAndAttachEmail;
 use App\Service\User\UserDeleteAndDetachEmail;
 use App\Service\User\UserGetEmail;
+use Illuminate\Http\Request;
 
 class BusinessPartnerController
 {
@@ -39,6 +40,77 @@ class BusinessPartnerController
             'success' => true,
             'message' => 'Display List  Successfully',
             'data' => PartnerResource::collection($users),
+        ], 200);
+    }
+
+    /**
+     * Search Business Partner with unified old and new bp_codes
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function searchBusinessPartner(Request $request)
+    {
+        $searchTerm = $request->get('search', '');
+        
+        if (empty($searchTerm)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Search term is required',
+                'data' => []
+            ], 400);
+        }
+
+        // Get base code (remove suffix if exists)
+        $baseCode = preg_replace('/-\d+$/', '', $searchTerm);
+        
+        $users = BusinessPartner::select('bp_code', 'bp_name', 'adr_line_1', 'parent_bp_code')
+            ->where(function($query) use ($searchTerm, $baseCode) {
+                $query->where('bp_code', $searchTerm)
+                      ->orWhere('bp_code', $baseCode)
+                      ->orWhere('parent_bp_code', $baseCode)
+                      ->orWhere('bp_name', 'like', '%' . $searchTerm . '%');
+            })
+            ->where(function($query) {
+                $query->where('bp_code', 'like', 'SL%')
+                      ->orWhere('bp_code', 'like', 'SI%');
+            })
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Search completed successfully',
+            'data' => PartnerResource::collection($users),
+        ], 200);
+    }
+
+    /**
+     * Get Business Partner by bp_code (unified search)
+     * @param string $bpCode
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function getBusinessPartnerByCode($bpCode)
+    {
+        // Get base code (remove suffix if exists)
+        $baseCode = preg_replace('/-\d+$/', '', $bpCode);
+        
+        $businessPartner = BusinessPartner::where(function($query) use ($bpCode, $baseCode) {
+            $query->where('bp_code', $bpCode)
+                  ->orWhere('bp_code', $baseCode)
+                  ->orWhere('parent_bp_code', $baseCode);
+        })->first();
+
+        if (!$businessPartner) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Business Partner not found',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Business Partner found successfully',
+            'data' => new PartnerResource($businessPartner),
         ], 200);
     }
 

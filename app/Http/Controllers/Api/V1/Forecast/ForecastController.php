@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Forecast;
 use App\Http\Requests\Forecast\StoreForecastRequest;
 use App\Http\Resources\Forecast\ForecastResource;
 use App\Models\Forecast\Forecast;
+use App\Service\User\BusinessPartnerUnifiedService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +13,10 @@ use Illuminate\Support\Facades\Storage;
 
 class ForecastController
 {
+    public function __construct(
+        protected BusinessPartnerUnifiedService $businessPartnerUnifiedService
+    ) {}
+
     /**
      * Summary of indexSupplier
      *
@@ -20,9 +25,13 @@ class ForecastController
     public function indexSupplier(): JsonResponse
     {
         $user = Auth::user()->bp_code;
+        // Unified search
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($user);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+        if (empty($supplierCodes)) $supplierCodes = [$user];
 
         $data = Forecast::with('user')
-            ->where('bp_code', $user)
+            ->whereIn('bp_code', $supplierCodes)
             ->orderBy('upload_at', 'desc')
             ->get();
 
@@ -40,9 +49,13 @@ class ForecastController
      */
     public function indexPurchasing($bp_code): JsonResponse
     {
+        // Unified search
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($bp_code);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+        if (empty($supplierCodes)) $supplierCodes = [$bp_code];
 
         $data = Forecast::with('user')
-            ->where('bp_code', $bp_code)
+            ->whereIn('bp_code', $supplierCodes)
             ->orderBy('upload_at', 'desc')
             ->get();
 

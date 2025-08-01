@@ -4,6 +4,7 @@ namespace App\Service\Subcontractor;
 
 use App\Models\Subcontractor\SubcontItem;
 use App\Models\Subcontractor\SubcontStock;
+use App\Service\User\BusinessPartnerUnifiedService;
 use Carbon\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,10 @@ use Log;
 
 class SubcontImportStockItem
 {
-    public function __construct(protected SubcontCreateStock $subcontCreateStock) {}
+    public function __construct(
+        protected SubcontCreateStock $subcontCreateStock,
+        protected BusinessPartnerUnifiedService $businessPartnerUnifiedService
+    ) {}
 
     public function importStockItem(
         string $bpCode,
@@ -24,15 +28,24 @@ class SubcontImportStockItem
         int $replatingNgItems,
     ) {
         try {
-            // Query to get sub_item_id form table subcont_item
-            $getItem = SubcontItem::where('bp_code', $bpCode)
+            // Get all related bp_codes (parent and children)
+            $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($bpCode);
+            $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+            // If no related codes found, use the original bp_code
+            if (empty($supplierCodes)) {
+                $supplierCodes = [$bpCode];
+            }
+
+            // Query to get sub_item_id from table subcont_item (unified)
+            $getItem = SubcontItem::whereIn('bp_code', $supplierCodes)
                 ->where('item_code', $partNumber)
                 ->value('sub_item_id');
 
             // Check stock record availability
             $this->subcontCreateStock->createAndCheckStock($partNumber, $getItem);
 
-            // Query to get stock record form table subcont_stock
+            // Query to get stock record from table subcont_stock
             $getStock = SubcontStock::where('sub_item_id', $getItem)
                 ->where('item_code', $partNumber)
                 ->first();
@@ -56,28 +69,19 @@ class SubcontImportStockItem
                     'ng_replating_stock' => $replatingNgItems,
                 ]);
             });
-        } catch (\Throwable $th) {
-            // Generate random request id
-            $randomReqId = 'error_'.Carbon::now()->format('Ymd;H:i:s').'_'.\Str::random(10);
 
-            // Log error to channel internal system error
-            Log::error("
-                Message => Input Import Stock Data Error,
-                Error => {$th->getMessage()},
-                File => {$th->getFile()},
-                Line => {$th->getLine()},
-                RequestId => $randomReqId,
-            ");
-
-            // Response
+            return response()->json([
+                'status' => true,
+                'message' => 'Import Stock Items Successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error importing stock item: ' . $e->getMessage());
             throw new HttpResponseException(
                 response()->json([
                     'status' => false,
-                    'message' => "Internal error while input stock (Request_id:$randomReqId)",
-                    'error' => "Internal error while input stock (Request_id:$randomReqId)",
+                    'message' => 'Failed to import stock item: ' . $e->getMessage(),
                 ], 500)
             );
         }
-
     }
 }

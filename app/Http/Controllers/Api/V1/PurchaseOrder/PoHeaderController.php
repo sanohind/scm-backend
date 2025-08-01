@@ -7,6 +7,7 @@ use App\Http\Resources\PurchaseOrder\PoHeaderResource;
 use App\Mail\PoResponseInternal;
 use App\Models\PurchaseOrder\PoHeader;
 use App\Service\User\UserGetEmailInternalPurchasing;
+use App\Service\User\BusinessPartnerUnifiedService;
 use App\Trait\AuthorizationRole;
 use App\Trait\ResponseApi;
 use Carbon\Carbon;
@@ -28,12 +29,13 @@ class PoHeaderController
      * List of service used
      */
     public function __construct(
-        protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing
+        protected UserGetEmailInternalPurchasing $userGetEmailInternalPurchasing,
+        protected BusinessPartnerUnifiedService $businessPartnerUnifiedService
     ) {
     }
 
     /**
-     * Get list po based on user
+     * Get list po based on user (unified search)
      *
      * @param  mixed  $bpCode
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -50,11 +52,21 @@ class PoHeaderController
             return $this->returnCustomResponseApi('error', 'User Not Found', null, 404);
         }
 
+        // Get all related bp_codes (parent and children)
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($user);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+        // If no related codes found, use the original bp_code
+        if (empty($supplierCodes)) {
+            $supplierCodes = [$user];
+        }
+
         $poData = PoHeader::with('poDetail')
-            ->where('supplier_code', $user)
+            ->whereIn('supplier_code', $supplierCodes)
             ->whereIn('po_status', ['In Process', 'in process'])
             ->orderBy('po_date', 'desc')
             ->get();
+
         if ($poData->isEmpty()) {
             return $this->returnResponseApi(true, 'PO Header data not found / empty / all PO data is Closed', null, 200);
         }
@@ -131,11 +143,6 @@ class PoHeaderController
             );
         }
 
-        return $this->returnCustomResponseApi(
-            'success',
-            'Update Response Successfully',
-            new PoHeaderResource($poHeader),
-            200
-        );
+        return $this->returnResponseApi(true, 'Success Update Response PO Header', PoHeaderResource::collection([$poHeader]), 200);
     }
 }

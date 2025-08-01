@@ -95,6 +95,10 @@ Route::middleware(['auth:sanctum', 'userRole:1'])->prefix('super-admin')->group(
     Route::get('organization/email/{bp_code}', [BusinessPartnerController::class,'getBussinessPartnerEmail']);
     // Route for update business partner
     Route::put('organization/email/update/{bp_code}', [BusinessPartnerController::class,'updateBusinessPartnerEmail']);
+    // Route for unified search business partner
+    Route::get('partner/search', [BusinessPartnerController::class,'searchBusinessPartner']);
+    // Route for get business partner by code (unified)
+    Route::get('partner/{bp_code}', [BusinessPartnerController::class,'getBusinessPartnerByCode']);
 
     /**
      * Route For User

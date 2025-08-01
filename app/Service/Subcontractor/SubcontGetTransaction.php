@@ -5,13 +5,22 @@ namespace App\Service\Subcontractor;
 use App\Http\Resources\Subcontractor\SubcontTransactionResource;
 use App\Models\Subcontractor\SubcontItem;
 use App\Models\Subcontractor\SubcontTransaction;
+use App\Service\User\BusinessPartnerUnifiedService;
 use Illuminate\Support\Facades\Auth;
 use Log;
 
 class SubcontGetTransaction
 {
     /**
-     * Get all log user transaction
+     * List of service used
+     */
+    public function __construct(
+        protected BusinessPartnerUnifiedService $businessPartnerUnifiedService
+    ) {
+    }
+
+    /**
+     * Get all log user transaction (unified search)
      *
      * @return mixed|\Illuminate\Http\JsonResponse
      */
@@ -34,8 +43,17 @@ class SubcontGetTransaction
             ], 404);
         }
 
-        // Get record of subcont transaction data
-        $data = SubcontTransaction::with('subItem')->where('bp_code', $bpCode)
+        // Get all related bp_codes (parent and children)
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($bpCode);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+        // If no related codes found, use the original bp_code
+        if (empty($supplierCodes)) {
+            $supplierCodes = [$bpCode];
+        }
+
+        // Get record of subcont transaction data (unified)
+        $data = SubcontTransaction::with('subItem')->whereIn('bp_code', $supplierCodes)
         ->whereBetween('transaction_date', [$start_date, $end_date])
         ->orderBy('transaction_date', 'desc')
         ->orderBy('transaction_time', 'desc')

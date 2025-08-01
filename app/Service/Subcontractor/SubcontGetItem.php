@@ -4,12 +4,21 @@ namespace App\Service\Subcontractor;
 
 use App\Http\Resources\Subcontractor\SubcontItemResource;
 use App\Models\Subcontractor\SubcontItem;
+use App\Service\User\BusinessPartnerUnifiedService;
 use Illuminate\Support\Facades\Auth;
 
 class SubcontGetItem
 {
     /**
-     * Get subcont item data based of user session
+     * List of service used
+     */
+    public function __construct(
+        protected BusinessPartnerUnifiedService $businessPartnerUnifiedService
+    ) {
+    }
+
+    /**
+     * Get subcont item data based of user session (unified search)
      *
      * @return mixed|\Illuminate\Http\JsonResponse
      */
@@ -31,9 +40,18 @@ class SubcontGetItem
             ], 404);
         }
 
-        // Get record of subcont item data
+        // Get all related bp_codes (parent and children)
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($user);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+        // If no related codes found, use the original bp_code
+        if (empty($supplierCodes)) {
+            $supplierCodes = [$user];
+        }
+
+        // Get record of subcont item data (unified)
         $data = SubcontItem::with('subStock')
-            ->where('bp_code', $user)
+            ->whereIn('bp_code', $supplierCodes)
             ->orderBy('item_code', 'asc')
             ->get();
 

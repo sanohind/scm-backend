@@ -13,9 +13,18 @@ use App\Models\PurchaseOrder\PoHeader;
 use Laravel\Sanctum\PersonalAccessToken;
 use App\Models\Subcontractor\SubcontTransaction;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Service\User\BusinessPartnerUnifiedService;
 
 class DashboardController
 {
+    /**
+     * List of service used
+     */
+    public function __construct(
+        protected BusinessPartnerUnifiedService $businessPartnerUnifiedService
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -24,24 +33,33 @@ class DashboardController
         // get bp_code by auth
         $sp_code = Auth::user()->bp_code;
 
+        // Get all related bp_codes (parent and children)
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($sp_code);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+        // If no related codes found, use the original bp_code
+        if (empty($supplierCodes)) {
+            $supplierCodes = [$sp_code];
+        }
+
         // get data po
-        $data_po_active = PoHeader::where('supplier_code', $sp_code)
+        $data_po_active = PoHeader::whereIn('supplier_code', $supplierCodes)
             ->whereIn('po_status', ['Open', 'open'])
             ->whereNull('response')
             ->count();
 
-        $data_po_in_proccess = PoHeader::where('supplier_code', $sp_code)
+        $data_po_in_proccess = PoHeader::whereIn('supplier_code', $supplierCodes)
             ->whereIn('po_status', ['In Process', 'in process', 'In Progress'])
             ->whereIn('response', ['Accepted', 'accepted'])
             ->count();
 
         // get data dn
-        $data_dn_open = DnHeader::where('supplier_code', $sp_code)
+        $data_dn_open = DnHeader::whereIn('supplier_code', $supplierCodes)
             ->whereIn('status_desc', ['Open', 'open'])
             ->where('confirm_update_at', '=', null)
             ->count();
 
-        $data_dn_confirmed = DnHeader::where('supplier_code', $sp_code)
+        $data_dn_confirmed = DnHeader::whereIn('supplier_code', $supplierCodes)
             ->whereIn('status_desc', ['Open', 'open'])
             ->where('confirm_update_at', '!=', null)
             ->count();
@@ -70,6 +88,15 @@ class DashboardController
         $sp_code = $user->bp_code;
         $role_id = $user->role;
 
+        // Get all related bp_codes (parent and children)
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($sp_code);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+        // If no related codes found, use the original bp_code
+        if (empty($supplierCodes)) {
+            $supplierCodes = [$sp_code];
+        }
+
         // Calculate the start and end dates
         $startDate = now()->subYear()->startOfMonth();
         $endDate = now()->endOfMonth();
@@ -90,41 +117,34 @@ class DashboardController
 
         // Include PO data for roles 5 and 6
         if (in_array($role_id, [5, 6])) {
-            $po_data_accepted = PoHeader::where('supplier_code', $sp_code)
+            $po_data_accepted = PoHeader::whereIn('supplier_code', $supplierCodes)
                 ->where('response', 'Accepted')
                 ->whereBetween('po_date', [$startDate, $endDate])
                 ->get();
 
-            $po_data_declined = PoHeader::where('supplier_code', $sp_code)
+            $po_data_declined = PoHeader::whereIn('supplier_code', $supplierCodes)
                 ->where('response', 'Declined')
                 ->whereBetween('po_date', [$startDate, $endDate])
                 ->get();
         }
 
-        // Include DN data for roles 5, 6, 7, and 8
-        if (in_array($role_id, [5, 6, 7, 8])) {
-            // DNs with actual_receipt_date equal to plan_delivery_date (On-Time)
-            $dn_data_confirmed = DnHeader::where('supplier_code', $sp_code)
+        // Include DN data for roles 5 and 6
+        if (in_array($role_id, [5, 6])) {
+            $dn_data_confirmed = DnHeader::whereIn('supplier_code', $supplierCodes)
+                ->where('status_desc', 'Confirmed')
                 ->whereBetween('dn_created_date', [$startDate, $endDate])
-                ->whereHas('dnDetail', function ($query) {
-                    $query->whereColumn('actual_receipt_date', '=', 'plan_delivery_date');
-                })
                 ->get();
 
-            // DNs with actual_receipt_date greater than plan_delivery_date (Overtime)
-            $dn_data_overtime = DnHeader::where('supplier_code', $sp_code)
+            $dn_data_overtime = DnHeader::whereIn('supplier_code', $supplierCodes)
+                ->where('status_desc', 'Confirmed')
+                ->where('plan_delivery_date', '<', 'dn_created_date')
                 ->whereBetween('dn_created_date', [$startDate, $endDate])
-                ->whereHas('dnDetail', function ($query) {
-                    $query->whereColumn('actual_receipt_date', '>', 'plan_delivery_date');
-                })
                 ->get();
 
-            // DNs with actual_receipt_date less than plan_delivery_date (Advance)
-            $dn_data_advance = DnHeader::where('supplier_code', $sp_code)
+            $dn_data_advance = DnHeader::whereIn('supplier_code', $supplierCodes)
+                ->where('status_desc', 'Confirmed')
+                ->where('plan_delivery_date', '>', 'dn_created_date')
                 ->whereBetween('dn_created_date', [$startDate, $endDate])
-                ->whereHas('dnDetail', function ($query) {
-                    $query->whereColumn('actual_receipt_date', '<', 'plan_delivery_date');
-                })
                 ->get();
         }
 
@@ -216,22 +236,40 @@ class DashboardController
 
         // Include PO statistics for roles 5 and 6
         if (in_array($role_id, [5, 6])) {
-            $data['po_total'] = PoHeader::where('supplier_code', $user->bp_code)->count();
-            $data['po_closed'] = PoHeader::where('supplier_code', $user->bp_code)
+            // Get all related bp_codes (parent and children)
+            $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($user->bp_code);
+            $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+            // If no related codes found, use the original bp_code
+            if (empty($supplierCodes)) {
+                $supplierCodes = [$user->bp_code];
+            }
+
+            $data['po_total'] = PoHeader::whereIn('supplier_code', $supplierCodes)->count();
+            $data['po_closed'] = PoHeader::whereIn('supplier_code', $supplierCodes)
                 ->where('po_status', 'Closed')
                 ->count();
-            $data['po_cancelled'] = PoHeader::where('supplier_code', $user->bp_code)
+            $data['po_cancelled'] = PoHeader::whereIn('supplier_code', $supplierCodes)
                 ->where('po_status', 'Cancelled')
                 ->count();
         }
 
         // Include DN statistics for roles 5, 6, 7, and 8
         if (in_array($role_id, [5, 6, 7, 8])) {
-            $data['dn_total'] = DnHeader::where('supplier_code', $user->bp_code)->count();
-            $data['dn_confirmed'] = DnHeader::where('supplier_code', $user->bp_code)
+            // Get all related bp_codes (parent and children)
+            $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($user->bp_code);
+            $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+            // If no related codes found, use the original bp_code
+            if (empty($supplierCodes)) {
+                $supplierCodes = [$user->bp_code];
+            }
+
+            $data['dn_total'] = DnHeader::whereIn('supplier_code', $supplierCodes)->count();
+            $data['dn_confirmed'] = DnHeader::whereIn('supplier_code', $supplierCodes)
                 ->where('status_desc', 'Confirmed')
                 ->count();
-            $data['dn_open'] = DnHeader::where('supplier_code', $user->bp_code)
+            $data['dn_open'] = DnHeader::whereIn('supplier_code', $supplierCodes)
                 ->where('status_desc', 'Open')
                 ->count();
         }
@@ -408,10 +446,19 @@ class DashboardController
                 });
             $events = $events->merge($dn_events);
         } else {
+            // Get all related bp_codes (parent and children)
+            $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($sp_code);
+            $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+            // If no related codes found, use the original bp_code
+            if (empty($supplierCodes)) {
+                $supplierCodes = [$sp_code];
+            }
+
             // For roles 5 and 6, include PO events
             if (in_array($role_id, [5, 6])) {
-                // Get PO data filtered by user's bp_code
-                $po_events = PoHeader::where('supplier_code', $sp_code)
+                // Get PO data filtered by user's bp_code (unified)
+                $po_events = PoHeader::whereIn('supplier_code', $supplierCodes)
                     ->get(['po_no', 'po_date', 'planned_receipt_date'])
                     ->map(function ($po) {
                         return [
@@ -426,8 +473,8 @@ class DashboardController
 
             // For roles 5, 6, 7, and 8, include DN events
             if (in_array($role_id, [5, 6, 7, 8])) {
-                // Get DN data filtered by user's bp_code
-                $dn_events = DnHeader::where('supplier_code', $sp_code)
+                // Get DN data filtered by user's bp_code (unified)
+                $dn_events = DnHeader::whereIn('supplier_code', $supplierCodes)
                     ->get([
                         'no_dn',
                         'dn_created_date',

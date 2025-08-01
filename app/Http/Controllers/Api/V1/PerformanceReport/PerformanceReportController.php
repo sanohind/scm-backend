@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\PerformanceReport\PerformanceReport;
 use App\Http\Requests\PerformanceReport\StorePerformanceRequest;
 use App\Http\Resources\PerformanceReport\PerformanceReportResource;
+use App\Service\User\BusinessPartnerUnifiedService;
 
 class PerformanceReportController extends Controller
 {
@@ -24,6 +25,10 @@ class PerformanceReportController extends Controller
      */
     use ResponseApi, StoreFile;
 
+    public function __construct(
+        protected BusinessPartnerUnifiedService $businessPartnerUnifiedService
+    ) {}
+
     // View list data Listing Report
     public function index(Request $bp_code)
     {
@@ -34,8 +39,13 @@ class PerformanceReportController extends Controller
             $bp_code = $bp_code->bp_code;
         }
 
+        // Unified search
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($bp_code);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+        if (empty($supplierCodes)) $supplierCodes = [$bp_code];
+
         $data_listingreport = PerformanceReport::with('listingreport')
-            ->where('bp_code', $bp_code)
+            ->whereIn('bp_code', $supplierCodes)
             ->orderBy('date', 'desc')
             ->get();
 

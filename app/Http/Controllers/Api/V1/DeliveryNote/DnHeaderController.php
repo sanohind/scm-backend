@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DeliveryNote\DnHeader;
 use App\Http\Resources\DeliveryNote\DnHeaderResource;
+use App\Service\User\BusinessPartnerUnifiedService;
 
 class DnHeaderController extends Controller
 {
@@ -18,16 +19,33 @@ class DnHeaderController extends Controller
     use ResponseApi;
 
     /**
-     * Get list dn header user
+     * List of service used
+     */
+    public function __construct(
+        protected BusinessPartnerUnifiedService $businessPartnerUnifiedService
+    ) {
+    }
+
+    /**
+     * Get list dn header user (unified search)
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function getListDnUser()
     {
         $bpCode = Auth::user()->bp_code;
 
+        // Get all related bp_codes (parent and children)
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($bpCode);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+        // If no related codes found, use the original bp_code
+        if (empty($supplierCodes)) {
+            $supplierCodes = [$bpCode];
+        }
+
         $dnHeaderData = DnHeader::with('poHeader', 'dnDetail')
             ->orderBy('plan_delivery_date', 'desc')
-            ->where('supplier_code', $bpCode)
+            ->whereIn('supplier_code', $supplierCodes)
             ->whereNotIn(
                 'status_desc',
                 ['Closed', 'closed', 'close', 'Confirmed', 'confirmed']
@@ -46,14 +64,23 @@ class DnHeaderController extends Controller
     }
 
     /**
-     * Get list selected supplier dn header
+     * Get list selected supplier dn header (unified search)
      * @param mixed $bpCode
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function getListDnHeaderSelected($bpCode)
     {
+        // Get all related bp_codes (parent and children)
+        $relatedBpCodes = $this->businessPartnerUnifiedService->getRelatedBusinessPartners($bpCode);
+        $supplierCodes = $relatedBpCodes->pluck('bp_code')->toArray();
+
+        // If no related codes found, use the original bp_code
+        if (empty($supplierCodes)) {
+            $supplierCodes = [$bpCode];
+        }
+
         $dnHeaderData = DnHeader::with('poHeader', 'dnDetail')
-            ->where('supplier_code', $bpCode)
+            ->whereIn('supplier_code', $supplierCodes)
             ->whereNotIn('status_desc', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed'])
             ->whereHas('poHeader', function ($query) {
                 $query->whereNotIn('po_status', ['Closed', 'closed', 'close', 'Confirmed', 'confirmed']);

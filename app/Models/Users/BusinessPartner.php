@@ -23,6 +23,7 @@ class BusinessPartner extends Model
 
     protected $fillable = [
         'bp_code',
+        'parent_bp_code',
         'bp_name',
         'bp_status_desc',
         'bp_role',
@@ -55,5 +56,59 @@ class BusinessPartner extends Model
     public function email(): BelongsToMany
     {
         return $this->belongsToMany(Email::class, 'business_partner_email', 'partner_id', 'email_id')->withTimestamps();
+    }
+
+    /**
+     * Get the base bp_code (without suffix)
+     */
+    public function getBaseBpCodeAttribute(): string
+    {
+        // If this is a parent record (no suffix), return the bp_code as is
+        if (!$this->parent_bp_code) {
+            return $this->bp_code;
+        }
+        
+        // If this is a child record, return the parent_bp_code
+        return $this->parent_bp_code;
+    }
+
+    /**
+     * Scope to get all related bp_codes (parent and children)
+     */
+    public function scopeRelatedBpCodes($query, $bpCode)
+    {
+        // Find the base bp_code
+        $baseCode = $this->getBaseCodeFromBpCode($bpCode);
+        
+        return $query->where(function($q) use ($baseCode, $bpCode) {
+            $q->where('bp_code', $baseCode)
+              ->orWhere('parent_bp_code', $baseCode)
+              ->orWhere('bp_code', $bpCode);
+        });
+    }
+
+    /**
+     * Get base code from bp_code (remove suffix like -1, -2, etc.)
+     */
+    private function getBaseCodeFromBpCode($bpCode): string
+    {
+        // Remove suffix pattern like -1, -2, -3, etc.
+        return preg_replace('/-\d+$/', '', $bpCode);
+    }
+
+    /**
+     * Check if this is a parent record (no suffix)
+     */
+    public function isParentRecord(): bool
+    {
+        return !$this->parent_bp_code;
+    }
+
+    /**
+     * Check if this is a child record (has suffix)
+     */
+    public function isChildRecord(): bool
+    {
+        return !empty($this->parent_bp_code);
     }
 }
