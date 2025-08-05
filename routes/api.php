@@ -44,6 +44,848 @@ Route::get('/testsync', function () {
     ]);
 });
 
+// test sync without job queue
+Route::get('/testsync-direct', function () {
+    try {
+        // Test database connections
+        $mysqlConnected = false;
+        $sqlsrvConnected = false;
+        
+        try {
+            DB::connection()->getPdo();
+            $mysqlConnected = true;
+        } catch (Exception $e) {
+            $mysqlConnected = false;
+        }
+        
+        try {
+            DB::connection('sqlsrv')->getPdo();
+            $sqlsrvConnected = true;
+        } catch (Exception $e) {
+            $sqlsrvConnected = false;
+        }
+        
+        return response()->json([
+            'mysql_connected' => $mysqlConnected,
+            'sqlsrv_connected' => $sqlsrvConnected,
+            'message' => 'Database connection test completed'
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// test SQL Server connection details
+Route::get('/testsync-sqlsrv', function () {
+    try {
+        $config = config('database.connections.sqlsrv');
+        
+        return response()->json([
+            'sqlsrv_config' => [
+                'host' => $config['host'],
+                'port' => $config['port'],
+                'database' => $config['database'],
+                'username' => $config['username'],
+                'password' => $config['password'] ? '***' : 'empty'
+            ],
+            'env_variables' => [
+                'DB_HOST_SQLSRV' => env('DB_HOST_SQLSRV'),
+                'DB_PORT_SQLSRV' => env('DB_PORT_SQLSRV'),
+                'DB_DATABASE_SQLSRV' => env('DB_DATABASE_SQLSRV'),
+                'DB_USERNAME_SQLSRV' => env('DB_USERNAME_SQLSRV'),
+                'DB_PASSWORD_SQLSRV' => env('DB_PASSWORD_SQLSRV') ? '***' : 'empty'
+            ]
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// test sync with local data only
+Route::get('/testsync-local', function () {
+    try {
+        // Test local database tables
+        $tables = [
+            'po_header' => DB::table('po_header')->count(),
+            'po_detail' => DB::table('po_detail')->count(),
+            'dn_header' => DB::table('dn_header')->count(),
+            'dn_detail' => DB::table('dn_detail')->count(),
+            'business_partner' => DB::table('business_partner')->count(),
+            'subcont_item' => DB::table('subcont_item')->count(),
+        ];
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Local database test completed',
+            'table_counts' => $tables,
+            'date' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// test sync simulation without job queue
+Route::get('/testsync-simulation', function () {
+    try {
+        $startTime = microtime(true);
+        
+        // Simulate sync process steps
+        $steps = [
+            'step_1' => 'Check database connections',
+            'step_2' => 'Count existing data',
+            'step_3' => 'Simulate sync process',
+            'step_4' => 'Generate test response'
+        ];
+        
+        // Check connections
+        $mysqlConnected = DB::connection()->getPdo() ? true : false;
+        
+        // Count data
+        $dataCounts = [
+            'po_header' => DB::table('po_header')->count(),
+            'po_detail' => DB::table('po_detail')->count(),
+            'dn_header' => DB::table('dn_header')->count(),
+            'dn_detail' => DB::table('dn_detail')->count(),
+        ];
+        
+        $endTime = microtime(true);
+        $executionTime = round(($endTime - $startTime) * 1000, 2); // in milliseconds
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sync simulation completed successfully',
+            'mysql_connected' => $mysqlConnected,
+            'data_counts' => $dataCounts,
+            'execution_time_ms' => $executionTime,
+            'steps_completed' => $steps,
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// test sync using controller without job queue
+Route::get('/testsync-controller', function () {
+    try {
+        // Create controller instance manually
+        $syncController = new \App\Http\Controllers\Api\V1\Syncronization\SyncController(
+            app(\App\Service\Syncronization\SyncBusinessPartnerData::class),
+            app(\App\Service\Syncronization\SyncPurchaseOrderData::class),
+            app(\App\Service\Syncronization\SyncDeliveryNoteData::class),
+            app(\App\Service\Syncronization\SyncSubcontItemData::class),
+            app(\App\Service\Syncronization\SyncDeleteData::class)
+        );
+        
+        // Call syncTest method
+        $response = $syncController->syncTest();
+        
+        return $response;
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// test manual sync without authentication
+Route::get('/testsync-manual', function (Request $request) {
+    try {
+        $month = $request->input('month', 8);
+        $year = $request->input('year', 2025);
+        
+        // Create manual sync controller
+        $manualController = new \App\Http\Controllers\Api\V1\Syncronization\SyncManualController();
+        
+        // Call syncManual method
+        $response = $manualController->syncManual($request);
+        
+        return $response;
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// test sync manual simple
+Route::get('/testsync-manual-simple', function () {
+    try {
+        // Test SQL Server connection for manual sync
+        $sqlsrvConnected = false;
+        $dataCount = 0;
+        
+        try {
+            $sqlsrvConnected = DB::connection('sqlsrv')->getPdo() ? true : false;
+            
+            if ($sqlsrvConnected) {
+                // Test query similar to manual sync
+                $dataCount = DB::connection('sqlsrv')
+                    ->table('po_header')
+                    ->where('po_period', 8)
+                    ->where('po_year', 2025)
+                    ->count();
+            }
+        } catch (Exception $e) {
+            $sqlsrvConnected = false;
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Manual sync test completed',
+            'sqlsrv_connected' => $sqlsrvConnected,
+            'data_count' => $dataCount,
+            'test_period' => 'August 2025',
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// test sync with detailed information
+Route::get('/testsync-detailed', function () {
+    try {
+        $startTime = microtime(true);
+        
+        // Test all sync components
+        $components = [
+            'business_partner' => function() {
+                return DB::connection('sqlsrv')
+                    ->table('business_partner')
+                    ->where('bp_role_desc', 'LIKE', '%Supplier%')
+                    ->count();
+            },
+            'po_header' => function() {
+                return DB::connection('sqlsrv')
+                    ->table('po_header')
+                    ->whereBetween('po_period', [7, 8])
+                    ->where('po_year', 2025)
+                    ->count();
+            },
+            'po_detail' => function() {
+                $poNumbers = DB::connection('sqlsrv')
+                    ->table('po_header')
+                    ->whereBetween('po_period', [7, 8])
+                    ->where('po_year', 2025)
+                    ->pluck('po_no')
+                    ->toArray();
+                
+                return DB::connection('sqlsrv')
+                    ->table('po_detail')
+                    ->whereIn('po_no', $poNumbers)
+                    ->count();
+            },
+            'dn_header' => function() {
+                $poNumbers = DB::connection('sqlsrv')
+                    ->table('po_header')
+                    ->whereBetween('po_period', [7, 8])
+                    ->where('po_year', 2025)
+                    ->pluck('po_no')
+                    ->toArray();
+                
+                return DB::connection('sqlsrv')
+                    ->table('dn_header')
+                    ->whereIn('po_no', $poNumbers)
+                    ->count();
+            },
+            'dn_detail' => function() {
+                $poNumbers = DB::connection('sqlsrv')
+                    ->table('po_header')
+                    ->whereBetween('po_period', [7, 8])
+                    ->where('po_year', 2025)
+                    ->pluck('po_no')
+                    ->toArray();
+                
+                $dnNumbers = DB::connection('sqlsrv')
+                    ->table('dn_header')
+                    ->whereIn('po_no', $poNumbers)
+                    ->pluck('no_dn')
+                    ->toArray();
+                
+                return DB::connection('sqlsrv')
+                    ->table('dn_detail')
+                    ->whereIn('no_dn', $dnNumbers)
+                    ->count();
+            }
+        ];
+        
+        $results = [];
+        foreach ($components as $name => $callback) {
+            try {
+                $results[$name] = $callback();
+            } catch (Exception $e) {
+                $results[$name] = 'error: ' . $e->getMessage();
+            }
+        }
+        
+        $endTime = microtime(true);
+        $executionTime = round(($endTime - $startTime) * 1000, 2);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Detailed sync test completed',
+            'execution_time_ms' => $executionTime,
+            'data_counts' => $results,
+            'period_range' => [
+                'from_month' => 7,
+                'to_month' => 8,
+                'year' => 2025
+            ],
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// test manual sync for last month with top 10 data
+Route::get('/testsync-manual-lastmonth', function () {
+    try {
+        $startTime = microtime(true);
+        
+        // Get current month and last month
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+        $lastMonth = now()->subMonth()->month;
+        
+        // Sync Business Partner
+        $businessPartners = DB::connection('sqlsrv')
+            ->table('business_partner')
+            ->where('bp_role_desc', 'LIKE', '%Supplier%')
+            ->limit(10)
+            ->get();
+        
+        // Sync PO Header for last month
+        $poHeaders = DB::connection('sqlsrv')
+            ->table('po_header')
+            ->where('po_period', $lastMonth)
+            ->where('po_year', $currentYear)
+            ->limit(10)
+            ->get();
+        
+        // Get PO numbers for detail
+        $poNumbers = $poHeaders->pluck('po_no')->toArray();
+        
+        // Sync PO Detail
+        $poDetails = DB::connection('sqlsrv')
+            ->table('po_detail')
+            ->whereIn('po_no', $poNumbers)
+            ->limit(10)
+            ->get();
+        
+        // Sync DN Header
+        $dnHeaders = DB::connection('sqlsrv')
+            ->table('dn_header')
+            ->whereIn('po_no', $poNumbers)
+            ->limit(10)
+            ->get();
+        
+        // Get DN numbers for detail
+        $dnNumbers = $dnHeaders->pluck('no_dn')->toArray();
+        
+        // Sync DN Detail
+        $dnDetails = DB::connection('sqlsrv')
+            ->table('dn_detail')
+            ->whereIn('no_dn', $dnNumbers)
+            ->limit(10)
+            ->get();
+        
+        $endTime = microtime(true);
+        $executionTime = round(($endTime - $startTime) * 1000, 2);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Manual sync for last month completed',
+            'execution_time_ms' => $executionTime,
+            'period' => [
+                'last_month' => $lastMonth,
+                'current_month' => $currentMonth,
+                'year' => $currentYear
+            ],
+            'top_10_data' => [
+                'business_partners' => $businessPartners,
+                'po_headers' => $poHeaders,
+                'po_details' => $poDetails,
+                'dn_headers' => $dnHeaders,
+                'dn_details' => $dnDetails
+            ],
+            'counts' => [
+                'business_partners' => $businessPartners->count(),
+                'po_headers' => $poHeaders->count(),
+                'po_details' => $poDetails->count(),
+                'dn_headers' => $dnHeaders->count(),
+                'dn_details' => $dnDetails->count()
+            ],
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// display top 10 data in readable format
+Route::get('/testsync-top10-readable', function () {
+    try {
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+        $lastMonth = now()->subMonth()->month;
+        
+        // Get top 10 PO Headers for last month
+        $poHeaders = DB::connection('sqlsrv')
+            ->table('po_header')
+            ->select('po_no', 'supplier_code', 'supplier_name', 'po_date', 'po_status', 'po_currency')
+            ->where('po_period', $lastMonth)
+            ->where('po_year', $currentYear)
+            ->limit(10)
+            ->get();
+        
+        // Get top 10 Business Partners
+        $businessPartners = DB::connection('sqlsrv')
+            ->table('business_partner')
+            ->select('bp_code', 'bp_name', 'bp_role_desc', 'bp_currency', 'country')
+            ->where('bp_role_desc', 'LIKE', '%Supplier%')
+            ->limit(10)
+            ->get();
+        
+        // Get PO numbers for detail
+        $poNumbers = $poHeaders->pluck('po_no')->toArray();
+        
+        // Get top 10 PO Details
+        $poDetails = DB::connection('sqlsrv')
+            ->table('po_detail')
+            ->select('po_no', 'po_line', 'item_code', 'bp_part_name', 'po_qty', 'price', 'amount')
+            ->whereIn('po_no', $poNumbers)
+            ->limit(10)
+            ->get();
+        
+        // Get top 10 DN Headers
+        $dnHeaders = DB::connection('sqlsrv')
+            ->table('dn_header')
+            ->select('no_dn', 'po_no', 'supplier_code', 'supplier_name', 'dn_created_date', 'status_desc')
+            ->whereIn('po_no', $poNumbers)
+            ->limit(10)
+            ->get();
+        
+        // Get DN numbers for detail
+        $dnNumbers = $dnHeaders->pluck('no_dn')->toArray();
+        
+        // Get top 10 DN Details
+        $dnDetails = DB::connection('sqlsrv')
+            ->table('dn_detail')
+            ->select('no_dn', 'dn_line', 'part_no', 'item_desc_a', 'dn_qty', 'receipt_qty', 'status_desc')
+            ->whereIn('no_dn', $dnNumbers)
+            ->limit(10)
+            ->get();
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Top 10 data for last month',
+            'period' => [
+                'last_month' => $lastMonth,
+                'current_month' => $currentMonth,
+                'year' => $currentYear,
+                'period_name' => 'July 2025'
+            ],
+            'summary' => [
+                'total_po_headers' => $poHeaders->count(),
+                'total_business_partners' => $businessPartners->count(),
+                'total_po_details' => $poDetails->count(),
+                'total_dn_headers' => $dnHeaders->count(),
+                'total_dn_details' => $dnDetails->count()
+            ],
+            'top_10_data' => [
+                'purchase_orders' => $poHeaders,
+                'business_partners' => $businessPartners,
+                'po_details' => $poDetails,
+                'delivery_notes' => $dnHeaders,
+                'dn_details' => $dnDetails
+            ],
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// simple top 10 data display
+Route::get('/testsync-top10-simple', function () {
+    try {
+        $lastMonth = now()->subMonth()->month;
+        $currentYear = now()->year;
+        
+        // Get top 10 PO Headers
+        $poHeaders = DB::connection('sqlsrv')
+            ->table('po_header')
+            ->where('po_period', $lastMonth)
+            ->where('po_year', $currentYear)
+            ->limit(10)
+            ->get(['po_no', 'supplier_code', 'supplier_name', 'po_date', 'po_status']);
+        
+        // Get top 10 Business Partners
+        $businessPartners = DB::connection('sqlsrv')
+            ->table('business_partner')
+            ->where('bp_role_desc', 'LIKE', '%Supplier%')
+            ->limit(10)
+            ->get(['bp_code', 'bp_name', 'bp_role_desc', 'bp_currency']);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Top 10 data for last month (July 2025)',
+            'period' => [
+                'month' => $lastMonth,
+                'year' => $currentYear,
+                'period_name' => 'July 2025'
+            ],
+            'data' => [
+                'purchase_orders' => $poHeaders,
+                'business_partners' => $businessPartners
+            ],
+            'counts' => [
+                'po_headers' => $poHeaders->count(),
+                'business_partners' => $businessPartners->count()
+            ],
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// display formatted top 10 data
+Route::get('/testsync-top10-formatted', function () {
+    try {
+        $lastMonth = now()->subMonth()->month;
+        $currentYear = now()->year;
+        
+        // Get top 10 PO Headers
+        $poHeaders = DB::connection('sqlsrv')
+            ->table('po_header')
+            ->where('po_period', $lastMonth)
+            ->where('po_year', $currentYear)
+            ->limit(10)
+            ->get(['po_no', 'supplier_code', 'supplier_name', 'po_date', 'po_status', 'po_currency']);
+        
+        // Get top 10 Business Partners
+        $businessPartners = DB::connection('sqlsrv')
+            ->table('business_partner')
+            ->where('bp_role_desc', 'LIKE', '%Supplier%')
+            ->limit(10)
+            ->get(['bp_code', 'bp_name', 'bp_role_desc', 'bp_currency', 'country']);
+        
+        // Format data for better readability
+        $formattedPO = $poHeaders->map(function($po) {
+            return [
+                'PO Number' => $po->po_no,
+                'Supplier Code' => $po->supplier_code,
+                'Supplier Name' => $po->supplier_name,
+                'PO Date' => $po->po_date,
+                'Status' => $po->po_status,
+                'Currency' => $po->po_currency
+            ];
+        });
+        
+        $formattedBP = $businessPartners->map(function($bp) {
+            return [
+                'BP Code' => $bp->bp_code,
+                'BP Name' => $bp->bp_name,
+                'Role' => $bp->bp_role_desc,
+                'Currency' => $bp->bp_currency,
+                'Country' => $bp->country
+            ];
+        });
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Top 10 data for last month (July 2025) - Formatted',
+            'period' => [
+                'month' => $lastMonth,
+                'year' => $currentYear,
+                'period_name' => 'July 2025'
+            ],
+            'summary' => [
+                'total_purchase_orders' => $poHeaders->count(),
+                'total_business_partners' => $businessPartners->count(),
+                'sync_period' => 'July 2025 (Last Month)'
+            ],
+            'formatted_data' => [
+                'purchase_orders' => $formattedPO,
+                'business_partners' => $formattedBP
+            ],
+            'raw_data' => [
+                'purchase_orders' => $poHeaders,
+                'business_partners' => $businessPartners
+            ],
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// display top 10 data summary
+Route::get('/testsync-top10-summary', function () {
+    try {
+        $lastMonth = now()->subMonth()->month;
+        $currentYear = now()->year;
+        
+        // Get top 10 PO Headers
+        $poHeaders = DB::connection('sqlsrv')
+            ->table('po_header')
+            ->where('po_period', $lastMonth)
+            ->where('po_year', $currentYear)
+            ->limit(10)
+            ->get();
+        
+        // Get top 10 Business Partners
+        $businessPartners = DB::connection('sqlsrv')
+            ->table('business_partner')
+            ->where('bp_role_desc', 'LIKE', '%Supplier%')
+            ->limit(10)
+            ->get();
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Top 10 data summary for last month (July 2025)',
+            'sync_period' => 'July 2025 (Last Month)',
+            'summary' => [
+                'total_purchase_orders' => $poHeaders->count(),
+                'total_business_partners' => $businessPartners->count(),
+                'period_month' => $lastMonth,
+                'period_year' => $currentYear
+            ],
+            'purchase_orders' => $poHeaders,
+            'business_partners' => $businessPartners,
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// display top 10 data in table format
+Route::get('/testsync-top10-table', function () {
+    try {
+        $lastMonth = now()->subMonth()->month;
+        $currentYear = now()->year;
+        
+        // Get top 10 PO Headers
+        $poHeaders = DB::connection('sqlsrv')
+            ->table('po_header')
+            ->where('po_period', $lastMonth)
+            ->where('po_year', $currentYear)
+            ->limit(10)
+            ->get();
+        
+        // Get top 10 Business Partners
+        $businessPartners = DB::connection('sqlsrv')
+            ->table('business_partner')
+            ->where('bp_role_desc', 'LIKE', '%Supplier%')
+            ->limit(10)
+            ->get();
+        
+        // Create table format
+        $poTable = [];
+        foreach ($poHeaders as $index => $po) {
+            $poTable[] = [
+                'No' => $index + 1,
+                'PO Number' => $po->po_no,
+                'Supplier Code' => $po->supplier_code,
+                'Supplier Name' => $po->supplier_name,
+                'PO Date' => $po->po_date,
+                'Status' => $po->po_status,
+                'Currency' => $po->po_currency ?? 'N/A'
+            ];
+        }
+        
+        $bpTable = [];
+        foreach ($businessPartners as $index => $bp) {
+            $bpTable[] = [
+                'No' => $index + 1,
+                'BP Code' => $bp->bp_code,
+                'BP Name' => $bp->bp_name,
+                'Role' => $bp->bp_role_desc,
+                'Currency' => $bp->bp_currency ?? 'N/A',
+                'Country' => $bp->country ?? 'N/A'
+            ];
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Top 10 data for last month (July 2025) - Table Format',
+            'sync_period' => 'July 2025 (Last Month)',
+            'summary' => [
+                'total_purchase_orders' => count($poTable),
+                'total_business_partners' => count($bpTable),
+                'period_month' => $lastMonth,
+                'period_year' => $currentYear
+            ],
+            'tables' => [
+                'purchase_orders' => [
+                    'title' => 'Top 10 Purchase Orders (July 2025)',
+                    'data' => $poTable
+                ],
+                'business_partners' => [
+                    'title' => 'Top 10 Business Partners (Suppliers)',
+                    'data' => $bpTable
+                ]
+            ],
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
+// display top 10 data in HTML format
+Route::get('/testsync-top10-html', function () {
+    try {
+        $lastMonth = now()->subMonth()->month;
+        $currentYear = now()->year;
+        
+        // Get top 10 PO Headers
+        $poHeaders = DB::connection('sqlsrv')
+            ->table('po_header')
+            ->where('po_period', $lastMonth)
+            ->where('po_year', $currentYear)
+            ->limit(10)
+            ->get();
+        
+        // Get top 10 Business Partners
+        $businessPartners = DB::connection('sqlsrv')
+            ->table('business_partner')
+            ->where('bp_role_desc', 'LIKE', '%Supplier%')
+            ->limit(10)
+            ->get();
+        
+        // Create HTML table
+        $poHtml = '<table border="1" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">';
+        $poHtml .= '<tr style="background-color: #f2f2f2;"><th>No</th><th>PO Number</th><th>Supplier Code</th><th>Supplier Name</th><th>PO Date</th><th>Status</th><th>Currency</th></tr>';
+        
+        foreach ($poHeaders as $index => $po) {
+            $poHtml .= '<tr>';
+            $poHtml .= '<td>' . ($index + 1) . '</td>';
+            $poHtml .= '<td>' . ($po->po_no ?? 'N/A') . '</td>';
+            $poHtml .= '<td>' . ($po->supplier_code ?? 'N/A') . '</td>';
+            $poHtml .= '<td>' . ($po->supplier_name ?? 'N/A') . '</td>';
+            $poHtml .= '<td>' . ($po->po_date ?? 'N/A') . '</td>';
+            $poHtml .= '<td>' . ($po->po_status ?? 'N/A') . '</td>';
+            $poHtml .= '<td>' . ($po->po_currency ?? 'N/A') . '</td>';
+            $poHtml .= '</tr>';
+        }
+        $poHtml .= '</table>';
+        
+        $bpHtml = '<table border="1" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">';
+        $bpHtml .= '<tr style="background-color: #f2f2f2;"><th>No</th><th>BP Code</th><th>BP Name</th><th>Role</th><th>Currency</th><th>Country</th></tr>';
+        
+        foreach ($businessPartners as $index => $bp) {
+            $bpHtml .= '<tr>';
+            $bpHtml .= '<td>' . ($index + 1) . '</td>';
+            $bpHtml .= '<td>' . ($bp->bp_code ?? 'N/A') . '</td>';
+            $bpHtml .= '<td>' . ($bp->bp_name ?? 'N/A') . '</td>';
+            $bpHtml .= '<td>' . ($bp->bp_role_desc ?? 'N/A') . '</td>';
+            $bpHtml .= '<td>' . ($bp->bp_currency ?? 'N/A') . '</td>';
+            $bpHtml .= '<td>' . ($bp->country ?? 'N/A') . '</td>';
+            $bpHtml .= '</tr>';
+        }
+        $bpHtml .= '</table>';
+        
+        $html = '<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Sync Data Report - July 2025</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                h1 { color: #333; }
+                h2 { color: #666; margin-top: 30px; }
+                .summary { background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+                table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+                th { background-color: #4CAF50; color: white; padding: 12px; text-align: left; }
+                td { padding: 8px; border: 1px solid #ddd; }
+                tr:nth-child(even) { background-color: #f2f2f2; }
+                .timestamp { color: #888; font-size: 12px; margin-top: 20px; }
+            </style>
+        </head>
+        <body>
+            <h1>Sync Data Report</h1>
+            <div class="summary">
+                <h2>Summary</h2>
+                <p><strong>Period:</strong> July 2025 (Last Month)</p>
+                <p><strong>Total Purchase Orders:</strong> ' . $poHeaders->count() . '</p>
+                <p><strong>Total Business Partners:</strong> ' . $businessPartners->count() . '</p>
+                <p><strong>Sync Date:</strong> ' . now()->format('Y-m-d H:i:s') . '</p>
+            </div>
+            
+            <h2>Top 10 Purchase Orders (July 2025)</h2>
+            ' . $poHtml . '
+            
+            <h2>Top 10 Business Partners (Suppliers)</h2>
+            ' . $bpHtml . '
+            
+            <div class="timestamp">
+                <p>Generated on: ' . now()->format('Y-m-d H:i:s') . '</p>
+            </div>
+        </body>
+        </html>';
+        
+        return response($html, 200, ['Content-Type' => 'text/html']);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ], 500);
+    }
+});
+
 // move email
 Route::get('/move', [UserController::class, 'moveEmail']);
 
