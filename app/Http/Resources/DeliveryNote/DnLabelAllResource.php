@@ -30,15 +30,15 @@ class DnLabelAllResource extends JsonResource
     private function qrNumber()
     {
         $part_number = $this->part_no;
-        $qty = $this->dn_qty;
+        $qty = $this->dn_snp; // Selalu menggunakan dn_snp untuk konsistensi
         $lot = $this->lot_number;
+        $customer = $this->item_customer ?? '';
         $poLine = $this->order_line;
         $seq = $this->order_seq;
         $dnNo = $this->no_dn;
         $dnLine = $this->dn_line;
-        $customer = $this->item_customer ?? '';
 
-        $concat = "$part_number;$qty;$lot;$poLine;$customer;$seq;$dnNo;$dnLine";
+        $concat = "$part_number;$qty;$lot;$customer;$poLine;$seq;$dnNo;$dnLine";
 
         return $concat;
     }
